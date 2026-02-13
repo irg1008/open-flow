@@ -1,16 +1,8 @@
 ---
-import { useTranslations } from "@/i18n/utils";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-
-const lang = Astro.currentLocale || "es";
-const t = useTranslations(lang as any);
 ---
 
-<BaseLayout
-	title={t("404.title")}
-	description={t("404.description")}
-	lang={lang}
->
+<BaseLayout title={"404.title"} description={"404.description"}>
 	<div
 		class="bg-background relative flex min-h-screen items-center justify-center overflow-hidden"
 	>
@@ -166,17 +158,17 @@ const t = useTranslations(lang as any);
 			<!-- Message -->
 			<div class="space-y-4">
 				<h2 class="text-foreground text-xl font-semibold md:text-2xl">
-					{t("404.heading")}
+					{"404.heading"}
 				</h2>
 				<p class="text-muted-foreground mx-auto max-w-md">
-					{t("404.text")}
+					{"404.text"}
 				</p>
 			</div>
 
 			<!-- CTA Button -->
 			<div class="mt-10">
 				<a
-					href={lang === "es" ? "/" : `/${lang}/`}
+					href="/"
 					class="bg-primary text-primary-foreground hover:bg-primary/90 group relative inline-flex items-center gap-2 overflow-hidden rounded-full px-8 py-4 font-semibold transition-all duration-300"
 				>
 					<svg
@@ -191,7 +183,7 @@ const t = useTranslations(lang as any);
 							stroke-width="2"
 							d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
 					</svg>
-					{t("404.button")}
+					{"404.button"}
 				</a>
 			</div>
 		</div>

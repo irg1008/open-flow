@@ -1,4 +1,5 @@
 ---
+import { CommentList } from "@/cells/CommentList";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
@@ -8,5 +9,5 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 	keywords="site, keywords"
 	ogImage="/og-image.png"
 >
-	Hola
+	<CommentList client:load />
 </BaseLayout>

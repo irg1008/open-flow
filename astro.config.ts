@@ -32,7 +32,10 @@ export default defineConfig({
 
   env: {
     schema: {
-      DATABASE_URL: envField.string({ context: "server", access: "secret" })
+      CONVEX_URL: envField.string({
+        access: "public",
+        context: "client"
+      })
     }
   }
 });
