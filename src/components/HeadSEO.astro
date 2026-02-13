@@ -1,0 +1,95 @@
+---
+import "@/styles/global.css";
+
+interface Props {
+	title?: string;
+	description?: string;
+	keywords?: string;
+	ogImage?: string;
+	type?: "website" | "article";
+}
+
+const {
+	title = "Default Site Title",
+	description = "Default description for your website.",
+	keywords,
+	ogImage,
+	type = "website",
+} = Astro.props as Props;
+
+const siteURL = new URL("/", Astro.site).toString();
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImageURL = ogImage
+	? new URL(ogImage, Astro.site).toString()
+	: new URL("og-image.png", siteURL).toString();
+const faviconURL = new URL("favicon.svg", siteURL).toString();
+---
+
+<!-- Basic -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<meta name="robots" content="index, follow" />
+
+<!-- Canonical -->
+<link rel="canonical" href={canonicalURL} />
+<link rel="icon" href={faviconURL} type="image/svg+xml" />
+
+<!-- Title -->
+<title>{title}</title>
+<meta name="description" content={description} />
+{keywords && <meta name="keywords" content={keywords} />}
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImageURL} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageURL} />
+
+<!-- Structured Data (JSON-LD) -->
+<script
+	type="application/ld+json"
+	set:html={JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "LodgingBusiness",
+		name: "El Rincón de La Sella",
+		description: description,
+		url: canonicalURL,
+		image: ogImageURL,
+		address: {
+			"@type": "PostalAddress",
+			streetAddress: "La Sella",
+			addressLocality: "Dénia",
+			addressRegion: "Alicante",
+			postalCode: "03750",
+			addressCountry: "ES",
+		},
+		geo: {
+			"@type": "GeoCoordinates",
+			latitude: "38.8145",
+			longitude: "0.0936",
+		},
+		amenityFeature: [
+			{ "@type": "LocationFeatureSpecification", name: "WiFi" },
+			{ "@type": "LocationFeatureSpecification", name: "Pool" },
+			{ "@type": "LocationFeatureSpecification", name: "Parking" },
+			{ "@type": "LocationFeatureSpecification", name: "Kitchen" },
+			{ "@type": "LocationFeatureSpecification", name: "Tennis Courts" },
+		],
+		numberOfRooms: 2,
+		petsAllowed: false,
+		nearbyAttractions: [
+			{ "@type": "Place", name: "Paramita Buddhist Temple" },
+			{ "@type": "Place", name: "La Sella Golf Course" },
+			{ "@type": "Place", name: "Cala Granadella" },
+			{ "@type": "Place", name: "Montgó Natural Park" },
+		],
+	})}
+/>
