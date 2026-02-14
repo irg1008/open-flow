@@ -1,0 +1,5 @@
+languageIds:
+  - astro
+
+usageMatchRegex:
+  - "[^\\w\\d]t\\(['\"`]({key})['\"`]"

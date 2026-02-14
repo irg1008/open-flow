@@ -12,10 +12,13 @@ import { GithubIcon } from "@/components/ui/svgs/github";
 import { UserAvatar } from "@/components/UserAvatar";
 import { authClient } from "@/lib/auth";
 import { withConvex } from "@/lib/convex";
+import { useI18n } from "@zachhandley/ez-i18n-react";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { LogOut } from "lucide-react";
 
 export const SignInButton = withConvex(() => {
+  const { t } = useI18n();
+
   const signInWithGithub = async () => {
     await authClient.signIn.social({ provider: "github" });
   };
@@ -29,8 +32,8 @@ export const SignInButton = withConvex(() => {
       <Unauthenticated>
         <Button onClick={signInWithGithub} variant="default" size="sm">
           <GithubIcon className="size-4" />
-          <span className="hidden sm:inline">Sign in with GitHub</span>
-          <span className="sm:hidden">Sign in</span>
+          <span className="hidden sm:inline">{t("auth.github-sign-in")}</span>
+          <span className="sm:hidden">{t("auth.sign-in")}</span>
         </Button>
       </Unauthenticated>
 
@@ -42,6 +45,7 @@ export const SignInButton = withConvex(() => {
 });
 
 const AvatarMenu = () => {
+  const { t } = useI18n();
   const { data } = authClient.useSession();
 
   const signOut = async () => {
@@ -52,7 +56,7 @@ const AvatarMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon-sm" className="rounded-full">
-          <UserAvatar user={data?.user} />
+          <UserAvatar user={data?.user} size="sm" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
@@ -63,7 +67,7 @@ const AvatarMenu = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={signOut}>
           <LogOut className="size-4" />
-          Sign out
+          {t("auth.sign-out")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

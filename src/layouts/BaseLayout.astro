@@ -3,13 +3,15 @@ import HeadSEO from "@/components/HeadSEO.astro";
 import { Navbar } from "@/components/Navbar";
 import ThemeMode from "@/components/ThemeMode.astro";
 import { Toaster } from "@/components/ui/sonner";
+import I18nHead from "@zachhandley/ez-i18n/astro";
 import { ClientRouter } from "astro:transitions";
 
 const { title, description, keywords, ogImage } = Astro.props;
+const { locale, translations } = Astro.locals;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
 	<head>
 		<ClientRouter />
 		<HeadSEO
@@ -18,6 +20,7 @@ const { title, description, keywords, ogImage } = Astro.props;
 			keywords={keywords}
 			ogImage={ogImage}
 		/>
+		<I18nHead locale={locale} translations={translations} />
 		<link rel="sitemap" href="/sitemap-index.xml" />
 
 		<ThemeMode />
@@ -32,7 +35,6 @@ const { title, description, keywords, ogImage } = Astro.props;
 	</head>
 	<body
 		class="group/body overscroll-none antialiased [--footer-height:calc(var(--spacing)*14)] [--header-height:calc(var(--spacing)*14)] xl:[--footer-height:calc(var(--spacing)*24)]"
-		,
 	>
 		<div class="bg-background relative flex min-h-svh flex-col">
 			<Navbar client:load />

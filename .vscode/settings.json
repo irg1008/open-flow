@@ -1,28 +1,31 @@
 {
-	"tailwindCSS.classFunctions": ["cva", "cn"],
-
-	// Editor settings
-	"editor.formatOnSave": true,
-	"editor.defaultFormatter": "oxc.oxc-vscode",
-	"editor.codeActionsOnSave": {
-		"source.fixAll.oxc": "explicit",
-		"source.organizeImports": "explicit",
-		"source.removeUnusedImports": "explicit"
-	},
-
 	// Astro specific
 	"[astro]": {
 		"editor.defaultFormatter": "astro-build.astro-vscode"
 	},
-
+	"[json]": {
+		"editor.defaultFormatter": "oxc.oxc-vscode"
+	},
 	"[typescript]": {
 		"editor.defaultFormatter": "oxc.oxc-vscode"
 	},
-
 	"[typescriptreact]": {
 		"editor.defaultFormatter": "oxc.oxc-vscode"
 	},
-
+	"editor.codeActionsOnSave": {
+		"source.fixAll.oxc": "explicit",
+		"source.organizeImports": "explicit",
+		"source.removeUnusedImports": "explicit",
+		"source.sort.json": "explicit"
+	},
+	"editor.defaultFormatter": "oxc.oxc-vscode",
+	// Editor settings
+	"editor.formatOnSave": true,
+	"i18n-ally.enabledFrameworks": ["vue", "react", "svelte", "custom"],
+	"i18n-ally.extract.autoDetect": true,
+	"i18n-ally.localesPaths": ["src/i18n"],
+	"tailwindCSS.classFunctions": ["cva", "cn"],
+	"typescript.tsdk": "node_modules\\typescript\\lib",
 	"workbench.colorCustomizations": {
 		"activityBar.activeBackground": "#313841",
 		"activityBar.background": "#313841",
@@ -41,6 +44,5 @@
 		"titleBar.activeForeground": "#e7e7e7",
 		"titleBar.inactiveBackground": "#1b1f2499",
 		"titleBar.inactiveForeground": "#e7e7e799"
-	},
-	"typescript.tsdk": "node_modules\\typescript\\lib"
+	}
 }

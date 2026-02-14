@@ -4,6 +4,7 @@ import partytown from "@astrojs/partytown";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
+import ezI18n from "@zachhandley/ez-i18n";
 import { defineConfig, envField } from "astro/config";
 
 // https://astro.build/config
@@ -12,6 +13,14 @@ export default defineConfig({
   base: process.env.BASE || "/",
   integrations: [
     react(),
+    ezI18n({
+      defaultLocale: "en",
+      cookieName: "locale",
+      translations: {
+        en: "./src/i18n/en.json",
+        es: "./src/i18n/es.json"
+      }
+    }),
     sitemap(),
     partytown({
       config: { forward: ["dataLayer.push"] }
@@ -26,6 +35,7 @@ export default defineConfig({
     allowedHosts: ["rincondelasella.com"]
   },
 
+  output: "server",
   adapter: node({
     mode: "standalone"
   }),

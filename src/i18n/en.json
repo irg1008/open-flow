@@ -1,0 +1,24 @@
+{
+  "auth": {
+    "github-sign-in": "Sign in with GitHub",
+    "sign-in": "Sign in",
+    "sign-out": "Sign out",
+    "sign-up": "Sign up"
+  },
+  "common": {
+    "brand": "Open Flow"
+  },
+  "pages": {
+    "home": {
+      "description": "The platform to sponsor open source projects in the easiest and most transparent way",
+      "keywords": "open source, sponsorship, transparent, easy",
+      "title": "Welcome to Open Flow"
+    }
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System",
+    "toggle": "Toggle theme"
+  }
+}
