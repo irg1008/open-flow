@@ -5,6 +5,8 @@ import type { JSX, PropsWithChildren } from "react";
 import { api } from "../../convex/_generated/api";
 import { authClient } from "./auth";
 
+const functions = api.functions;
+
 const client = new ConvexReactClient(CONVEX_URL);
 
 function ConvexClientProvider(props: PropsWithChildren) {
@@ -25,5 +27,4 @@ function withConvex<T extends JSX.IntrinsicAttributes>(Component: React.Componen
   };
 }
 
-export { api, useMutation, useQuery, withConvex };
-
+export { functions as api, useMutation, useQuery, withConvex };

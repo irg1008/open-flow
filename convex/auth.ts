@@ -1,5 +1,5 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
-import { convex, crossDomain } from "@convex-dev/better-auth/plugins";
+import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth/minimal";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
@@ -10,9 +10,8 @@ const siteUrl = process.env.SITE_URL!;
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
-  console.log(ctx);
   return betterAuth({
-    trustedOrigins: [siteUrl],
+    baseURL: siteUrl,
     database: authComponent.adapter(ctx),
 
     // Configure simple, non-verified email/password to get started
@@ -21,6 +20,6 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
       requireEmailVerification: false
     },
 
-    plugins: [crossDomain({ siteUrl }), convex({ authConfig })]
+    plugins: [convex({ authConfig })]
   });
 };

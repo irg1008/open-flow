@@ -8,7 +8,6 @@
   },
   "scripts": {
     "build": "astro build",
-    "predev": "convex dev --until-success",
     "dev": "bun run --parallel 'dev:*'",
     "dev:astro": "astro dev",
     "dev:convex": "convex dev",
