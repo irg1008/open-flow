@@ -6,6 +6,7 @@ import { api } from "../../convex/_generated/api";
 import { authClient } from "./auth";
 
 const functions = api.functions;
+const auth = api.auth;
 
 const client = new ConvexReactClient(CONVEX_URL);
 
@@ -27,4 +28,4 @@ function withConvex<T extends JSX.IntrinsicAttributes>(Component: React.Componen
   };
 }
 
-export { functions as api, useMutation, useQuery, withConvex };
+export { functions as api, auth, useMutation, useQuery, withConvex };

@@ -1,21 +1,7 @@
-import { ThemeMode } from "@/components/ThemeMode";
-import { Button } from "@/components/ui/button";
-import { GithubIcon } from "@/components/ui/svgs/github";
-import { authClient } from "@/lib/auth";
 import { api, useQuery, withConvex } from "@/lib/convex";
-import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { toast } from "sonner";
 
 export const CommentList = withConvex(() => {
   const comments = useQuery(api.comments.list);
-
-  const signIn = async () => {
-    await authClient.signIn.social({ provider: "github" });
-  };
-
-  const signOut = async () => {
-    await authClient.signOut();
-  };
 
   return comments === undefined ? (
     <p className="py-4 text-center text-gray-500">Loading comments...</p>
@@ -23,25 +9,6 @@ export const CommentList = withConvex(() => {
     <p className="py-4 text-center text-gray-500">No comments found.</p>
   ) : (
     <div className="space-y-6">
-      <Unauthenticated>
-        Logged out
-        <Button onClick={signIn}>Sign in</Button>
-      </Unauthenticated>
-      <Authenticated>
-        <GithubIcon className="size-10" />
-        <ThemeMode />
-        <Button
-          onClick={() => {
-            toast("something", { duration: 100000 });
-          }}
-        >
-          Toast
-        </Button>
-        Logged in
-        <Button onClick={signOut}>Sign out</Button>
-      </Authenticated>
-      <AuthLoading>Loading...</AuthLoading>
-
       {comments.map((comment) => (
         <article
           key={comment._id}
