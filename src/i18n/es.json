@@ -17,6 +17,14 @@
         "title": "Bienvenido a Open Flow"
       }
     },
+    "not-found": {
+      "action": "ir al inicio",
+      "message": "página no encontrada",
+      "meta": {
+        "description": "La página que buscas no existe.",
+        "title": "404 - Página no encontrada"
+      }
+    },
     "settings": {
       "account": {
         "delete-action": "Eliminar cuenta",
