@@ -1,7 +1,10 @@
+import { ThemeMode } from "@/components/ThemeMode";
 import { Button } from "@/components/ui/button";
+import { GithubIcon } from "@/components/ui/svgs/github";
 import { authClient } from "@/lib/auth";
 import { api, useQuery, withConvex } from "@/lib/convex";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
+import { toast } from "sonner";
 
 export const CommentList = withConvex(() => {
   const comments = useQuery(api.comments.list);
@@ -25,6 +28,15 @@ export const CommentList = withConvex(() => {
         <Button onClick={signIn}>Sign in</Button>
       </Unauthenticated>
       <Authenticated>
+        <GithubIcon className="size-10" />
+        <ThemeMode />
+        <Button
+          onClick={() => {
+            toast("something", { duration: 100000 });
+          }}
+        >
+          Toast
+        </Button>
         Logged in
         <Button onClick={signOut}>Sign out</Button>
       </Authenticated>

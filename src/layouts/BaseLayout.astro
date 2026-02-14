@@ -1,8 +1,9 @@
 ---
-import { ClientRouter } from "astro:transitions";
-import { cn } from "@/lib/utils";
 import HeadSEO from "@/components/HeadSEO.astro";
+import ThemeMode from "@/components/ThemeMode.astro";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
+import { ClientRouter } from "astro:transitions";
 
 const { title, description, keywords, ogImage } = Astro.props;
 ---
@@ -19,18 +20,7 @@ const { title, description, keywords, ogImage } = Astro.props;
 		/>
 		<link rel="sitemap" href="/sitemap-index.xml" />
 
-		<script is:inline>
-			(() => {
-				try {
-					const stored = localStorage.getItem("theme");
-					const prefersDark = window.matchMedia(
-						"(prefers-color-scheme: dark)",
-					).matches;
-					const dark = stored ? stored === "dark" : prefersDark;
-					document.documentElement.classList.toggle("dark", dark);
-				} catch {}
-			})();
-		</script>
+		<ThemeMode />
 
 		<!-- <script
 			defer
