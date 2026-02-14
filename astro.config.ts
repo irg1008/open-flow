@@ -8,7 +8,7 @@ import { defineConfig, envField } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.SITE || "http://localhost:4321",
+  site: process.env.SITE_URL || "http://localhost:4322",
   base: process.env.BASE || "/",
   integrations: [
     react(),
@@ -33,6 +33,10 @@ export default defineConfig({
   env: {
     schema: {
       CONVEX_URL: envField.string({
+        access: "public",
+        context: "client"
+      }),
+      CONVEX_SITE_URL: envField.string({
         access: "public",
         context: "client"
       })

@@ -39,7 +39,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     # Map 'main' branch to 'prod' environment, everything else to 'dev'
-    environment: 
+    environment:
       name: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
 
     steps:
@@ -83,4 +83,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            SITE=${{ vars.SITE }}
+            SITE_URL=${{ vars.SITE_URL }}

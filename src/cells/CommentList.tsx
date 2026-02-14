@@ -1,8 +1,14 @@
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth";
 import { api, useQuery, withConvex } from "@/lib/convex";
 
 
 export const CommentList = withConvex(() => {
   const comments = useQuery(api.comments.list);
+
+  const signIn = () => {
+    authClient.signIn.email({ email: "something@soso.com", password: "password" });
+  }
 
   return comments === undefined ? (
     <p className="py-4 text-center text-gray-500">Loading comments...</p>
@@ -10,6 +16,8 @@ export const CommentList = withConvex(() => {
     <p className="py-4 text-center text-gray-500">No comments found.</p>
   ) : (
     <div className="space-y-6">
+      <Button onClick={signIn}>Sign in</Button>
+
       {comments.map((comment) => (
         <article
           key={comment._id}
