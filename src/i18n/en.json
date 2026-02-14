@@ -31,7 +31,9 @@
         "delete-confirm-description": "This action is permanent and cannot be undone.",
         "delete-description": "Delete your account permanently.",
         "delete-title": "Delete account",
-        "delete-type-label": "Type \"{value}\" to confirm account deletion.",
+        "delete-type-label": "Type \"{value}\" to confirm",
+        "language-description": "Choose your preferred language for this app.",
+        "language-title": "Language",
         "profile-title": "Profile",
         "title": "Account"
       },

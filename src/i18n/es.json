@@ -31,7 +31,9 @@
         "delete-confirm-description": "Esta acción es permanente y no se puede deshacer.",
         "delete-description": "Elimina tu cuenta de forma permanente.",
         "delete-title": "Eliminar cuenta",
-        "delete-type-label": "Escribe \"{value}\" para confirmar la eliminación de la cuenta.",
+        "delete-type-label": "Escribe \"{value}\" para confirmar",
+        "language-description": "Elige tu idioma preferido para esta aplicación.",
+        "language-title": "Idioma",
         "profile-title": "Perfil",
         "title": "Cuenta"
       },

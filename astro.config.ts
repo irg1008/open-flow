@@ -15,7 +15,6 @@ export default defineConfig({
     react(),
     ezI18n({
       defaultLocale: "en",
-      cookieName: "locale",
       translations: {
         en: "./src/i18n/en.json",
         es: "./src/i18n/es.json"
