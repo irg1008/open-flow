@@ -10,9 +10,32 @@
   },
   "pages": {
     "home": {
-      "description": "The platform to sponsor open source projects in the easiest and most transparent way",
-      "keywords": "open source, sponsorship, transparent, easy",
-      "title": "Welcome to Open Flow"
+      "meta": {
+        "description": "The platform to sponsor open source projects in the easiest and most transparent way",
+        "keywords": "open source, sponsorship, transparent, easy",
+        "title": "Welcome to Open Flow"
+      }
+    },
+    "settings": {
+      "account": {
+        "delete-action": "Delete account",
+        "delete-description": "Delete your account permanently.",
+        "delete-title": "Delete account",
+        "profile-title": "Profile",
+        "title": "Account"
+      },
+      "integrations": {
+        "empty": "No integrations connected yet.",
+        "list-title": "Connected accounts",
+        "title": "Integrations"
+      },
+      "menu": "Menu",
+      "meta": {
+        "description": "Manage your account preferences and integrations.",
+        "keywords": "settings, account, integrations",
+        "title": "Settings - Open Flow"
+      },
+      "title": "Settings"
     }
   },
   "theme": {

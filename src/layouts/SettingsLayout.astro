@@ -1,0 +1,14 @@
+---
+import { SettingsSidebar } from "@/components/settings-sidebar";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const { title, description, keywords } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} keywords={keywords}>
+	<SettingsSidebar client:load currentPath={Astro.url.pathname}>
+		<div>
+			<slot />
+		</div>
+	</SettingsSidebar>
+</BaseLayout>

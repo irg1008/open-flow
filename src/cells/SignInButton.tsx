@@ -9,12 +9,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GithubIcon } from "@/components/ui/svgs/github";
-import { UserAvatar } from "@/components/UserAvatar";
+import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth";
 import { withConvex } from "@/lib/convex";
 import { useI18n } from "@zachhandley/ez-i18n-react";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
-import { LogOut } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 
 export const SignInButton = withConvex(() => {
   const { t } = useI18n();
@@ -65,6 +65,12 @@ const AvatarMenu = () => {
           <p className="text-muted-foreground text-xs font-normal">{data?.user?.email}</p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <a href="/settings">
+            <Settings className="size-4" />
+            {t("pages.settings.title")}
+          </a>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={signOut}>
           <LogOut className="size-4" />
           {t("auth.sign-out")}

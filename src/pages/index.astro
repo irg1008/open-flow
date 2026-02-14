@@ -6,9 +6,9 @@ const { t } = Astro.locals;
 ---
 
 <BaseLayout
-	title={t("pages.home.title")}
-	description={t("pages.home.description")}
-	keywords={t("pages.home.keywords")}
+	title={t("pages.home.meta.title")}
+	description={t("pages.home.meta.description")}
+	keywords={t("pages.home.meta.keywords")}
 >
 	<CommentList client:load />
 </BaseLayout>

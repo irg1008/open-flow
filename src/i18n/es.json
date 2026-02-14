@@ -10,9 +10,32 @@
   },
   "pages": {
     "home": {
-      "description": "La plataforma para esponsorizar proyectos de código abierto de las manera mas fácil y transparente",
-      "keywords": "open source, sponsorship, transparent, easy",
-      "title": "Bienvenido a Open Flow"
+      "meta": {
+        "description": "La plataforma para esponsorizar proyectos de código abierto de las manera mas fácil y transparente",
+        "keywords": "open source, sponsorship, transparent, easy",
+        "title": "Bienvenido a Open Flow"
+      }
+    },
+    "settings": {
+      "account": {
+        "delete-action": "Eliminar cuenta",
+        "delete-description": "Elimina tu cuenta de forma permanente.",
+        "delete-title": "Eliminar cuenta",
+        "profile-title": "Perfil",
+        "title": "Cuenta"
+      },
+      "integrations": {
+        "empty": "Aún no hay integraciones conectadas.",
+        "list-title": "Cuentas conectadas",
+        "title": "Integraciones"
+      },
+      "menu": "Menú",
+      "meta": {
+        "description": "Administra tus preferencias de cuenta e integraciones.",
+        "keywords": "configuración, cuenta, integraciones",
+        "title": "Configuración - Open Flow"
+      },
+      "title": "Configuración"
     }
   },
   "theme": {

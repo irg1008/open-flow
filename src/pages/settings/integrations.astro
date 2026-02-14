@@ -1,0 +1,14 @@
+---
+import { IntegrationsSettings } from "@/cells/settings/IntegrationsSettings";
+import SettingsLayout from "@/layouts/SettingsLayout.astro";
+
+const { t } = Astro.locals;
+---
+
+<SettingsLayout
+	title={t("pages.settings.meta.title")}
+	description={t("pages.settings.meta.description")}
+	keywords={t("pages.settings.meta.keywords")}
+>
+	<IntegrationsSettings />
+</SettingsLayout>
