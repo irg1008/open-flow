@@ -1,3 +1,4 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api, useQuery, withConvex } from "@/lib/convex";
 
 export const CommentList = withConvex(() => {
@@ -10,20 +11,19 @@ export const CommentList = withConvex(() => {
   ) : (
     <div className="space-y-6">
       {comments.map((comment) => (
-        <article
-          key={comment._id}
-          className="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm"
-        >
-          <header className="mb-2 flex items-center justify-between">
-            <strong className="font-medium text-gray-900">{comment.author}</strong>
-            <span className="text-sm text-gray-500">
-              {new Date(comment._creationTime).toLocaleDateString()}
-            </span>
-          </header>
-          <main className="leading-relaxed text-gray-700">
+        <Card key={comment._id}>
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between gap-2">
+              <CardTitle className="text-base">{comment.author}</CardTitle>
+              <span className="text-muted-foreground text-sm">
+                {new Date(comment._creationTime).toLocaleDateString()}
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
             <p className="whitespace-pre-line">{comment.content}</p>
-          </main>
-        </article>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );
