@@ -1,0 +1,7 @@
+---
+import NotFoundPage from "@/pages/404.astro";
+
+const { authorized } = Astro.locals;
+---
+
+{authorized ? <slot /> : <NotFoundPage />}

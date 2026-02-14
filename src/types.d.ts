@@ -13,3 +13,9 @@ declare namespace NodeJS {
     CONVEX_SITE_URL: string;
   }
 }
+
+declare namespace App {
+  interface Locals {
+    authorized?: boolean;
+  }
+}

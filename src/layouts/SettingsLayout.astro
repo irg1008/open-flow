@@ -1,14 +1,20 @@
 ---
 import { SettingsSidebar } from "@/components/settings-sidebar";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import AuthedLayout from "./AuthedLayout.astro";
 
 const { title, description, keywords } = Astro.props;
 ---
 
-<BaseLayout title={title} description={description} keywords={keywords}>
-	<SettingsSidebar client:load currentPath={Astro.url.pathname}>
-		<div>
+<AuthedLayout>
+	<BaseLayout
+		needsAuth
+		title={title}
+		description={description}
+		keywords={keywords}
+	>
+		<SettingsSidebar client:load currentPath={Astro.url.pathname}>
 			<slot />
-		</div>
-	</SettingsSidebar>
-</BaseLayout>
+		</SettingsSidebar>
+	</BaseLayout>
+</AuthedLayout>

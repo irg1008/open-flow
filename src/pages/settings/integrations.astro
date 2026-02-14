@@ -10,5 +10,5 @@ const { t } = Astro.locals;
 	description={t("pages.settings.meta.description")}
 	keywords={t("pages.settings.meta.keywords")}
 >
-	<IntegrationsSettings />
+	<IntegrationsSettings client:load />
 </SettingsLayout>

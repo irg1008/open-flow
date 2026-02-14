@@ -13,6 +13,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth";
 import { withConvex } from "@/lib/convex";
 import { useI18n } from "@zachhandley/ez-i18n-react";
+import { navigate } from "astro:transitions/client";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { LogOut, Settings } from "lucide-react";
 
@@ -50,6 +51,7 @@ const AvatarMenu = () => {
 
   const signOut = async () => {
     await authClient.signOut();
+    await navigate("/");
   };
 
   return (

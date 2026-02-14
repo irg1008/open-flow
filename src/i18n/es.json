@@ -6,7 +6,8 @@
     "sign-up": "Registrarse"
   },
   "common": {
-    "brand": "Open Flow"
+    "brand": "Open Flow",
+    "cancel": "Cancelar"
   },
   "pages": {
     "home": {
@@ -19,8 +20,10 @@
     "settings": {
       "account": {
         "delete-action": "Eliminar cuenta",
+        "delete-confirm-description": "Esta acción es permanente y no se puede deshacer.",
         "delete-description": "Elimina tu cuenta de forma permanente.",
         "delete-title": "Eliminar cuenta",
+        "delete-type-label": "Escribe \"{value}\" para confirmar la eliminación de la cuenta.",
         "profile-title": "Perfil",
         "title": "Cuenta"
       },

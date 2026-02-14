@@ -6,7 +6,8 @@
     "sign-up": "Sign up"
   },
   "common": {
-    "brand": "Open Flow"
+    "brand": "Open Flow",
+    "cancel": "Cancel"
   },
   "pages": {
     "home": {
@@ -19,8 +20,10 @@
     "settings": {
       "account": {
         "delete-action": "Delete account",
+        "delete-confirm-description": "This action is permanent and cannot be undone.",
         "delete-description": "Delete your account permanently.",
         "delete-title": "Delete account",
+        "delete-type-label": "Type \"{value}\" to confirm account deletion.",
         "profile-title": "Profile",
         "title": "Account"
       },

@@ -3,7 +3,6 @@ import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth/minimal";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
-import { query } from "./_generated/server";
 import authConfig from "./auth.config";
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
@@ -27,13 +26,14 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
       }
     },
 
+    user: {
+      deleteUser: {
+        enabled: true
+      }
+    },
+
     plugins: [convex({ authConfig })]
   });
 };
 
-export const getCurrentUser = query({
-  args: {},
-  handler: async (ctx) => {
-    return await authComponent.getAuthUser(ctx);
-  }
-});
+// See https://labs.convex.dev/better-auth/basic-usage/authorization for more info
