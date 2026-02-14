@@ -7,7 +7,7 @@ export const CommentList = withConvex(() => {
   const comments = useQuery(api.comments.list);
 
   const signIn = async () => {
-    await authClient.signIn.email({ email: "something@soso.com", password: "password" });
+    await authClient.signIn.social({ provider: "github" });
   };
 
   const signOut = async () => {

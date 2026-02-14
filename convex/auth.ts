@@ -5,19 +5,25 @@ import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import authConfig from "./auth.config";
 
-const siteUrl = process.env.SITE_URL!;
-
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
 export const createAuth = (ctx: GenericCtx<DataModel>) => {
   return betterAuth({
-    baseURL: siteUrl,
+    baseURL: process.env.SITE_URL,
     database: authComponent.adapter(ctx),
 
     // Configure simple, non-verified email/password to get started
     emailAndPassword: {
-      enabled: true,
+      enabled: false,
       requireEmailVerification: false
+    },
+
+    socialProviders: {
+      github: {
+        clientId: process.env.GITHUB_CLIENT_ID!,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+        scopes: ["read:user", "user:email"]
+      }
     },
 
     plugins: [convex({ authConfig })]
