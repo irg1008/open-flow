@@ -1,5 +1,5 @@
 ---
-import { CommentList } from "@/cells/CommentList";
+import { Repos } from "@/cells/Respos";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const { t } = Astro.locals;
@@ -10,5 +10,5 @@ const { t } = Astro.locals;
 	description={t("pages.home.meta.description")}
 	keywords={t("pages.home.meta.keywords")}
 >
-	<CommentList client:load />
+	<Repos client:load />
 </BaseLayout>

@@ -1,12 +1,11 @@
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { CONVEX_URL } from "astro:env/client";
-import { ConvexReactClient, useMutation, useQuery } from "convex/react";
+import { ConvexReactClient, useAction, useMutation, useQuery } from "convex/react";
 import type { JSX, PropsWithChildren } from "react";
 import { api } from "../../convex/_generated/api";
 import { authClient } from "./auth";
 
 const functions = api.functions;
-const auth = api.auth;
 
 const client = new ConvexReactClient(CONVEX_URL);
 
@@ -28,4 +27,4 @@ function withConvex<T extends JSX.IntrinsicAttributes>(Component: React.Componen
   };
 }
 
-export { functions as api, auth, useMutation, useQuery, withConvex };
+export { functions as api, useAction, useMutation, useQuery, withConvex };

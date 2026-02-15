@@ -9,7 +9,9 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as crons from "../crons.js";
 import type * as functions_comments from "../functions/comments.js";
+import type * as functions_github from "../functions/github.js";
 import type * as http from "../http.js";
 
 import type {
@@ -20,7 +22,9 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  crons: typeof crons;
   "functions/comments": typeof functions_comments;
+  "functions/github": typeof functions_github;
   http: typeof http;
 }>;
 

@@ -3,6 +3,7 @@ import { Slot } from "radix-ui";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { Spinner } from "./spinner";
 
 const buttonVariants = cva(
   "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -41,10 +42,18 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  children,
+  disabled,
+  loading,
+  loadingDisabled = true,
+  loadingProps,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    loading?: boolean;
+    loadingDisabled?: boolean;
+    loadingProps?: React.ComponentProps<typeof Spinner>;
   }) {
   const Comp = asChild ? Slot.Root : "button";
 
@@ -54,8 +63,12 @@ function Button({
       data-variant={variant}
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={disabled || (loading && loadingDisabled)}
       {...props}
-    />
+    >
+      {loading && <Spinner {...loadingProps} />}
+      {children}
+    </Comp>
   );
 }
 
