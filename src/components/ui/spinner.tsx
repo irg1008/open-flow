@@ -1246,7 +1246,7 @@ export const Spinner = ({ type = "dots13", speed = 1 }: SpinnerProps) => {
         setSpinnerText("");
       }
     };
-  }, [type]);
+  }, [type, speed]);
 
   useEffect(() => {
     return () => {

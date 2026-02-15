@@ -1,0 +1,35 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"ignorePatterns": [
+		"*.min.*",
+		"*.map",
+		"**/public",
+		"**/build",
+		"**/dist",
+		"**/out",
+		"**/.github",
+		"**/.next",
+		"**/.astro",
+		"**/.netlify"
+	],
+	"jsPlugins": ["@convex-dev/eslint-plugin", "eslint-plugin-astro"],
+	"plugins": [
+		"typescript",
+		"unicorn",
+		"react",
+		"react-perf",
+		"import",
+		"jsx-a11y",
+		"node",
+		"promise",
+		"vitest",
+		"vue"
+	],
+	"rules": {
+		"@convex-dev/eslint-plugin/explicit-table-ids": "warn",
+		"@convex-dev/eslint-plugin/import-wrong-runtime": "warn",
+		"@convex-dev/eslint-plugin/no-old-registered-function-syntax": "error",
+		"@convex-dev/eslint-plugin/require-args-validator": "off",
+		"no-unused-vars": "error"
+	}
+}

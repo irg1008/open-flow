@@ -46,7 +46,7 @@ export function AccountSettings() {
   };
 
   const handleSetLocale = async (newLocale: string) => {
-    setLocale(newLocale, { redirect: true });
+    await setLocale(newLocale, { redirect: true });
   };
 
   return (
