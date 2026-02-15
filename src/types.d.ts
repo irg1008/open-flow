@@ -11,6 +11,8 @@ declare namespace NodeJS {
     CONVEX_DEPLOYMENT: string;
     CONVEX_URL: string;
     CONVEX_SITE_URL: string;
+
+    GITHUB_SEARCH_TOKEN: string;
   }
 }
 

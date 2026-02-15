@@ -11,6 +11,12 @@
   },
   "pages": {
     "home": {
+      "repos": {
+        "empty": "No repositories found.",
+        "no-description": "No description",
+        "search-hint": "Search the repositories you want to sponsor.",
+        "search-placeholder": "Search repositories"
+      },
       "meta": {
         "description": "The platform to sponsor open source projects in the easiest and most transparent way",
         "keywords": "open source, sponsorship, transparent, easy",

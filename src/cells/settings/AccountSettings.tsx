@@ -88,32 +88,40 @@ export function AccountSettings() {
             <AlertDialogTrigger asChild>
               <Button variant="destructive">{t("pages.settings.account.delete-action")}</Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{t("pages.settings.account.delete-title")}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t("pages.settings.account.delete-confirm-description")}
-                  <br />
-                  {t("pages.settings.account.delete-type-label", { value: requiredText })}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
+            <AlertDialogContent asChild>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleDelete();
+                }}
+              >
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t("pages.settings.account.delete-title")}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t("pages.settings.account.delete-confirm-description")}
+                    <br />
+                    {t("pages.settings.account.delete-type-label", { value: requiredText })}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
 
-              <Input
-                value={confirmValue}
-                onChange={(event) => setConfirmValue(event.target.value)}
-                placeholder={requiredText}
-              />
+                <Input
+                  value={confirmValue}
+                  onChange={(event) => setConfirmValue(event.target.value)}
+                  placeholder={requiredText}
+                />
 
-              <AlertDialogFooter>
-                <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-                <AlertDialogAction
-                  variant="destructive"
-                  disabled={!canDelete}
-                  onClick={handleDelete}
-                >
-                  {t("pages.settings.account.delete-action")}
-                </AlertDialogAction>
-              </AlertDialogFooter>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+                  <AlertDialogAction
+                    type="submit"
+                    onClick={handleDelete}
+                    variant="destructive"
+                    disabled={!canDelete}
+                  >
+                    {t("pages.settings.account.delete-action")}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </form>
             </AlertDialogContent>
           </AlertDialog>
         </CardFooter>

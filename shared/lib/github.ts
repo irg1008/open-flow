@@ -9,6 +9,7 @@ export type ListRepoOptions = {
   limit?: number;
   minStars?: number;
   pastDays?: number;
+  token?: string;
 };
 
 export enum RepoListsNames {
@@ -17,7 +18,7 @@ export enum RepoListsNames {
 }
 
 export const listRepos = async (options: ListRepoOptions) => {
-  const { query, limit = 20, minStars = 500, pastDays } = options;
+  const { query, limit = 20, minStars = 500, pastDays, token } = options;
 
   const queryParts = [`stars:>=${minStars}`];
 
@@ -32,12 +33,18 @@ export const listRepos = async (options: ListRepoOptions) => {
 
   const safeLimit = Math.min(100, Math.max(1, limit));
 
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers.Authorization = `Token ${token}`;
+  }
+
   const { data } = await octokit.search.repos({
     q: queryParts.join(" "),
     sort: "stars",
     order: "desc",
     per_page: safeLimit,
-    page: 1
+    page: 1,
+    headers
   });
 
   const repos: Doc<"repoLists">["repos"] = data.items.map((repo) => ({

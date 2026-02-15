@@ -1,4 +1,4 @@
-import { createClient, type GenericCtx } from "@convex-dev/better-auth";
+import { CreateAuth, createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth/minimal";
 import { components } from "./_generated/api";
@@ -7,12 +7,11 @@ import authConfig from "./auth.config";
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
-export const createAuth = (ctx: GenericCtx<DataModel>) => {
+export const createAuth: CreateAuth<DataModel> = (ctx) => {
   return betterAuth({
     baseURL: process.env.SITE_URL,
     database: authComponent.adapter(ctx),
 
-    // Configure simple, non-verified email/password to get started
     emailAndPassword: {
       enabled: false,
       requireEmailVerification: false
@@ -34,6 +33,10 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
 
     plugins: [convex({ authConfig })]
   });
+};
+
+export const getAuth = (ctx: GenericCtx<DataModel>) => {
+  return authComponent.getAuth(createAuth, ctx);
 };
 
 // See https://labs.convex.dev/better-auth/basic-usage/authorization for more info

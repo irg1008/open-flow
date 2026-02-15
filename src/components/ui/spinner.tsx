@@ -1254,5 +1254,5 @@ export const Spinner = ({ type = "dots13", speed = 1 }: SpinnerProps) => {
     };
   }, [spinner]);
 
-  return <span>{spinnerText}</span>;
+  return <>{spinnerText}</>;
 };
