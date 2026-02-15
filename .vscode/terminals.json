@@ -1,0 +1,21 @@
+{
+	"autorun": true,
+	"autokill": true,
+	"terminals": [
+		{
+			"name": "Astro",
+			"icon": "rocket",
+			"color": "terminal.ansiCyan",
+			"command": "bun dev:astro",
+			"execute": true
+		},
+		{
+			"name": "Convex",
+			"icon": "dashboard",
+			"color": "terminal.ansiBlue",
+			"command": "bun dev:convex",
+			"execute": true,
+			"split": "Astro"
+		}
+	]
+}

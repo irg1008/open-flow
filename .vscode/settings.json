@@ -1,5 +1,4 @@
 {
-	// Astro specific
 	"[astro]": {
 		"editor.defaultFormatter": "astro-build.astro-vscode"
 	},
@@ -15,14 +14,13 @@
 	"editor.codeActionsOnSave": {
 		"source.fixAll.oxc": "explicit",
 		"source.organizeImports": "explicit",
-		"source.removeUnusedImports": "explicit",
-		"source.sort.json": "explicit"
+		"source.removeUnusedImports": "explicit"
 	},
 	"editor.defaultFormatter": "oxc.oxc-vscode",
-	// Editor settings
 	"editor.formatOnSave": true,
 	"i18n-ally.enabledFrameworks": ["vue", "react", "svelte", "custom"],
 	"i18n-ally.extract.autoDetect": true,
+	"i18n-ally.keystyle": "nested",
 	"i18n-ally.localesPaths": ["src/i18n"],
 	"tailwindCSS.classFunctions": ["cva", "cn"],
 	"typescript.tsdk": "node_modules\\typescript\\lib",
@@ -44,6 +42,5 @@
 		"titleBar.activeForeground": "#e7e7e7",
 		"titleBar.inactiveBackground": "#1b1f2499",
 		"titleBar.inactiveForeground": "#e7e7e799"
-	},
-	"i18n-ally.keystyle": "nested"
+	}
 }

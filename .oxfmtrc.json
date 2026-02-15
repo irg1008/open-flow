@@ -1,5 +1,9 @@
 {
 	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"experimentalSortPackageJson": true,
+	"experimentalTailwindcss": {
+		"functions": ["clsx", "cn", "cva", "tw"]
+	},
 	"ignorePatterns": [
 		"*.min.*",
 		"*.map",
@@ -11,11 +15,9 @@
 		"**/.next",
 		"**/.astro",
 		"**/.netlify",
+		"**/package.json"
 	],
-	"singleQuote": false,
 	"jsxSingleQuote": false,
-	"trailingComma": "none",
-	"experimentalTailwindcss": {
-		"functions": ["clsx", "cn", "cva", "tw"],
-	},
+	"singleQuote": false,
+	"trailingComma": "none"
 }
