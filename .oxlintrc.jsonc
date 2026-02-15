@@ -1,17 +1,5 @@
 {
 	"$schema": "./node_modules/oxlint/configuration_schema.json",
-	"plugins": [
-		"typescript",
-		"unicorn",
-		"react",
-		"react-perf",
-		"import",
-		"jsx-a11y",
-		"node",
-		"promise",
-		"vitest",
-		"vue",
-	],
 	"ignorePatterns": [
 		"*.min.*",
 		"*.map",
@@ -24,4 +12,22 @@
 		"**/.astro",
 		"**/.netlify",
 	],
+	"plugins": [
+		"typescript",
+		"unicorn",
+		"react",
+		"react-perf",
+		"import",
+		"jsx-a11y",
+		"node",
+		"promise",
+		"vitest",
+		"vue",
+		"eslint",
+	],
+	"rules": {
+		"typescript/await-thenable": "error",
+		"typescript/no-floating-promises": "error",
+		"typescript/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+	},
 }

@@ -1,6 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { repoValidator } from "./functions/github";
+import { repoValidator } from "./github/validators";
 
 export default defineSchema({
   comments: defineTable({

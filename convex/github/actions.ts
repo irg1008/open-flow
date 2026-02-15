@@ -3,36 +3,19 @@ import { v } from "convex/values";
 import { format, subDays } from "date-fns";
 import { internal } from "../_generated/api";
 import { Doc } from "../_generated/dataModel";
-import { internalAction, internalMutation } from "../_generated/server";
+import { internalAction } from "../_generated/server";
 
 const octokit = new Octokit();
 
-export const repoValidator = v.object({
-  id: v.number(),
-  name: v.string(),
-  description: v.nullable(v.string()),
-  stargazersCount: v.number(),
-  htmlUrl: v.string(),
-  createdAt: v.string(),
-  owner: v.nullable(
-    v.object({
-      name: v.optional(v.nullable(v.string())),
-      login: v.string(),
-      avatarUrl: v.string(),
-      htmlUrl: v.string()
-    })
-  )
-});
-
 export const listRepos = internalAction({
   args: {
+    listName: v.string(),
+    pastDays: v.optional(v.number()),
     query: v.optional(v.string()),
     minStars: v.optional(v.number()),
-    pastDays: v.optional(v.number()),
-    limit: v.optional(v.number()),
-    listName: v.string()
+    limit: v.optional(v.number())
   },
-  handler: async (ctx, { minStars = 500, pastDays, limit = 20, listName, query }) => {
+  handler: async (ctx, { listName, pastDays, query, minStars = 500, limit = 20 }) => {
     const queryParts = [`stars:>=${minStars}`];
 
     if (query) {
@@ -71,28 +54,9 @@ export const listRepos = internalAction({
         : null
     }));
 
-    await ctx.runMutation(internal.functions.github.saveRepoList, { name: listName, repos });
-  }
-});
-
-export const saveRepoList = internalMutation({
-  args: {
-    name: v.string(),
-    repos: v.array(repoValidator)
-  },
-  handler: async (ctx, { name, repos }) => {
-    const normalizedName = name.trim();
-    const data = { name: normalizedName, repos };
-
-    const existingList = await ctx.db
-      .query("repoLists")
-      .withIndex("by_name", (q) => q.eq("name", normalizedName))
-      .unique();
-
-    if (!existingList) {
-      return await ctx.db.insert("repoLists", data);
-    }
-
-    return await ctx.db.patch(existingList._id, data);
+    await ctx.runMutation(internal.github.mutations.saveRepoList, {
+      name: listName,
+      repos
+    });
   }
 });

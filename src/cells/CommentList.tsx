@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api, useQuery, withConvex } from "@/lib/convex";
 
 export const CommentList = withConvex(() => {
-  const comments = useQuery(api.comments.list);
+  const comments = useQuery(api.comments.queries.list);
 
   return comments === undefined ? (
     <p className="py-4 text-center text-gray-500">Loading comments...</p>

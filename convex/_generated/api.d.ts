@@ -9,10 +9,14 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as comments_mutations from "../comments/mutations.js";
+import type * as comments_queries from "../comments/queries.js";
 import type * as crons from "../crons.js";
-import type * as functions_comments from "../functions/comments.js";
-import type * as functions_github from "../functions/github.js";
+import type * as github_actions from "../github/actions.js";
+import type * as github_mutations from "../github/mutations.js";
+import type * as github_validators from "../github/validators.js";
 import type * as http from "../http.js";
+import type * as lib_custom from "../lib/custom.js";
 
 import type {
   ApiFromModules,
@@ -22,10 +26,14 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  "comments/mutations": typeof comments_mutations;
+  "comments/queries": typeof comments_queries;
   crons: typeof crons;
-  "functions/comments": typeof functions_comments;
-  "functions/github": typeof functions_github;
+  "github/actions": typeof github_actions;
+  "github/mutations": typeof github_mutations;
+  "github/validators": typeof github_validators;
   http: typeof http;
+  "lib/custom": typeof lib_custom;
 }>;
 
 /**
