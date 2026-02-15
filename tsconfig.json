@@ -1,8 +1,10 @@
 {
-  "extends": "astro/tsconfigs/strict",
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+	"extends": "astro/tsconfigs/strict",
+	"compilerOptions": {
+		"paths": {
+			"@/*": ["./src/*"],
+			"shared/*": ["./shared/*"],
+			"#/*": ["./convex/*"]
+		}
+	}
 }

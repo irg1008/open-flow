@@ -7,7 +7,8 @@
 			"icon": "rocket",
 			"color": "terminal.ansiCyan",
 			"command": "bun dev:astro",
-			"execute": true
+			"execute": true,
+			"focus": true
 		},
 		{
 			"name": "Convex",
