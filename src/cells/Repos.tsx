@@ -60,7 +60,7 @@ export const Repos = withConvex(() => {
         />
       </InputGroup>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={open} onOpenChange={setOpen} showCloseButton={false}>
         <Command shouldFilter={false}>
           <CommandInput
             value={query}
