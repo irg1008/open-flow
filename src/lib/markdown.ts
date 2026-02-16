@@ -1,5 +1,5 @@
 import hljs from "highlight.js";
-import { marked, type MarkedExtension, type MarkedOptions } from "marked";
+import { Marked, type MarkedExtension, type MarkedOptions } from "marked"; // Import Class 'Marked'
 import { baseUrl as baseUrlExtension } from "marked-base-url";
 import { markedHighlight } from "marked-highlight";
 
@@ -33,9 +33,11 @@ export const parseRemoteMarkdown = async (
   baseUrl: string,
   options?: MarkedOptions
 ) => {
-  marked.use(baseUrlExtension(baseUrl));
-  marked.use(baseUrlHtmlExtension(baseUrl));
-  marked.use(highlightExtension);
+  const marked = new Marked(
+    baseUrlExtension(baseUrl),
+    baseUrlHtmlExtension(baseUrl),
+    highlightExtension
+  );
 
   const response = await fetch(markdownUrl);
   if (response.status !== 200) return null;
