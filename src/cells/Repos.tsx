@@ -1,4 +1,5 @@
-import type { Doc } from "#/_generated/dataModel";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Command,
   CommandDialog,
@@ -11,10 +12,10 @@ import {
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import { useAsyncSearch } from "@/hooks/use-async-search";
+import { useKeyDown } from "@/hooks/use-key-down";
 import { withConvex } from "@/lib/convex";
 import { useI18n } from "@zachhandley/ez-i18n-react";
-import { GITHUB_SEARCH_TOKEN } from "astro:env/client";
-import { SearchIcon } from "lucide-react";
+import { AlertCircleIcon, SearchIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { listRepos } from "shared/lib/github";
 
@@ -22,18 +23,20 @@ export const Repos = withConvex(() => {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
 
-  const searchRepos = useCallback(
-    async (searchQuery: string): Promise<Doc<"repoLists">["repos"]> => {
-      const result = await listRepos({
-        query: searchQuery,
-        minStars: 0,
-        limit: 10,
-        token: GITHUB_SEARCH_TOKEN
-      });
-      return result.repos;
-    },
-    []
+  useKeyDown(
+    (e) => e.key === "k" && (e.ctrlKey || e.metaKey),
+    () => setOpen(true)
   );
+
+  const searchRepos = useCallback(async (searchQuery: string) => {
+    const { repos } = await listRepos({
+      query: searchQuery,
+      minStars: 0,
+      limit: 10
+    });
+
+    return repos;
+  }, []);
 
   const {
     data: repos,
@@ -43,7 +46,7 @@ export const Repos = withConvex(() => {
     error,
     setQuery
   } = useAsyncSearch(searchRepos, {
-    debounceMs: 1000
+    debounceMs: 700
   });
 
   return (
@@ -61,26 +64,40 @@ export const Repos = withConvex(() => {
       </InputGroup>
 
       <CommandDialog open={open} onOpenChange={setOpen} showCloseButton={false}>
-        <Command shouldFilter={false}>
+        <Command loop shouldFilter={false}>
           <CommandInput
             value={query}
             onValueChange={setQuery}
             placeholder={t("pages.home.repos.search-placeholder")}
           />
+
           <CommandList>
-            {isLoading && (
+            {isLoading && !error && !repos?.length && (
               <div className="flex items-center justify-center p-4">
                 <Spinner />
               </div>
             )}
 
-            {!isLoading && error && <p className="text-destructive p-2 text-sm">{error}</p>}
+            {error && (
+              <CommandGroup>
+                <Alert variant="destructive">
+                  <AlertCircleIcon />
+                  <AlertTitle>{t("pages.home.repos.search-error")}</AlertTitle>
+                  <AlertDescription>
+                    {t("pages.home.repos.search-error-description")}
+                  </AlertDescription>
+                </Alert>
+              </CommandGroup>
+            )}
 
-            {!isLoading && !error && (
+            {!error && (
               <>
-                <CommandEmpty>
-                  {hasQuery ? t("pages.home.repos.empty") : t("pages.home.repos.search-hint")}
-                </CommandEmpty>
+                {!isLoading && (
+                  <CommandEmpty>
+                    {hasQuery ? t("pages.home.repos.empty") : t("pages.home.repos.search-hint")}
+                  </CommandEmpty>
+                )}
+
                 <CommandGroup>
                   {repos?.map((repo) => (
                     <CommandItem
@@ -91,14 +108,26 @@ export const Repos = withConvex(() => {
                         setOpen(false);
                       }}
                     >
-                      <div className="flex flex-col gap-1">
-                        <span className="text-sm font-medium">
-                          {repo.owner?.login ? `${repo.owner.login}/` : ""}
-                          {repo.name}
-                        </span>
-                        <span className="text-muted-foreground text-xs">
-                          {repo.description ?? t("pages.home.repos.no-description")}
-                        </span>
+                      <div className="flex items-start gap-2">
+                        <Avatar size="sm">
+                          <AvatarImage
+                            src={repo.owner?.avatarUrl ?? undefined}
+                            alt={repo.owner?.login ?? repo.name}
+                          />
+                          <AvatarFallback>
+                            {(repo.owner?.login?.[0] ?? repo.name[0] ?? "?").toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <div className="flex flex-col gap-1">
+                          <span className="text-sm font-medium">
+                            {repo.owner?.login ? `${repo.owner.login}/` : ""}
+                            {repo.name}
+                          </span>
+                          <span className="text-muted-foreground text-xs">
+                            {repo.description ?? t("pages.home.repos.no-description")}
+                          </span>
+                        </div>
                       </div>
                     </CommandItem>
                   ))}

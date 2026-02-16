@@ -12,6 +12,9 @@ export type ListRepoOptions = {
   token?: string;
 };
 
+// return of proimise
+export type ListReposResult = Awaited<ReturnType<typeof listRepos>>;
+
 export enum RepoListsNames {
   LastMonth = "popular-last-month",
   AllTime = "popular-all-time"
@@ -38,7 +41,7 @@ export const listRepos = async (options: ListRepoOptions) => {
     headers.Authorization = `Token ${token}`;
   }
 
-  const { data } = await octokit.search.repos({
+  const { data, headers: responseHeaders } = await octokit.search.repos({
     q: queryParts.join(" "),
     sort: "stars",
     order: "desc",
@@ -46,6 +49,14 @@ export const listRepos = async (options: ListRepoOptions) => {
     page: 1,
     headers
   });
+
+  const { "x-ratelimit-reset": _xRateLimitReset, "x-ratelimit-remaining": _xRateLimitRemaining } =
+    responseHeaders;
+
+  const rateLimitReset = _xRateLimitReset ? parseInt(_xRateLimitReset, 10) : undefined;
+  const rateLimitRemaining = _xRateLimitRemaining ? parseInt(_xRateLimitRemaining, 10) : undefined;
+  const rateLimitReached = rateLimitRemaining === 0;
+  const rateLimitMs = rateLimitReset ? rateLimitReset * 1000 - Date.now() : undefined;
 
   const repos: Doc<"repoLists">["repos"] = data.items.map((repo) => ({
     id: repo.id,
@@ -64,5 +75,5 @@ export const listRepos = async (options: ListRepoOptions) => {
       : null
   }));
 
-  return { repos, count: data.total_count };
+  return { repos, count: data.total_count, rateLimitRemaining, rateLimitReached, rateLimitMs };
 };

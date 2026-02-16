@@ -48,10 +48,6 @@ export default defineConfig({
       CONVEX_SITE_URL: envField.string({
         access: "public",
         context: "client"
-      }),
-      GITHUB_SEARCH_TOKEN: envField.string({
-        access: "public",
-        context: "client"
       })
     }
   }

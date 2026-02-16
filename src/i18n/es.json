@@ -11,16 +11,18 @@
   },
   "pages": {
     "home": {
-      "repos": {
-        "empty": "No se encontraron repositorios.",
-        "no-description": "Sin descripción",
-        "search-hint": "Busca los repositorios que quieres apoyar.",
-        "search-placeholder": "Buscar repositorios"
-      },
       "meta": {
         "description": "La plataforma para esponsorizar proyectos de código abierto de las manera mas fácil y transparente",
         "keywords": "open source, sponsorship, transparent, easy",
         "title": "Bienvenido a Open Flow"
+      },
+      "repos": {
+        "empty": "No se encontraron repositorios.",
+        "no-description": "Sin descripción",
+        "search-error": "Error al buscar repositorios",
+        "search-error-description": "No podemos procesar la búsqueda, prueba de nuevo en unos segundos",
+        "search-hint": "Busca los repositorios que quieres apoyar.",
+        "search-placeholder": "Buscar repositorios"
       }
     },
     "not-found": {

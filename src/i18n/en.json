@@ -11,16 +11,18 @@
   },
   "pages": {
     "home": {
-      "repos": {
-        "empty": "No repositories found.",
-        "no-description": "No description",
-        "search-hint": "Search the repositories you want to sponsor.",
-        "search-placeholder": "Search repositories"
-      },
       "meta": {
         "description": "The platform to sponsor open source projects in the easiest and most transparent way",
         "keywords": "open source, sponsorship, transparent, easy",
         "title": "Welcome to Open Flow"
+      },
+      "repos": {
+        "empty": "No repositories found.",
+        "no-description": "No description",
+        "search-error": "Error searching repositories",
+        "search-error-description": "We can't process the search right now, please try again in a few seconds",
+        "search-hint": "Search the repositories you want to sponsor.",
+        "search-placeholder": "Search repositories"
       }
     },
     "not-found": {
