@@ -15,9 +15,10 @@ import { useAsyncSearch } from "@/hooks/use-async-search";
 import { useKeyDown } from "@/hooks/use-key-down";
 import { withConvex } from "@/lib/convex";
 import { useI18n } from "@zachhandley/ez-i18n-react";
+import { navigate } from "astro:transitions/client";
 import { AlertCircleIcon, SearchIcon } from "lucide-react";
 import { useCallback, useState } from "react";
-import { github } from "shared/lib/github";
+import { github, type Repo } from "shared/lib/github";
 
 export const ReposSearch = withConvex(() => {
   const { t } = useI18n();
@@ -48,6 +49,11 @@ export const ReposSearch = withConvex(() => {
   } = useAsyncSearch(searchRepos, {
     debounceMs: 700
   });
+
+  const handleSelectRepo = async (repo: Repo) => {
+    setOpen(false);
+    await navigate(`/${repo.ownerLogin}/${repo.name}`);
+  };
 
   return (
     <>
@@ -103,10 +109,7 @@ export const ReposSearch = withConvex(() => {
                     <CommandItem
                       key={repo.id}
                       value={`${repo.ownerLogin ? `${repo.ownerLogin}/` : ""}${repo.name}`}
-                      onSelect={() => {
-                        window.open(repo.htmlUrl, "_blank", "noopener,noreferrer");
-                        setOpen(false);
-                      }}
+                      onSelect={() => handleSelectRepo(repo)}
                     >
                       <div className="flex items-start gap-2">
                         <Avatar size="sm">

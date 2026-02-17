@@ -9,7 +9,7 @@ export enum RepoListsNames {
   AllTime = "popular-all-time"
 }
 
-type GhRepo = Pick<
+export type GhRepo = Pick<
   RestEndpointMethodTypes["search"]["repos"]["response"]["data"]["items"][number],
   | "id"
   | "name"
@@ -20,7 +20,7 @@ type GhRepo = Pick<
   | "owner"
   | "default_branch"
 >;
-type Repo = WithoutSystemFields<Doc<"repoDetail">>;
+export type Repo = WithoutSystemFields<Doc<"repoDetail">>;
 
 export const mapGithubRepo = (ghRepo: GhRepo, etag?: string): Repo => ({
   id: ghRepo.id,
@@ -78,7 +78,7 @@ const listRepos = async (options: ListRepoOptions) => {
   const queryParts = [`stars:>=${minStars}`];
 
   if (query) {
-    queryParts.push(`${query} in:name,description`);
+    queryParts.push(`${query} in:name,description,owner`);
   }
 
   if (pastDays) {

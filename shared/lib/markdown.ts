@@ -1,5 +1,7 @@
+import DOMPurify from "dompurify";
 import hljs from "highlight.js";
 import { Marked, type MarkedExtension, type MarkedOptions } from "marked"; // Import Class 'Marked'
+import markedAlert from "marked-alert";
 import { baseUrl as baseUrlExtension } from "marked-base-url";
 import { markedHighlight } from "marked-highlight";
 
@@ -11,10 +13,12 @@ export const highlightExtension = markedHighlight({
   }
 });
 
+export const alertsExtension = markedAlert({ className: "alert" });
+
 export const baseUrlHtmlExtension = (baseUrl: string): MarkedExtension => ({
   walkTokens(token) {
     if (token.type === "html" && typeof token.text === "string") {
-      token.text = token.text.replace(/(src|href)=["']([^"']+)["']/g, (match, attr, url) => {
+      token.text = token.text.replace(/(src|href|srcset)=["']([^"']+)["']/g, (match, attr, url) => {
         // Ignore absolute URLs and anchors
         if (/^https?:\/\//.test(url) || url.startsWith("#")) {
           return match;
@@ -28,28 +32,64 @@ export const baseUrlHtmlExtension = (baseUrl: string): MarkedExtension => ({
   }
 });
 
+export const externalUrlHook = () => {
+  DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+    if (node.tagName === "A") {
+      const href = node.getAttribute("href");
+
+      if (href && /^https?:\/\//.test(href)) {
+        node.setAttribute("target", "_blank");
+        node.setAttribute("rel", "noopener noreferrer");
+      }
+    }
+  });
+};
+
+export const parseMarkdown = async (markdown: string, baseUrl: string, options?: MarkedOptions) => {
+  const marked = new Marked(
+    baseUrlExtension(baseUrl),
+    baseUrlHtmlExtension(baseUrl),
+    alertsExtension,
+    highlightExtension
+  );
+  const html = await marked.parse(markdown, options);
+
+  externalUrlHook();
+  const sanitized = DOMPurify.sanitize(html);
+
+  return sanitized;
+};
+
 export const parseRemoteMarkdown = async (
   markdownUrl: string,
   baseUrl: string,
   options?: MarkedOptions
-) => {
-  const marked = new Marked(
-    baseUrlExtension(baseUrl),
-    baseUrlHtmlExtension(baseUrl),
-    highlightExtension
-  );
-
+): Promise<string | null> => {
   const response = await fetch(markdownUrl);
   if (response.status !== 200) return null;
 
   const markdown = await response.text();
-  const content = marked.parse(markdown, options);
 
-  return content;
+  // Check if the markdown is actually a sub-markdown file (e.g., README.md that points to another markdown file)
+  const isSubMarkdown = markdown.trim().endsWith(".md");
+  if (isSubMarkdown) {
+    const subMarkdownUrl = new URL(markdown.trim(), baseUrl).href;
+    return await parseRemoteMarkdown(subMarkdownUrl, baseUrl, options);
+  }
+
+  return await parseMarkdown(markdown, baseUrl, options);
 };
 
 export const parseRemoteGithubMarkdown = async (user: string, repo: string, branch: string) => {
   const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/`;
-  const markdownUrl = `${rawUrl}README.md`;
-  return await parseRemoteMarkdown(markdownUrl, rawUrl, { gfm: true, breaks: true });
+
+  const markdownNameVariants = ["README.md", "readme.md", "Readme.md"];
+
+  for (const markdownName of markdownNameVariants) {
+    const markdownUrl = `${rawUrl}${markdownName}`;
+    const result = await parseRemoteMarkdown(markdownUrl, rawUrl, { gfm: true });
+    if (result) return result;
+  }
+
+  return null;
 };

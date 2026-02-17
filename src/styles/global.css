@@ -193,40 +193,65 @@
 }
 
 @utility typography {
+	@apply space-y-4;
+
 	h1 {
-		@apply scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance;
+		@apply scroll-m-20 text-3xl border-b pb-4 font-extrabold tracking-tight text-balance mt-6 mb-3;
 	}
 
 	h2 {
-		@apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight mt-6;
+		@apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight mt-6 mb-3;
 	}
 
 	h3 {
-		@apply scroll-m-20 text-2xl font-semibold tracking-tight mt-4;
+		@apply scroll-m-20 text-xl font-semibold tracking-tight mt-6 mb-3;
 	}
 
 	h4 {
-		@apply scroll-m-20 text-xl font-semibold tracking-tight mt-4;
+		@apply scroll-m-20 text-lg font-semibold tracking-tight mt-6 mb-3;
 	}
 
 	h5 {
-		@apply scroll-m-20 text-lg font-semibold tracking-tight mt-4;
+		@apply scroll-m-20 text-base font-semibold tracking-tight mt-6 mb-3;
 	}
 
 	h6 {
-		@apply scroll-m-20 text-base font-semibold tracking-tight mt-4;
+		@apply scroll-m-20 text-sm font-semibold tracking-tight mt-6 mb-3;
 	}
 
 	p {
-		@apply leading-7 not-first:mt-4;
+		@apply leading-7 gap-1;
 	}
 
-	p[align="center"] {
-		@apply flex items-center justify-center text-center gap-2;
+	small {
+		@apply text-sm leading-none font-medium;
+	}
+
+	div,
+	p {
+		img {
+			@apply inline;
+		}
+
+		&[align="center"] {
+			@apply text-center items-center;
+		}
+
+		&[align="right"] {
+			@apply text-right items-end;
+		}
+	}
+
+	div {
+		@apply space-y-4;
+	}
+
+	div[align] p:not([align]) {
+		align-items: inherit;
 	}
 
 	ul {
-		@apply my-6 ml-6 list-disc [&>li]:mt-2;
+		@apply ml-6 list-disc [&>li]:mt-2;
 	}
 
 	blockquote {
@@ -234,7 +259,7 @@
 	}
 
 	hr {
-		@apply mt-4;
+		@apply mt-6;
 	}
 
 	a {
@@ -242,14 +267,62 @@
 	}
 
 	code {
-		@apply bg-muted relative rounded px-2 py-1 font-mono text-sm font-semibold mt-4 overflow-x-auto;
+		@apply bg-muted relative rounded px-2 py-1 font-mono text-sm font-semibold overflow-x-auto;
 
 		&.block {
-			@apply p-3;
+			@apply p-3 mt-4;
 		}
 
 		&::selection {
 			@apply bg-popover text-popover-foreground;
+		}
+	}
+
+	table {
+		@apply w-full;
+	}
+
+	tr {
+		@apply even:bg-muted m-0 border-t p-0;
+	}
+
+	th {
+		@apply border px-4 py-2 text-left font-bold [[align=center]]:text-center [[align=right]]:text-right;
+	}
+
+	td {
+		@apply border px-4 py-2 text-left [[align=center]]:text-center [[align=right]]:text-right;
+	}
+
+	.alert {
+		@apply px-4 py-2 rounded border-l-4 fill-current;
+
+		&.alert-note {
+			@apply border-blue-500 text-blue-500;
+		}
+
+		&.alert-tip {
+			@apply border-green-500 text-green-500;
+		}
+
+		&.alert-important {
+			@apply border-purple-500 text-purple-500;
+		}
+
+		&.alert-warning {
+			@apply border-amber-500 text-amber-500;
+		}
+
+		&.alert-caution {
+			@apply border-red-500 text-red-500;
+		}
+
+		& p:not(.alert-title) {
+			@apply text-foreground;
+		}
+
+		& .alert-title {
+			@apply flex gap-2 items-center mb-2;
 		}
 	}
 }
