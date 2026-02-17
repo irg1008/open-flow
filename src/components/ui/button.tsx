@@ -56,6 +56,7 @@ function Button({
     loadingProps?: React.ComponentProps<typeof Spinner>;
   }) {
   const Comp = asChild ? Slot.Root : "button";
+  const isDisabled = disabled || (loading && loadingDisabled);
 
   return (
     <Comp
@@ -63,11 +64,12 @@ function Button({
       data-variant={variant}
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
-      disabled={disabled || (loading && loadingDisabled)}
+      disabled={!asChild ? isDisabled : undefined}
+      aria-disabled={asChild && isDisabled ? true : undefined}
       {...props}
     >
       {loading && <Spinner {...loadingProps} />}
-      {children}
+      {asChild ? <Slot.Slottable>{children}</Slot.Slottable> : children}
     </Comp>
   );
 }

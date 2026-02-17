@@ -10,7 +10,6 @@ export const useAsync = <TData, TArgs extends unknown[]>(
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("fetching data");
       setIsLoading(true);
       setError(null);
 
