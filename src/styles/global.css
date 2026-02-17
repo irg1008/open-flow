@@ -221,12 +221,24 @@
 		@apply leading-7 not-first:mt-4;
 	}
 
+	p[align="center"] {
+		@apply flex items-center justify-center text-center gap-2;
+	}
+
 	ul {
 		@apply my-6 ml-6 list-disc [&>li]:mt-2;
 	}
 
 	blockquote {
 		@apply mt-6 border-l-2 pl-6 italic;
+	}
+
+	hr {
+		@apply mt-4;
+	}
+
+	a {
+		@apply font-medium underline underline-offset-4 inline-block;
 	}
 
 	code {

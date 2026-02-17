@@ -30,6 +30,7 @@
 		"@convex-dev/eslint-plugin/import-wrong-runtime": "warn",
 		"@convex-dev/eslint-plugin/no-old-registered-function-syntax": "error",
 		"@convex-dev/eslint-plugin/require-args-validator": "off",
-		"no-unused-vars": "error"
+		"no-unused-vars": "error",
+		"typescript/no-explicit-any": "warn"
 	}
 }

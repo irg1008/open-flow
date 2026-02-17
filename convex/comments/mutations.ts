@@ -7,7 +7,7 @@ export const create = mutation({
     content: v.string()
   },
   handler: async (ctx, args) => {
-    await ctx.db.insert("comments", {
+    await ctx.db.insert("comment", {
       author: args.author,
       content: args.content
     });

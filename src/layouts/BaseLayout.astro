@@ -6,6 +6,13 @@ import { Toaster } from "@/components/ui/sonner";
 import I18nHead from "@zachhandley/ez-i18n/astro";
 import { ClientRouter } from "astro:transitions";
 
+interface Props {
+	title?: string;
+	description?: string;
+	keywords?: string;
+	ogImage?: string;
+}
+
 const { title, description, keywords, ogImage } = Astro.props;
 const { locale, translations } = Astro.locals;
 ---

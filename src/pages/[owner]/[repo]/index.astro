@@ -1,0 +1,11 @@
+---
+import { RepoDetail } from "@/cells/github/RepoDetail";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const { owner, repo } = Astro.params;
+if (!owner || !repo) return Astro.redirect("/");
+---
+
+<BaseLayout title={`${owner}/${repo}`}>
+	<RepoDetail client:load owner={owner} name={repo} />
+</BaseLayout>

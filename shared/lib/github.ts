@@ -1,6 +1,63 @@
 import type { Doc } from "#/_generated/dataModel";
-import { Octokit } from "@octokit/rest";
+import { Octokit, type RestEndpointMethodTypes } from "@octokit/rest";
+import type { WithoutSystemFields } from "convex/server";
 import { format, subDays } from "date-fns";
+import { z } from "zod";
+
+export enum RepoListsNames {
+  LastMonth = "popular-last-month",
+  AllTime = "popular-all-time"
+}
+
+type GhRepo = Pick<
+  RestEndpointMethodTypes["search"]["repos"]["response"]["data"]["items"][number],
+  | "id"
+  | "name"
+  | "description"
+  | "stargazers_count"
+  | "html_url"
+  | "created_at"
+  | "owner"
+  | "default_branch"
+>;
+type Repo = WithoutSystemFields<Doc<"repoDetail">>;
+
+export const mapGithubRepo = (ghRepo: GhRepo, etag?: string): Repo => ({
+  id: ghRepo.id,
+  name: ghRepo.name,
+  description: ghRepo.description,
+  branch: ghRepo.default_branch,
+  stargazersCount: ghRepo.stargazers_count,
+  htmlUrl: ghRepo.html_url,
+  createdAt: ghRepo.created_at,
+  ownerName: ghRepo.owner?.name,
+  ownerLogin: ghRepo.owner?.login,
+  ownerAvatarUrl: ghRepo.owner?.avatar_url,
+  ownerHtmlUrl: ghRepo.owner?.html_url,
+  etag
+});
+
+export const createHeaders = (
+  token?: string,
+  optional: Record<string, string | undefined> = {}
+) => {
+  const headers = Object.entries(optional).reduce<Record<string, string>>((acc, [key, value]) => {
+    if (value) acc[key] = value;
+    return acc;
+  }, {});
+
+  if (token) {
+    headers.Authorization = `Token ${token}`;
+  }
+
+  return headers;
+};
+
+const httpErrorSchema = z.object({
+  response: z.object({
+    status: z.number()
+  })
+});
 
 const octokit = new Octokit();
 
@@ -12,16 +69,11 @@ export type ListRepoOptions = {
   token?: string;
 };
 
-// return of proimise
-export type ListReposResult = Awaited<ReturnType<typeof listRepos>>;
-
-export enum RepoListsNames {
-  LastMonth = "popular-last-month",
-  AllTime = "popular-all-time"
-}
-
-export const listRepos = async (options: ListRepoOptions) => {
+const listRepos = async (options: ListRepoOptions) => {
   const { query, limit = 20, minStars = 500, pastDays, token } = options;
+
+  const safeLimit = Math.min(100, Math.max(1, limit));
+  const headers = createHeaders(token);
 
   const queryParts = [`stars:>=${minStars}`];
 
@@ -32,13 +84,6 @@ export const listRepos = async (options: ListRepoOptions) => {
   if (pastDays) {
     const createdAfterDate = format(subDays(new Date(), pastDays), "yyyy-MM-dd");
     queryParts.push(`created:>=${createdAfterDate}`);
-  }
-
-  const safeLimit = Math.min(100, Math.max(1, limit));
-
-  const headers: Record<string, string> = {};
-  if (token) {
-    headers.Authorization = `Token ${token}`;
   }
 
   const { data, headers: responseHeaders } = await octokit.search.repos({
@@ -58,22 +103,32 @@ export const listRepos = async (options: ListRepoOptions) => {
   const rateLimitReached = rateLimitRemaining === 0;
   const rateLimitMs = rateLimitReset ? rateLimitReset * 1000 - Date.now() : undefined;
 
-  const repos: Doc<"repoLists">["repos"] = data.items.map((repo) => ({
-    id: repo.id,
-    name: repo.name,
-    description: repo.description,
-    stargazersCount: repo.stargazers_count,
-    htmlUrl: repo.html_url,
-    createdAt: repo.created_at,
-    owner: repo.owner
-      ? {
-          name: repo.owner.name,
-          login: repo.owner.login,
-          avatarUrl: repo.owner.avatar_url,
-          htmlUrl: repo.owner.html_url
-        }
-      : null
-  }));
-
+  const repos: Repo[] = data.items.map((ghRepo) => mapGithubRepo(ghRepo));
   return { repos, count: data.total_count, rateLimitRemaining, rateLimitReached, rateLimitMs };
+};
+
+export type GetRepoOptions = {
+  etag?: string;
+  owner: string;
+  name: string;
+  token?: string;
+};
+
+const getRepo = async ({ etag, owner, name, token }: GetRepoOptions) => {
+  try {
+    const headers = createHeaders(token, { "if-none-match": etag });
+    const response = await octokit.repos.get({ owner, repo: name, headers });
+
+    const { data, headers: responseHeaders, status } = response;
+    return { status, repo: mapGithubRepo(data, responseHeaders.etag) };
+  } catch (error) {
+    const httpError = httpErrorSchema.safeParse(error);
+    if (!httpError.success) throw error;
+    return { status: httpError.data.response.status, repo: null }; // Possible status 304 Not Modified or 404 Not Found.
+  }
+};
+
+export const github = {
+  listRepos,
+  getRepo
 };

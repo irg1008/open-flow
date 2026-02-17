@@ -10,6 +10,7 @@
         "@astrojs/react": "^4.4.2",
         "@astrojs/sitemap": "^3.6.1",
         "@base-ui/react": "^1.2.0",
+        "@convex-dev/action-cache": "^0.3.0",
         "@convex-dev/better-auth": "^0.10.10",
         "@convex-dev/rate-limiter": "^0.3.2",
         "@fontsource-variable/fira-code": "^5.2.7",
@@ -164,6 +165,8 @@
     "@better-fetch/fetch": ["@better-fetch/fetch@1.1.21", "", {}, "sha512-/ImESw0sskqlVR94jB+5+Pxjf+xBwDZF/N5+y2/q4EqD7IARUTSpPfIo8uf39SYpCxyOCtbyYpUrZ3F/k0zT4A=="],
 
     "@capsizecss/unpack": ["@capsizecss/unpack@4.0.0", "", { "dependencies": { "fontkitten": "^1.0.0" } }, "sha512-VERIM64vtTP1C4mxQ5thVT9fK0apjPFobqybMtA1UdUujWka24ERHbRHFGmpbbhp73MhV+KSsHQH9C6uOTdEQA=="],
+
+    "@convex-dev/action-cache": ["@convex-dev/action-cache@0.3.0", "", { "peerDependencies": { "convex": "^1.24.8" } }, "sha512-B3GsOgwPv81whdu1mHaMKBwbIYHhNXsv3Fr5oMjynIOrRy1laGLUo9zRWDKWJgtKXfVnn8X/uxYD9RyWmPIbPQ=="],
 
     "@convex-dev/better-auth": ["@convex-dev/better-auth@0.10.10", "", { "dependencies": { "@better-auth/passkey": "1.4.9", "@better-fetch/fetch": "^1.1.18", "common-tags": "^1.8.2", "convex-helpers": "^0.1.95", "jose": "^6.1.0", "remeda": "^2.32.0", "semver": "^7.7.3", "type-fest": "^4.39.1", "zod": "^4.0.0" }, "peerDependencies": { "better-auth": "1.4.9", "convex": "^1.25.0", "react": "^18.3.1 || ^19.0.0", "react-dom": "^18.3.1 || ^19.0.0" } }, "sha512-BpwQ2kph43O7hmtGQAJ+ie3KrjONp83659QDjKDdH+X8yIdGevgehaqS5GHB0iJo7zQTtvs687GnAeLZ4Xx3/w=="],
 

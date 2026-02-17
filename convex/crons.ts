@@ -7,14 +7,14 @@ const crons = cronJobs();
 crons.daily(
   "popular-github-repos-last-month",
   { hourUTC: 6, minuteUTC: 0 },
-  internal.github.actions.listRepos,
+  internal.github.actions.fetchRepos,
   { minStars: 2_000, pastDays: 30, listName: RepoListsNames.LastMonth }
 );
 
 crons.daily(
   "popular-github-repos-all-time",
   { hourUTC: 6, minuteUTC: 0 },
-  internal.github.actions.listRepos,
+  internal.github.actions.fetchRepos,
   { minStars: 100_000, listName: RepoListsNames.AllTime }
 );
 

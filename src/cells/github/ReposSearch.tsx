@@ -17,9 +17,9 @@ import { withConvex } from "@/lib/convex";
 import { useI18n } from "@zachhandley/ez-i18n-react";
 import { AlertCircleIcon, SearchIcon } from "lucide-react";
 import { useCallback, useState } from "react";
-import { listRepos } from "shared/lib/github";
+import { github } from "shared/lib/github";
 
-export const Repos = withConvex(() => {
+export const ReposSearch = withConvex(() => {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
 
@@ -29,7 +29,7 @@ export const Repos = withConvex(() => {
   );
 
   const searchRepos = useCallback(async (searchQuery: string) => {
-    const { repos } = await listRepos({
+    const { repos } = await github.listRepos({
       query: searchQuery,
       minStars: 0,
       limit: 10
@@ -102,7 +102,7 @@ export const Repos = withConvex(() => {
                   {repos?.map((repo) => (
                     <CommandItem
                       key={repo.id}
-                      value={`${repo.owner?.login ? `${repo.owner.login}/` : ""}${repo.name}`}
+                      value={`${repo.ownerLogin ? `${repo.ownerLogin}/` : ""}${repo.name}`}
                       onSelect={() => {
                         window.open(repo.htmlUrl, "_blank", "noopener,noreferrer");
                         setOpen(false);
@@ -111,17 +111,17 @@ export const Repos = withConvex(() => {
                       <div className="flex items-start gap-2">
                         <Avatar size="sm">
                           <AvatarImage
-                            src={repo.owner?.avatarUrl ?? undefined}
-                            alt={repo.owner?.login ?? repo.name}
+                            src={repo.ownerAvatarUrl ?? undefined}
+                            alt={repo.ownerLogin ?? repo.name}
                           />
                           <AvatarFallback>
-                            {(repo.owner?.login?.[0] ?? repo.name[0] ?? "?").toUpperCase()}
+                            {(repo.ownerLogin?.[0] ?? repo.name[0] ?? "?").toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
 
                         <div className="flex flex-col gap-1">
                           <span className="text-sm font-medium">
-                            {repo.owner?.login ? `${repo.owner.login}/` : ""}
+                            {repo.ownerLogin ? `${repo.ownerLogin}/` : ""}
                             {repo.name}
                           </span>
                           <span className="text-muted-foreground text-xs">

@@ -6,6 +6,7 @@ declare namespace NodeJS {
     // Set inside convex dashboard
     GITHUB_CLIENT_ID: string;
     GITHUB_CLIENT_SECRET: string;
+    GITHUB_PERSONAL_TOKEN: string;
     BETTER_AUTH_SECRET: string;
 
     CONVEX_DEPLOYMENT: string;
