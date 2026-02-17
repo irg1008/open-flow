@@ -2,6 +2,7 @@ import type { Doc } from "#/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useAsync } from "@/hooks/use-async";
+import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import type { Repo } from "shared/lib/github";
 import { parseRemoteGithubMarkdown } from "shared/lib/markdown";
@@ -11,41 +12,61 @@ const fetchRepoMarkdown = async (repo: Repo) => {
   return await parseRemoteGithubMarkdown(repo.ownerLogin, repo.name, repo.branch);
 };
 
-export const RepoDetailMarkdown = ({ repo }: { repo: Doc<"repoDetail"> }) => {
+type CollapseProps =
+  | {
+      expandible: true;
+      expanded?: boolean;
+    }
+  | {
+      expandible?: false;
+      expanded?: never;
+    };
+
+export type RepoDetailMarkdownProps = {
+  repo: Doc<"repoDetail">;
+} & CollapseProps &
+  React.ComponentProps<"div">;
+
+export const RepoDetailMarkdown = ({
+  repo,
+  expandible,
+  expanded: initialExpanded,
+  ...props
+}: RepoDetailMarkdownProps) => {
   const { data: markdownContent } = useAsync(fetchRepoMarkdown, repo);
 
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(initialExpanded ?? false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el || !markdownContent) return;
-    setIsOverflowing(el.scrollHeight > 200);
-  }, [markdownContent]);
+  const shouldShowReadMore = expandible && !expanded && isOverflowing;
 
   useEffect(() => {
-    setExpanded(false);
-  }, [repo.id]);
+    const el = contentRef.current;
+    if (!expandible || !el || !markdownContent) return;
+    setIsOverflowing(el.scrollHeight > 200);
+  }, [markdownContent, expandible]);
+
+  useEffect(() => {
+    setExpanded(initialExpanded ?? false);
+  }, [repo.id, initialExpanded]);
 
   return (
     markdownContent && (
-      <Card>
-        <CardContent
-          className={`relative ${!expanded && isOverflowing ? "max-h-80 overflow-hidden" : ""}`}
-        >
+      <Card {...props}>
+        <CardContent className={cn("relative", shouldShowReadMore && "max-h-80 overflow-hidden")}>
           <section
             ref={contentRef}
             className="typography"
             dangerouslySetInnerHTML={{ __html: markdownContent }}
           />
 
-          {!expanded && isOverflowing && (
+          {shouldShowReadMore && (
             <aside className="from-card pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-t to-transparent" />
           )}
         </CardContent>
 
-        {!expanded && isOverflowing && (
+        {shouldShowReadMore && (
           <CardFooter className="pt-0">
             <Button onClick={() => setExpanded(true)}>Read more</Button>
           </CardFooter>
