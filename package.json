@@ -24,7 +24,6 @@
     "@astrojs/partytown": "^2.1.4",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.6.1",
-    "@base-ui/react": "^1.2.0",
     "@convex-dev/action-cache": "^0.3.0",
     "@convex-dev/better-auth": "^0.10.10",
     "@convex-dev/rate-limiter": "^0.3.2",
