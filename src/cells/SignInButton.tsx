@@ -10,19 +10,20 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { GithubIcon } from "@/components/ui/svgs/github";
 import { UserAvatar } from "@/components/user-avatar";
-import { authClient } from "@/lib/auth";
-import { withAuthConvex } from "@/lib/convex";
-import { useI18n } from "@zachhandley/ez-i18n-react";
-import { navigate } from "astro:transitions/client";
+import { useI18n } from "@/i18n/client";
+import { authClient } from "@/lib/auth-client";
+import { useReactMutation } from "@/lib/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { LogOut, Settings } from "lucide-react";
 
-export const SignInButton = withAuthConvex(() => {
+export const SignInButton = () => {
   const { t } = useI18n();
 
-  const signInWithGithub = async () => {
-    await authClient.signIn.social({ provider: "github" });
-  };
+  const { mutate: signInWithGithub } = useReactMutation({
+    mutationKey: ["signIn", "github"],
+    mutationFn: () => authClient.signIn.social({ provider: "github" })
+  });
 
   return (
     <>
@@ -31,7 +32,7 @@ export const SignInButton = withAuthConvex(() => {
       </AuthLoading>
 
       <Unauthenticated>
-        <Button onClick={signInWithGithub} variant="default" size="sm">
+        <Button onClick={() => signInWithGithub()} variant="default" size="sm">
           <GithubIcon className="size-4" />
           <span className="hidden sm:inline">{t("auth.github-sign-in")}</span>
           <span className="sm:hidden">{t("auth.sign-in")}</span>
@@ -43,15 +44,16 @@ export const SignInButton = withAuthConvex(() => {
       </Authenticated>
     </>
   );
-});
+};
 
 const AvatarMenu = () => {
   const { t } = useI18n();
   const { data } = authClient.useSession();
+  const navigate = useNavigate();
 
   const signOut = async () => {
     await authClient.signOut();
-    await navigate("/");
+    await navigate({ to: "/" });
   };
 
   return (
@@ -69,10 +71,10 @@ const AvatarMenu = () => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <a href="/settings">
+            <Link to="/settings/account">
               <Settings className="size-4" />
               {t("pages.settings.title")}
-            </a>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={signOut}>
             <LogOut className="size-4" />

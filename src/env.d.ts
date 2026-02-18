@@ -1,7 +1,7 @@
 declare namespace NodeJS {
   interface ProcessEnv {
     SITE_URL: string; // Set both inside and outside convex dashboard
-    BASE: string | undefined;
+    BASE?: string;
 
     // Set inside convex dashboard
     GITHUB_CLIENT_ID: string;
@@ -10,13 +10,7 @@ declare namespace NodeJS {
     BETTER_AUTH_SECRET: string;
 
     CONVEX_DEPLOYMENT: string;
-    CONVEX_URL: string;
-    CONVEX_SITE_URL: string;
-  }
-}
-
-declare namespace App {
-  interface Locals {
-    authorized?: boolean;
+    VITE_CONVEX_URL: string;
+    VITE_CONVEX_SITE_URL: string;
   }
 }

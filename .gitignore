@@ -1,7 +1,10 @@
 # build output
 dist/
 # generated types
-.astro/
+.tanstack/
+src/routeTree.gen.ts
+.tmp-tanstack-scaffold/
+.tmp-tanstack-scaffold-query/
 
 # dependencies
 node_modules/
@@ -22,4 +25,3 @@ pnpm-debug.log*
 .DS_Store
 
 ./generated
-/prisma/generated

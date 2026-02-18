@@ -9,10 +9,13 @@
 		"**/out",
 		"**/.github",
 		"**/.next",
-		"**/.astro",
-		"**/.netlify"
+		"**/.netlify",
+		"**/.tanstack",
+		"**/routeTree.gen.ts",
+		"**/.tmp-tanstack-scaffold/**",
+		"**/.tmp-tanstack-scaffold-query/**"
 	],
-	"jsPlugins": ["@convex-dev/eslint-plugin", "eslint-plugin-astro"],
+	"jsPlugins": ["@convex-dev/eslint-plugin"],
 	"plugins": [
 		"typescript",
 		"unicorn",
@@ -31,6 +34,6 @@
 		"@convex-dev/eslint-plugin/no-old-registered-function-syntax": "error",
 		"@convex-dev/eslint-plugin/require-args-validator": "off",
 		"no-unused-vars": "error",
-		"typescript/no-explicit-any": "warn"
+		"typescript/no-explicit-any": "error"
 	}
 }

@@ -1,4 +1,8 @@
-/// <reference types="vitest/config" />
-import { getViteConfig } from "astro/config";
+import { defineConfig } from "vitest/config";
 
-export default getViteConfig({});
+/// <reference types="vitest/config" />
+export default defineConfig({
+  test: {
+    exclude: ["**/node_modules/**", "**/.git/**", "**/dist/**"]
+  }
+});

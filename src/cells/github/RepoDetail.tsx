@@ -1,19 +1,25 @@
 import type { RepoFullName } from "#/github/validators";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useAsync } from "@/hooks/use-async";
-import { api, useAction, useQuery, withConvex } from "@/lib/convex";
-import { navigate } from "astro:transitions/client";
+import { api, useAction, useQuery } from "@/lib/convex";
+import { useReactQuery } from "@/lib/react-query";
 import { RepoDetailMarkdown } from "./RepoMarkdown";
 
-export const RepoDetail = withConvex((props: RepoFullName) => {
+export const RepoDetail = (props: RepoFullName) => {
   const repo = useQuery(api.github.queries.getRepoDetail, props);
-
   const revalidateRepo = useAction(api.github.actions.fetchRepoDetail);
-  const { data: status, isLoading } = useAsync(revalidateRepo, props);
+
+  const { data: status, isLoading } = useReactQuery({
+    queryKey: ["repoDetail", props.owner, props.name],
+    queryFn: () => revalidateRepo(props)
+  });
 
   if (status === 404) {
-    navigate("/not-found", { state: { from: location.pathname } });
+    return (
+      <section className="container py-8">
+        <p className="text-muted-foreground">Repository not found.</p>
+      </section>
+    );
   }
 
   return (
@@ -33,4 +39,4 @@ export const RepoDetail = withConvex((props: RepoFullName) => {
       )}
     </section>
   );
-});
+};

@@ -1,7 +1,7 @@
 import type { Doc } from "#/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { useAsync } from "@/hooks/use-async";
+import { useReactQuery } from "@/lib/react-query";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import type { Repo } from "shared/lib/github";
@@ -33,7 +33,10 @@ export const RepoDetailMarkdown = ({
   expanded: initialExpanded,
   ...props
 }: RepoDetailMarkdownProps) => {
-  const { data: markdownContent } = useAsync(fetchRepoMarkdown, repo);
+  const { data: markdownContent } = useReactQuery({
+    queryKey: ["repoDetailMarkdown", repo.id],
+    queryFn: () => fetchRepoMarkdown(repo)
+  });
 
   const [expanded, setExpanded] = useState(initialExpanded ?? false);
   const [isOverflowing, setIsOverflowing] = useState(false);

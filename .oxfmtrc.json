@@ -13,7 +13,6 @@
 		"**/out",
 		"**/.github",
 		"**/.next",
-		"**/.astro",
 		"**/.netlify",
 		"**/package.json"
 	],

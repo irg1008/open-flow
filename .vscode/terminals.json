@@ -3,10 +3,10 @@
 	"autokill": true,
 	"terminals": [
 		{
-			"name": "Astro",
+			"name": "Stack",
 			"icon": "rocket",
 			"color": "terminal.ansiCyan",
-			"command": "bun dev:astro",
+			"command": "bun dev:stack",
 			"execute": true,
 			"focus": true
 		},
@@ -16,7 +16,7 @@
 			"color": "terminal.ansiBlue",
 			"command": "bun dev:convex",
 			"execute": true,
-			"split": "Astro"
+			"split": "Stack"
 		}
 	]
 }

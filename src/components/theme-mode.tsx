@@ -5,25 +5,52 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useI18n } from "@zachhandley/ez-i18n-react";
+import { useI18n } from "@/i18n/client";
+import darkThemeUrl from "highlight.js/styles/github-dark.css?url";
+import lightThemeUrl from "highlight.js/styles/github.css?url";
 import { Moon, Sun } from "lucide-react";
 import * as React from "react";
+
+const HIGHLIGHT_THEME = {
+  dark: darkThemeUrl,
+  light: lightThemeUrl
+} as const;
 
 export function ThemeMode() {
   const { t } = useI18n();
   const [theme, setThemeState] = React.useState<"light" | "dark" | "system">("light");
 
-  React.useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setThemeState(isDarkMode ? "dark" : "light");
+  const syncThemeArtifacts = React.useCallback((resolvedTheme: "light" | "dark") => {
+    document.documentElement.classList[resolvedTheme === "dark" ? "add" : "remove"]("dark");
+
+    let linkTag = document.getElementById("highlight-theme") as HTMLLinkElement | null;
+    if (!linkTag) {
+      linkTag = document.createElement("link");
+      linkTag.id = "highlight-theme";
+      linkTag.rel = "stylesheet";
+      document.head.appendChild(linkTag);
+    }
+    linkTag.href = HIGHLIGHT_THEME[resolvedTheme];
   }, []);
 
   React.useEffect(() => {
-    const isDark =
-      theme === "dark" ||
-      (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    document.documentElement.classList[isDark ? "add" : "remove"]("dark");
-  }, [theme]);
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | "system" | null;
+    const initialTheme =
+      savedTheme ?? (document.documentElement.classList.contains("dark") ? "dark" : "light");
+    setThemeState(initialTheme);
+  }, []);
+
+  React.useEffect(() => {
+    const resolvedTheme =
+      theme === "system"
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light"
+        : theme;
+
+    localStorage.setItem("theme", theme);
+    syncThemeArtifacts(resolvedTheme);
+  }, [theme, syncThemeArtifacts]);
 
   return (
     <DropdownMenu>

@@ -19,14 +19,14 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { authClient } from "@/lib/auth";
-import { useI18n } from "@zachhandley/ez-i18n-react";
-import { navigate } from "astro:transitions/client";
-import { localeNames, locales } from "ez-i18n:config";
+import { localeNames, locales, useI18n } from "@/i18n/client";
+import { authClient } from "@/lib/auth-client";
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 export function AccountSettings() {
   const { t, locale, setLocale } = useI18n();
+  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [confirmValue, setConfirmValue] = useState("");
@@ -42,7 +42,7 @@ export function AccountSettings() {
   const handleDelete = async () => {
     if (!canDelete) return;
     await authClient.deleteUser();
-    await navigate("/");
+    await navigate({ to: "/" });
   };
 
   const handleSetLocale = async (newLocale: string) => {

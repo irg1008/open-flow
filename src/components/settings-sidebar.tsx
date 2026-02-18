@@ -11,7 +11,8 @@ import {
   SidebarProvider,
   SidebarTrigger
 } from "@/components/ui/sidebar";
-import { useI18n } from "@zachhandley/ez-i18n-react";
+import { useI18n } from "@/i18n/client";
+import { Link } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 
 type SettingsSidebarProps = {
@@ -54,7 +55,7 @@ export function SettingsSidebar({
                 {links.map((link) => (
                   <SidebarMenuItem key={link.href}>
                     <SidebarMenuButton asChild isActive={currentPath === link.href}>
-                      <a href={link.href}>{link.label}</a>
+                      <Link to={link.href}>{link.label}</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

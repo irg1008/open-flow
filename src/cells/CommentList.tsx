@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { api, useQuery, withConvex } from "@/lib/convex";
+import { api, useQuery } from "@/lib/convex";
 
-export const CommentList = withConvex(() => {
+export const CommentList = () => {
   const comments = useQuery(api.comments.queries.list);
 
   return comments === undefined ? (
@@ -27,4 +27,4 @@ export const CommentList = withConvex(() => {
       ))}
     </div>
   );
-});
+};

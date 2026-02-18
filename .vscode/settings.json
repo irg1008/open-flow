@@ -1,7 +1,4 @@
 {
-	"[astro]": {
-		"editor.defaultFormatter": "astro-build.astro-vscode"
-	},
 	"[json]": {
 		"editor.defaultFormatter": "oxc.oxc-vscode"
 	},
@@ -18,10 +15,15 @@
 	},
 	"editor.defaultFormatter": "oxc.oxc-vscode",
 	"editor.formatOnSave": true,
-	"i18n-ally.enabledFrameworks": ["vue", "react", "svelte", "custom"],
-	"i18n-ally.extract.autoDetect": true,
-	"i18n-ally.keystyle": "nested",
-	"i18n-ally.localesPaths": ["src/i18n"],
+	"files.readonlyInclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"files.watcherExclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"search.exclude": {
+		"**/routeTree.gen.ts": true
+	},
 	"tailwindCSS.classFunctions": ["cva", "cn"],
 	"typescript.tsdk": "node_modules\\typescript\\lib",
 	"workbench.colorCustomizations": {

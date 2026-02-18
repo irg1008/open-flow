@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { useI18n } from "@zachhandley/ez-i18n-react";
+import { useI18n } from "@/i18n/client";
 
 export function IntegrationsSettings() {
   const { t } = useI18n();
