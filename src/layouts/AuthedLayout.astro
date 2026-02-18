@@ -1,7 +1,13 @@
 ---
 import NotFoundPage from "@/pages/404.astro";
+import { CONVEX_SITE_URL } from "astro:env/client";
+import type { Session } from "better-auth";
 
-const { authorized } = Astro.locals;
+const sessionResponse = await fetch(
+	`${CONVEX_SITE_URL}/api/auth/get-session`,
+	Astro.request,
+);
+const session: Session | null = await sessionResponse.json();
 ---
 
-{authorized ? <slot /> : <NotFoundPage />}
+{session ? <slot /> : <NotFoundPage />}

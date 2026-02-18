@@ -12,6 +12,8 @@ export const repoValidator = v.object({
   ownerLogin: v.optional(v.nullable(v.string())),
   ownerAvatarUrl: v.optional(v.nullable(v.string())),
   ownerHtmlUrl: v.optional(v.nullable(v.string())),
+  license: v.optional(v.nullable(v.string())),
+  topics: v.optional(v.array(v.string())),
   etag: v.optional(v.string()), // Etag from GitHub API to manage cache invalidation
   claimed: v.optional(v.boolean()) // Whether this repo has been claimed by a user in our app
 });

@@ -7,12 +7,7 @@ const { title, description, keywords } = Astro.props;
 ---
 
 <AuthedLayout>
-	<BaseLayout
-		needsAuth
-		title={title}
-		description={description}
-		keywords={keywords}
-	>
+	<BaseLayout title={title} description={description} keywords={keywords}>
 		<SettingsSidebar client:load currentPath={Astro.url.pathname}>
 			<slot />
 		</SettingsSidebar>

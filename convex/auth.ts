@@ -1,6 +1,7 @@
 import { CreateAuth, createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth/minimal";
+import { customCtx } from "convex-helpers/server/customFunctions";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import authConfig from "./auth.config";
@@ -35,8 +36,12 @@ export const createAuth: CreateAuth<DataModel> = (ctx) => {
   });
 };
 
-export const getAuth = (ctx: GenericCtx<DataModel>) => {
-  return authComponent.getAuth(createAuth, ctx);
-};
-
 // See https://labs.convex.dev/better-auth/basic-usage/authorization for more info
+
+export const authCtxOverride = customCtx(async (ctx: GenericCtx<DataModel>) => {
+  const user = await ctx.auth.getUserIdentity();
+  if (!user) throw new Error("Unauthorized");
+  return { user };
+});
+
+export type User = Awaited<ReturnType<typeof authComponent.getAuthUser>>;

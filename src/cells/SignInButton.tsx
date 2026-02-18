@@ -11,13 +11,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { GithubIcon } from "@/components/ui/svgs/github";
 import { UserAvatar } from "@/components/user-avatar";
 import { authClient } from "@/lib/auth";
-import { withConvex } from "@/lib/convex";
+import { withAuthConvex } from "@/lib/convex";
 import { useI18n } from "@zachhandley/ez-i18n-react";
 import { navigate } from "astro:transitions/client";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { LogOut, Settings } from "lucide-react";
 
-export const SignInButton = withConvex(() => {
+export const SignInButton = withAuthConvex(() => {
   const { t } = useI18n();
 
   const signInWithGithub = async () => {
@@ -55,29 +55,31 @@ const AvatarMenu = () => {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-sm" className="rounded-full">
-          <UserAvatar user={data?.user} size="sm" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64">
-        <DropdownMenuLabel className="space-y-1">
-          <p className="leading-none font-medium">{data?.user?.name || "User"}</p>
-          <p className="text-muted-foreground text-xs font-normal">{data?.user?.email}</p>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <a href="/settings">
-            <Settings className="size-4" />
-            {t("pages.settings.title")}
-          </a>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={signOut}>
-          <LogOut className="size-4" />
-          {t("auth.sign-out")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    data?.user && (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon-sm" className="rounded-full">
+            <UserAvatar user={data.user} size="sm" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-64">
+          <DropdownMenuLabel className="space-y-1">
+            <p className="leading-none font-medium">{data.user.name}</p>
+            <p className="text-muted-foreground text-xs font-normal">{data.user.email}</p>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <a href="/settings">
+              <Settings className="size-4" />
+              {t("pages.settings.title")}
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={signOut}>
+            <LogOut className="size-4" />
+            {t("auth.sign-out")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
   );
 };

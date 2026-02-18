@@ -3,14 +3,21 @@ import lightThemeUrl from "highlight.js/styles/github.css?url";
 import darkThemeUrl from "highlight.js/styles/github-dark.css?url";
 ---
 
-<link id="highlight-theme" rel="stylesheet" />
-
 <script is:inline define:vars={{ lightThemeUrl, darkThemeUrl }}>
 	function setDarkMode(document) {
 		const setThemeLink = (theme) => {
-			const linkTag = document.getElementById("highlight-theme");
-			if (linkTag) {
-				linkTag.href = theme === "dark" ? darkThemeUrl : lightThemeUrl;
+			const href = theme === "dark" ? darkThemeUrl : lightThemeUrl;
+			let linkTag = document.getElementById("highlight-theme");
+
+			if (!linkTag) {
+				linkTag = document.createElement("link");
+				linkTag.id = "highlight-theme";
+				linkTag.rel = "stylesheet";
+				document.head.appendChild(linkTag);
+			}
+
+			if (linkTag.getAttribute("href") !== href) {
+				linkTag.setAttribute("href", href);
 			}
 		};
 
@@ -25,9 +32,11 @@ import darkThemeUrl from "highlight.js/styles/github-dark.css?url";
 				? "dark"
 				: "light";
 		};
-		const isDark = getThemePreference() === "dark";
+
+		const theme = getThemePreference();
+		const isDark = theme === "dark";
 		document.documentElement.classList[isDark ? "add" : "remove"]("dark");
-		setThemeLink(getThemePreference());
+		setThemeLink(theme);
 
 		if (typeof localStorage !== "undefined") {
 			const observer = new MutationObserver(() => {

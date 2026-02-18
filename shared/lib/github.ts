@@ -19,6 +19,8 @@ export type GhRepo = Pick<
   | "created_at"
   | "owner"
   | "default_branch"
+  | "license"
+  | "topics"
 >;
 export type Repo = WithoutSystemFields<Doc<"repoDetail">>;
 
@@ -32,8 +34,10 @@ export const mapGithubRepo = (ghRepo: GhRepo, etag?: string): Repo => ({
   createdAt: ghRepo.created_at,
   ownerName: ghRepo.owner?.name,
   ownerLogin: ghRepo.owner?.login,
+  topics: ghRepo.topics,
   ownerAvatarUrl: ghRepo.owner?.avatar_url,
   ownerHtmlUrl: ghRepo.owner?.html_url,
+  license: ghRepo.license?.key,
   etag
 });
 
