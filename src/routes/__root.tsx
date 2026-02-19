@@ -4,6 +4,7 @@ import { getLocale } from "@/i18n/_generated/runtime";
 import { authClient } from "@/lib/auth-client";
 import { getToken } from "@/lib/auth-server";
 import { seo } from "@/lib/seo";
+import { ThemeScript } from "@/lib/theme";
 import globalCss from "@/styles/global.css?url";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { ConvexQueryClient } from "@convex-dev/react-query";
@@ -63,6 +64,8 @@ function RootComponent() {
       initialToken={context.token}
     >
       <RootDocument>
+        <ThemeScript />
+
         <main className="bg-background relative flex min-h-svh flex-col">
           <Navbar />
           <div className="relative flex flex-1 flex-col p-4 has-[main]:p-0">
