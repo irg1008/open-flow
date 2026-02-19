@@ -1,22 +1,15 @@
 /// <reference types="vite/client" />
 import { Navbar } from "@/components/navbar";
 import { getLocale } from "@/i18n/_generated/runtime";
-import { authClient } from "@/lib/auth-client";
 import { getToken } from "@/lib/auth-server";
+import { ConvexProvider } from "@/lib/convex";
 import { seo } from "@/lib/seo";
 import { ThemeScript } from "@/lib/theme";
 import globalCss from "@/styles/global.css?url";
-import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {
-  createRootRouteWithContext,
-  HeadContent,
-  Outlet,
-  Scripts,
-  useRouteContext
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import * as React from "react";
@@ -55,14 +48,8 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
-  const context = useRouteContext({ from: Route.id });
-
   return (
-    <ConvexBetterAuthProvider
-      client={context.convexQueryClient.convexClient}
-      authClient={authClient}
-      initialToken={context.token}
-    >
+    <ConvexProvider from={Route.id}>
       <RootDocument>
         <ThemeScript />
 
@@ -74,7 +61,7 @@ function RootComponent() {
           <Toaster />
         </main>
       </RootDocument>
-    </ConvexBetterAuthProvider>
+    </ConvexProvider>
   );
 }
 
