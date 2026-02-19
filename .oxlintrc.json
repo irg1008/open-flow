@@ -25,8 +25,7 @@
 		"jsx-a11y",
 		"node",
 		"promise",
-		"vitest",
-		"vue"
+		"vitest"
 	],
 	"rules": {
 		"@convex-dev/eslint-plugin/explicit-table-ids": "warn",

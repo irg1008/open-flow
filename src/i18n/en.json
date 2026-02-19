@@ -1,68 +1,42 @@
 {
-  "auth": {
-    "github-sign-in": "Sign in with GitHub",
-    "sign-in": "Sign in",
-    "sign-out": "Sign out",
-    "sign-up": "Sign up"
-  },
-  "common": {
-    "brand": "Open Flow",
-    "cancel": "Cancel"
-  },
-  "pages": {
-    "home": {
-      "meta": {
-        "description": "The platform to sponsor open source projects in the easiest and most transparent way",
-        "keywords": "open source, sponsorship, transparent, easy",
-        "title": "Welcome to Open Flow"
-      },
-      "repos": {
-        "empty": "No repositories found.",
-        "no-description": "No description",
-        "search-error": "Error searching repositories",
-        "search-error-description": "We can't process the search right now, please try again in a few seconds",
-        "search-hint": "Search the repositories you want to sponsor.",
-        "search-placeholder": "Search repositories"
-      }
-    },
-    "not-found": {
-      "action": "go home",
-      "message": "page not found",
-      "meta": {
-        "description": "The page you are looking for does not exist.",
-        "title": "404 - Page not found"
-      }
-    },
-    "settings": {
-      "account": {
-        "delete-action": "Delete account",
-        "delete-confirm-description": "This action is permanent and cannot be undone.",
-        "delete-description": "Delete your account permanently.",
-        "delete-title": "Delete account",
-        "delete-type-label": "Type \"{value}\" to confirm",
-        "language-description": "Choose your preferred language for this app.",
-        "language-title": "Language",
-        "profile-title": "Profile",
-        "title": "Account"
-      },
-      "integrations": {
-        "empty": "No integrations connected yet.",
-        "list-title": "Connected accounts",
-        "title": "Integrations"
-      },
-      "menu": "Menu",
-      "meta": {
-        "description": "Manage your account preferences and integrations.",
-        "keywords": "settings, account, integrations",
-        "title": "Settings - Open Flow"
-      },
-      "title": "Settings"
-    }
-  },
-  "theme": {
-    "dark": "Dark",
-    "light": "Light",
-    "system": "System",
-    "toggle": "Toggle theme"
-  }
+  "auth_github_sign_in": "Sign in with GitHub",
+  "auth_sign_in": "Sign in",
+  "auth_sign_out": "Sign out",
+  "auth_sign_up": "Sign up",
+  "common_brand": "Open Flow",
+  "common_cancel": "Cancel",
+  "pages_home_meta_description": "The platform to sponsor open source projects in the easiest and most transparent way",
+  "pages_home_meta_keywords": "open source, sponsorship, transparent, easy",
+  "pages_home_meta_title": "Welcome to Open Flow",
+  "pages_not_found_action": "go home",
+  "pages_not_found_message": "page not found",
+  "pages_not_found_meta_description": "The page you are looking for does not exist.",
+  "pages_not_found_meta_title": "404 - Page not found",
+  "repos_empty": "No repositories found.",
+  "repos_no_description": "No description",
+  "repos_search_error": "Error searching repositories",
+  "repos_search_error_description": "We can't process the search right now, please try again in a few seconds",
+  "repos_search_hint": "Search the repositories you want to sponsor.",
+  "repos_search_placeholder": "Search repositories",
+  "settings_account_delete_action": "Delete account",
+  "settings_account_delete_confirm_description": "This action is permanent and cannot be undone.",
+  "settings_account_delete_description": "Delete your account permanently.",
+  "settings_account_delete_title": "Delete account",
+  "settings_account_delete_type_label": "Type \"{value}\" to confirm",
+  "settings_account_language_description": "Choose your preferred language for this app.",
+  "settings_account_language_title": "Language",
+  "settings_account_profile_title": "Profile",
+  "settings_account_title": "Account",
+  "settings_integrations_empty": "No integrations connected yet.",
+  "settings_integrations_list_title": "Connected accounts",
+  "settings_integrations_title": "Integrations",
+  "settings_menu": "Menu",
+  "settings_meta_description": "Manage your account preferences and integrations.",
+  "settings_meta_keywords": "settings, account, integrations",
+  "settings_meta_title": "Settings - Open Flow",
+  "settings_title": "Settings",
+  "theme_dark": "Dark",
+  "theme_light": "Light",
+  "theme_system": "System",
+  "theme_toggle": "Toggle theme"
 }

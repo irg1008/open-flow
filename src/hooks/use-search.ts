@@ -7,12 +7,14 @@ type UseAsyncSearchOptions<TData> = {
   debounceMs?: number;
   retryDelay?: number;
   searchKey: string;
+  staleTime?: number;
   searchFn: (query: string) => Promise<TData[]>;
 };
 
 export function useSearch<TData>({
   debounceMs = 500,
   retryDelay = 20_000,
+  staleTime = 2 * 60_000,
   searchFn,
   searchKey
 }: UseAsyncSearchOptions<TData>) {
@@ -23,9 +25,10 @@ export function useSearch<TData>({
   const isDebouncing = debounceQuery !== trimmedQuery;
 
   const queryResult = useReactQuery({
+    retryDelay,
+    staleTime,
     queryKey: [searchKey, debounceQuery],
     enabled: !!debounceQuery,
-    retryDelay: retryDelay,
     queryFn: () => searchFn(debounceQuery),
     select: (data) => (query ? data : []),
     placeholderData: keepPreviousData

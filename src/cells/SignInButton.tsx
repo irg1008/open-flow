@@ -10,20 +10,19 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { GithubIcon } from "@/components/ui/svgs/github";
 import { UserAvatar } from "@/components/user-avatar";
-import { useI18n } from "@/i18n/client";
+import { m } from "@/i18n//_generated/messages";
 import { authClient } from "@/lib/auth-client";
-import { useReactMutation } from "@/lib/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { LogOut, Settings } from "lucide-react";
 
 export const SignInButton = () => {
-  const { t } = useI18n();
-
-  const { mutate: signInWithGithub } = useReactMutation({
-    mutationKey: ["signIn", "github"],
-    mutationFn: () => authClient.signIn.social({ provider: "github" })
-  });
+  const signInWithGithub = async () => {
+    await authClient.signIn.social({
+      provider: "github",
+      callbackURL: window.location.href
+    });
+  };
 
   return (
     <>
@@ -34,8 +33,8 @@ export const SignInButton = () => {
       <Unauthenticated>
         <Button onClick={() => signInWithGithub()} variant="default" size="sm">
           <GithubIcon className="size-4" />
-          <span className="hidden sm:inline">{t("auth.github-sign-in")}</span>
-          <span className="sm:hidden">{t("auth.sign-in")}</span>
+          <span className="hidden sm:inline">{m.auth_github_sign_in()}</span>
+          <span className="sm:hidden">{m.auth_sign_in()}</span>
         </Button>
       </Unauthenticated>
 
@@ -47,7 +46,6 @@ export const SignInButton = () => {
 };
 
 const AvatarMenu = () => {
-  const { t } = useI18n();
   const { data } = authClient.useSession();
   const navigate = useNavigate();
 
@@ -73,12 +71,12 @@ const AvatarMenu = () => {
           <DropdownMenuItem asChild>
             <Link to="/settings/account">
               <Settings className="size-4" />
-              {t("pages.settings.title")}
+              {m.settings_title()}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={signOut}>
             <LogOut className="size-4" />
-            {t("auth.sign-out")}
+            {m.auth_sign_out()}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

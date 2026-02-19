@@ -1,10 +1,8 @@
-import { useI18n } from "@/i18n/client";
+import { m } from "@/i18n/_generated/messages";
 import { Link } from "@tanstack/react-router";
 import styles from "./not-found.module.css";
 
 export function NotFound() {
-  const { t } = useI18n();
-
   return (
     <div className="bg-background flex min-h-[calc(100svh-var(--header-height))] items-center justify-center px-4">
       <div className="text-center">
@@ -15,10 +13,10 @@ export function NotFound() {
           404
         </h1>
         <p className="text-muted-foreground mt-4 font-mono text-sm">
-          {t("pages.not-found.message")}
+          {m.pages_not_found_message()}
         </p>
         <Link to="/" className="mt-6 inline-block font-mono text-sm underline underline-offset-4">
-          {t("pages.not-found.action")}
+          {m.pages_not_found_action()}
         </Link>
       </div>
     </div>

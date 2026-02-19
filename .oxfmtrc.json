@@ -14,7 +14,9 @@
 		"**/.github",
 		"**/.next",
 		"**/.netlify",
-		"**/package.json"
+		"**/package.json",
+		"**/.tanstack",
+		"**/routeTree.gen.ts"
 	],
 	"jsxSingleQuote": false,
 	"singleQuote": false,

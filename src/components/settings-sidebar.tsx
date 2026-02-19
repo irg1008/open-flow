@@ -11,7 +11,7 @@ import {
   SidebarProvider,
   SidebarTrigger
 } from "@/components/ui/sidebar";
-import { useI18n } from "@/i18n/client";
+import { m } from "@/i18n/_generated/messages";
 import { Link } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 
@@ -28,11 +28,9 @@ export function SettingsSidebar({
   currentPath,
   children
 }: PropsWithChildren<SettingsSidebarProps>) {
-  const { t } = useI18n();
-
   const links: SettingsLink[] = [
-    { href: "/settings/account", label: t("pages.settings.account.title") },
-    { href: "/settings/integrations", label: t("pages.settings.integrations.title") }
+    { href: "/settings/account", label: m.settings_account_title() },
+    { href: "/settings/integrations", label: m.settings_integrations_title() }
   ];
 
   return (
@@ -45,7 +43,7 @@ export function SettingsSidebar({
     >
       <Sidebar collapsible="offcanvas" className="md:pt-(--header-height)">
         <SidebarHeader>
-          <h2 className="mt-4 px-2 text-sm font-semibold">{t("pages.settings.title")}</h2>
+          <h2 className="mt-4 px-2 text-sm font-semibold">{m.settings_title()}</h2>
         </SidebarHeader>
 
         <SidebarContent>

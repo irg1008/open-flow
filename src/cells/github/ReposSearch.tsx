@@ -15,14 +15,13 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { Spinner } from "@/components/ui/spinner";
 import { useKeyDown } from "@/hooks/use-key-down";
 import { useSearch, UseSearchResult } from "@/hooks/use-search";
-import { useI18n } from "@/i18n/client";
+import { m } from "@/i18n/_generated/messages";
 import { useNavigate } from "@tanstack/react-router";
 import { AlertCircleIcon, SearchIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { github, type Repo } from "shared/lib/github";
 
 export const ReposSearch = () => {
-  const { t } = useI18n();
   const [open, setOpen] = useState(false);
 
   useKeyDown(
@@ -55,7 +54,7 @@ export const ReposSearch = () => {
         <InputGroupInput
           value={results.query}
           readOnly
-          placeholder={t("pages.home.repos.search-placeholder")}
+          placeholder={m.repos_search_placeholder()}
           onFocus={() => setOpen(true)}
         />
       </InputGroup>
@@ -65,7 +64,7 @@ export const ReposSearch = () => {
           <CommandInput
             value={results.query}
             onValueChange={results.setQuery}
-            placeholder={t("pages.home.repos.search-placeholder")}
+            placeholder={m.repos_search_placeholder()}
           />
 
           <CommandList>
@@ -82,7 +81,6 @@ type ReposSearchResultProps = {
 };
 
 const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
-  const { t } = useI18n();
   const navigate = useNavigate();
 
   if (result.error) {
@@ -90,8 +88,8 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
       <CommandGroup>
         <Alert variant="destructive">
           <AlertCircleIcon />
-          <AlertTitle>{t("pages.home.repos.search-error")}</AlertTitle>
-          <AlertDescription>{t("pages.home.repos.search-error-description")}</AlertDescription>
+          <AlertTitle>{m.repos_search_error()}</AlertTitle>
+          <AlertDescription>{m.repos_search_error_description()}</AlertDescription>
         </Alert>
       </CommandGroup>
     );
@@ -127,7 +125,7 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
                   {repo.name}
                 </span>
                 <span className="text-muted-foreground text-xs">
-                  {repo.description ?? t("pages.home.repos.no-description")}
+                  {repo.description ?? m.repos_no_description()}
                 </span>
               </div>
             </div>
@@ -138,7 +136,7 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
   }
 
   if (!result.query) {
-    return <CommandEmpty>{t("pages.home.repos.search-hint")}</CommandEmpty>;
+    return <CommandEmpty>{m.repos_search_hint()}</CommandEmpty>;
   }
 
   if (result.isLoading || result.isFetching) {
@@ -149,5 +147,5 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
     );
   }
 
-  return <CommandEmpty>{t("pages.home.repos.empty")}</CommandEmpty>;
+  return <CommandEmpty>{m.repos_empty()}</CommandEmpty>;
 };

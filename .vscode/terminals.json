@@ -6,7 +6,7 @@
 			"name": "Stack",
 			"icon": "rocket",
 			"color": "terminal.ansiCyan",
-			"command": "bun dev:stack",
+			"command": "bun dev:start",
 			"execute": true,
 			"focus": true
 		},

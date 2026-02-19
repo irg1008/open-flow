@@ -1,7 +1,6 @@
 /// <reference types="vite/client" />
 import { Navbar } from "@/components/navbar";
-import { I18nProvider } from "@/i18n/client";
-import { defaultLocale } from "@/i18n/config";
+import { getLocale } from "@/i18n/_generated/runtime";
 import { authClient } from "@/lib/auth-client";
 import { getToken } from "@/lib/auth-server";
 import { seo } from "@/lib/seo";
@@ -21,6 +20,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { createServerFn } from "@tanstack/react-start";
 import * as React from "react";
 import { Toaster } from "sonner";
+
 const getAuth = createServerFn({ method: "GET" }).handler(async () => {
   return await getToken();
 });
@@ -62,24 +62,22 @@ function RootComponent() {
       authClient={authClient}
       initialToken={context.token}
     >
-      <I18nProvider initialLocale={defaultLocale}>
-        <RootDocument>
-          <main className="bg-background relative flex min-h-svh flex-col">
-            <Navbar />
-            <div className="relative flex flex-1 flex-col p-4 has-[main]:p-0">
-              <Outlet />
-            </div>
-            <Toaster />
-          </main>
-        </RootDocument>
-      </I18nProvider>
+      <RootDocument>
+        <main className="bg-background relative flex min-h-svh flex-col">
+          <Navbar />
+          <div className="relative flex flex-1 flex-col p-4 has-[main]:p-0">
+            <Outlet />
+          </div>
+          <Toaster />
+        </main>
+      </RootDocument>
     </ConvexBetterAuthProvider>
   );
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang={getLocale()}>
       <head>
         <HeadContent />
       </head>

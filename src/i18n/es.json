@@ -1,68 +1,42 @@
 {
-  "auth": {
-    "github-sign-in": "Iniciar sesión con GitHub",
-    "sign-in": "Iniciar sesión",
-    "sign-out": "Cerrar sesión",
-    "sign-up": "Registrarse"
-  },
-  "common": {
-    "brand": "Open Flow",
-    "cancel": "Cancelar"
-  },
-  "pages": {
-    "home": {
-      "meta": {
-        "description": "La plataforma para esponsorizar proyectos de código abierto de las manera mas fácil y transparente",
-        "keywords": "open source, sponsorship, transparent, easy",
-        "title": "Bienvenido a Open Flow"
-      },
-      "repos": {
-        "empty": "No se encontraron repositorios.",
-        "no-description": "Sin descripción",
-        "search-error": "Error al buscar repositorios",
-        "search-error-description": "No podemos procesar la búsqueda, prueba de nuevo en unos segundos",
-        "search-hint": "Busca los repositorios que quieres apoyar.",
-        "search-placeholder": "Buscar repositorios"
-      }
-    },
-    "not-found": {
-      "action": "ir a inicio",
-      "message": "página no encontrada",
-      "meta": {
-        "description": "La página que buscas no existe.",
-        "title": "404 - Página no encontrada"
-      }
-    },
-    "settings": {
-      "account": {
-        "delete-action": "Eliminar cuenta",
-        "delete-confirm-description": "Esta acción es permanente y no se puede deshacer.",
-        "delete-description": "Elimina tu cuenta de forma permanente.",
-        "delete-title": "Eliminar cuenta",
-        "delete-type-label": "Escribe \"{value}\" para confirmar",
-        "language-description": "Elige tu idioma preferido para esta aplicación.",
-        "language-title": "Idioma",
-        "profile-title": "Perfil",
-        "title": "Cuenta"
-      },
-      "integrations": {
-        "empty": "Aún no hay integraciones conectadas.",
-        "list-title": "Cuentas conectadas",
-        "title": "Integraciones"
-      },
-      "menu": "Menú",
-      "meta": {
-        "description": "Administra tus preferencias de cuenta e integraciones.",
-        "keywords": "configuración, cuenta, integraciones",
-        "title": "Configuración - Open Flow"
-      },
-      "title": "Configuración"
-    }
-  },
-  "theme": {
-    "dark": "Oscuro",
-    "light": "Claro",
-    "system": "Sistema",
-    "toggle": "Cambiar tema"
-  }
+  "auth_github_sign_in": "Iniciar sesión con GitHub",
+  "auth_sign_in": "Iniciar sesión",
+  "auth_sign_out": "Cerrar sesión",
+  "auth_sign_up": "Registrarse",
+  "common_brand": "Open Flow",
+  "common_cancel": "Cancelar",
+  "pages_home_meta_description": "La plataforma para esponsorizar proyectos de código abierto de las manera mas fácil y transparente",
+  "pages_home_meta_keywords": "open source, sponsorship, transparent, easy",
+  "pages_home_meta_title": "Bienvenido a Open Flow",
+  "pages_not_found_action": "ir a inicio",
+  "pages_not_found_message": "página no encontrada",
+  "pages_not_found_meta_description": "La página que buscas no existe.",
+  "pages_not_found_meta_title": "404 - Página no encontrada",
+  "repos_empty": "No se encontraron repositorios.",
+  "repos_no_description": "Sin descripción",
+  "repos_search_error": "Error al buscar repositorios",
+  "repos_search_error_description": "No podemos procesar la búsqueda, prueba de nuevo en unos segundos",
+  "repos_search_hint": "Busca los repositorios que quieres apoyar.",
+  "repos_search_placeholder": "Buscar repositorios",
+  "settings_account_delete_action": "Eliminar cuenta",
+  "settings_account_delete_confirm_description": "Esta acción es permanente y no se puede deshacer.",
+  "settings_account_delete_description": "Elimina tu cuenta de forma permanente.",
+  "settings_account_delete_title": "Eliminar cuenta",
+  "settings_account_delete_type_label": "Escribe \"{value}\" para confirmar",
+  "settings_account_language_description": "Elige tu idioma preferido para esta aplicación.",
+  "settings_account_language_title": "Idioma",
+  "settings_account_profile_title": "Perfil",
+  "settings_account_title": "Cuenta",
+  "settings_integrations_empty": "Aún no hay integraciones conectadas.",
+  "settings_integrations_list_title": "Cuentas conectadas",
+  "settings_integrations_title": "Integraciones",
+  "settings_menu": "Menú",
+  "settings_meta_description": "Administra tus preferencias de cuenta e integraciones.",
+  "settings_meta_keywords": "configuración, cuenta, integraciones",
+  "settings_meta_title": "Configuración - Open Flow",
+  "settings_title": "Configuración",
+  "theme_dark": "Oscuro",
+  "theme_light": "Claro",
+  "theme_system": "Sistema",
+  "theme_toggle": "Cambiar tema"
 }

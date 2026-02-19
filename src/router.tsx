@@ -1,3 +1,4 @@
+import { deLocalizeUrl, localizeUrl } from "@/i18n/_generated/runtime";
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { QueryClient, notifyManager } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
@@ -32,11 +33,15 @@ export function getRouter() {
 
   const router = createTanStackRouter({
     routeTree,
+    scrollRestoration: true,
     defaultPreload: "intent",
-    defaultErrorComponent: () => <div>Oh no! An unexpected error has occurred.</div>,
-    defaultNotFoundComponent: NotFound,
+    defaultPreloadStaleTime: 0,
     context: { queryClient, convexQueryClient },
-    scrollRestoration: true
+    defaultNotFoundComponent: NotFound,
+    rewrite: {
+      input: ({ url }) => deLocalizeUrl(url),
+      output: ({ url }) => localizeUrl(url)
+    }
   });
 
   setupRouterSsrQueryIntegration({

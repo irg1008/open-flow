@@ -19,19 +19,19 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { localeNames, locales, useI18n } from "@/i18n/client";
+import { m } from "@/i18n/_generated/messages";
+import { getLocale, Locale, locales, setLocale } from "@/i18n/_generated/runtime";
 import { authClient } from "@/lib/auth-client";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 export function AccountSettings() {
-  const { t, locale, setLocale } = useI18n();
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [confirmValue, setConfirmValue] = useState("");
 
-  const requiredText = t("pages.settings.account.delete-action");
+  const requiredText = m.settings_account_delete_action();
   const canDelete = confirmValue.trim() === requiredText;
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -45,29 +45,39 @@ export function AccountSettings() {
     await navigate({ to: "/" });
   };
 
-  const handleSetLocale = async (newLocale: string) => {
-    await setLocale(newLocale, { redirect: true });
+  const handleSetLocale = async (newLocale: Locale) => {
+    await setLocale(newLocale);
+  };
+
+  const getCountryName = (locale: Locale) => {
+    const formatter = new Intl.DisplayNames([locale], { type: "language" });
+    return formatter.of(locale) || locale;
   };
 
   return (
     <div className="space-y-4">
       <Card>
         <CardContent>
-          <h2 className="font-medium">{t("pages.settings.account.language-title")}</h2>
+          <h2 className="font-medium">{m.settings_account_language_title()}</h2>
           <p className="text-muted-foreground mt-2 text-sm">
-            {t("pages.settings.account.language-description")}
+            {m.settings_account_language_description()}
           </p>
         </CardContent>
         <CardFooter>
           <div className="w-full max-w-xs">
-            <Select value={locale} onValueChange={handleSetLocale}>
-              <SelectTrigger id="account-language" size="sm" className="w-full">
+            <Select value={getLocale()} onValueChange={handleSetLocale}>
+              <SelectTrigger id="account-language" size="sm" className="w-full capitalize">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {locales.map((currentLocale) => (
-                  <SelectItem key={currentLocale} value={currentLocale}>
-                    {localeNames[currentLocale] || currentLocale}
+                  <SelectItem
+                    key={currentLocale}
+                    value={currentLocale}
+                    data-active-locale={currentLocale === getLocale()}
+                    className="capitalize"
+                  >
+                    {getCountryName(currentLocale)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -78,15 +88,15 @@ export function AccountSettings() {
 
       <Card>
         <CardContent>
-          <h2 className="font-medium">{t("pages.settings.account.profile-title")}</h2>
+          <h2 className="font-medium">{m.settings_account_profile_title()}</h2>
           <p className="text-muted-foreground mt-2 text-sm">
-            {t("pages.settings.account.delete-description")}
+            {m.settings_account_delete_description()}
           </p>
         </CardContent>
         <CardFooter>
           <AlertDialog open={open} onOpenChange={handleOpenChange}>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">{t("pages.settings.account.delete-action")}</Button>
+              <Button variant="destructive">{m.settings_account_delete_action()}</Button>
             </AlertDialogTrigger>
             <AlertDialogContent asChild>
               <form
@@ -96,11 +106,11 @@ export function AccountSettings() {
                 }}
               >
                 <AlertDialogHeader>
-                  <AlertDialogTitle>{t("pages.settings.account.delete-title")}</AlertDialogTitle>
+                  <AlertDialogTitle>{m.settings_account_delete_title()}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    {t("pages.settings.account.delete-confirm-description")}
+                    {m.settings_account_delete_confirm_description()}
                     <br />
-                    {t("pages.settings.account.delete-type-label", { value: requiredText })}
+                    {m.settings_account_delete_type_label({ value: requiredText })}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
@@ -111,14 +121,14 @@ export function AccountSettings() {
                 />
 
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+                  <AlertDialogCancel>{m.common_cancel()}</AlertDialogCancel>
                   <AlertDialogAction
                     type="submit"
                     onClick={handleDelete}
                     variant="destructive"
                     disabled={!canDelete}
                   >
-                    {t("pages.settings.account.delete-action")}
+                    {m.settings_account_delete_action()}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </form>
