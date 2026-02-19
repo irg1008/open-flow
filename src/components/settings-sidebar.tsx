@@ -12,25 +12,20 @@ import {
   SidebarTrigger
 } from "@/components/ui/sidebar";
 import { m } from "@/i18n/_generated/messages";
-import { Link } from "@tanstack/react-router";
+import { Link, ToPathOption, useLocation } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 
-type SettingsSidebarProps = {
-  currentPath: string;
-};
-
 type SettingsLink = {
-  href: string;
+  pathname: ToPathOption;
   label: string;
 };
 
-export function SettingsSidebar({
-  currentPath,
-  children
-}: PropsWithChildren<SettingsSidebarProps>) {
+export function SettingsSidebar({ children }: PropsWithChildren) {
+  const location = useLocation();
+
   const links: SettingsLink[] = [
-    { href: "/settings/account", label: m.settings_account_title() },
-    { href: "/settings/integrations", label: m.settings_integrations_title() }
+    { pathname: "/settings/account", label: m.settings_account_title() },
+    { pathname: "/settings/integrations", label: m.settings_integrations_title() }
   ];
 
   return (
@@ -51,9 +46,9 @@ export function SettingsSidebar({
             <SidebarGroupContent>
               <SidebarMenu>
                 {links.map((link) => (
-                  <SidebarMenuItem key={link.href}>
-                    <SidebarMenuButton asChild isActive={currentPath === link.href}>
-                      <Link to={link.href}>{link.label}</Link>
+                  <SidebarMenuItem key={link.pathname}>
+                    <SidebarMenuButton asChild isActive={location.pathname === link.pathname}>
+                      <Link to={link.pathname}>{link.label}</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -68,7 +63,7 @@ export function SettingsSidebar({
           <SidebarTrigger className="-ml-1" />
 
           <h1 className="text-base font-medium">
-            {links.find((link) => link.href === currentPath)?.label}
+            {links.find((link) => link.pathname === location.pathname)?.label}
           </h1>
         </div>
 

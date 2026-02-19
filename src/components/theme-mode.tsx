@@ -6,20 +6,10 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { m } from "@/i18n/_generated/messages";
-import { getTheme, handleThemeChange, UserTheme } from "@/lib/theme";
+import { handleThemeChange } from "@/lib/theme";
 import { Moon, Sun } from "lucide-react";
-import { useState } from "react";
 
 export function ThemeMode() {
-  const [theme, setThemeState] = useState(getTheme());
-
-  const handleSetTheme = (newTheme: UserTheme) => {
-    handleThemeChange(newTheme);
-    setThemeState(newTheme);
-  };
-
-  console.log({ theme });
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -30,11 +20,13 @@ export function ThemeMode() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleSetTheme("light")}>
+        <DropdownMenuItem onClick={() => handleThemeChange("light")}>
           {m.theme_light()}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleSetTheme("dark")}>{m.theme_dark()}</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleSetTheme("system")}>
+        <DropdownMenuItem onClick={() => handleThemeChange("dark")}>
+          {m.theme_dark()}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleThemeChange("system")}>
           {m.theme_system()}
         </DropdownMenuItem>
       </DropdownMenuContent>

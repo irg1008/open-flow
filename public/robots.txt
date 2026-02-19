@@ -1,8 +1,2 @@
 User-agent: *
-Disallow: /
-
-User-agent: Googlebot
 Allow: /
-Disallow: /success
-
-Sitemap: https://rincondelasella.com/sitemap-index.xml

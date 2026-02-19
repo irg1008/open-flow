@@ -18,7 +18,7 @@ const HIGHLIGHT_THEME = {
   light: lightThemeUrl
 } as const;
 
-const updateHightlightTheme = (theme: AppTheme) => {
+const updateHightlightTheme = createClientOnlyFn((theme: AppTheme) => {
   let linkTag = document.getElementById("highlight-theme") as HTMLLinkElement | null;
 
   if (!linkTag) {
@@ -29,56 +29,41 @@ const updateHightlightTheme = (theme: AppTheme) => {
   }
 
   linkTag.href = HIGHLIGHT_THEME[theme];
-};
+});
 
 const getMediaQuery = createClientOnlyFn(() => {
   return window.matchMedia("(prefers-color-scheme: dark)");
 });
 
-export const getTheme = createIsomorphicFn()
+export const getUserTheme = createIsomorphicFn()
   .server((): UserTheme => "system")
-  .client(() => {
+  .client((): UserTheme => {
     const storedTheme = localStorage.getItem(themeStorageKey);
     return UserThemeSchema.parse(storedTheme);
   });
 
-export const setTheme = createClientOnlyFn((theme: UserTheme) => {
+export const getAppTheme = createClientOnlyFn((theme: UserTheme) => {
+  const systemTheme = getMediaQuery().matches ? "dark" : "light";
+  return theme === "system" ? systemTheme : theme;
+});
+
+export const setUserTheme = createClientOnlyFn((theme: UserTheme) => {
   const validatedTheme = UserThemeSchema.parse(theme);
   localStorage.setItem(themeStorageKey, validatedTheme);
 });
 
 export const handleThemeChange = createClientOnlyFn((theme: UserTheme) => {
-  const systemTheme = getMediaQuery().matches ? "dark" : "light";
-  const resolvedTheme = theme === "system" ? systemTheme : theme;
+  const appTheme = getAppTheme(theme);
 
-  document.documentElement.classList[resolvedTheme === "dark" ? "add" : "remove"]("dark");
-  document.documentElement.classList[theme === "system" ? "add" : "remove"]("system");
+  setUserTheme(theme);
+  updateHightlightTheme(appTheme);
 
-  setTheme(theme);
-  updateHightlightTheme(resolvedTheme);
+  document.documentElement.classList[appTheme === "dark" ? "add" : "remove"]("dark");
 });
 
-// Custom script with duplicated logic, used for SSR
-
-const getThemeScript = () => {
-  function themeFn() {
-    const storedTheme = localStorage.getItem("user-theme" satisfies typeof themeStorageKey);
-
-    const theme =
-      storedTheme && ["light", "dark", "system"].includes(storedTheme) ? storedTheme : "system";
-
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-
-    const resolvedTheme = theme === "system" ? systemTheme : theme;
-    document.documentElement.classList[resolvedTheme === "dark" ? "add" : "remove"]("dark");
-    document.documentElement.classList[theme === "system" ? "add" : "remove"]("system");
-  }
-  return `(${themeFn.toString()})();`;
-};
-
 const setupPreferredListener = () => {
+  if (getUserTheme() !== "system") return;
+
   const mediaQuery = getMediaQuery();
   const handler = () => handleThemeChange("system");
 
@@ -86,7 +71,29 @@ const setupPreferredListener = () => {
   return () => mediaQuery.removeEventListener("change", handler);
 };
 
-export const ThemeScript = () => {
-  useEffect(setupPreferredListener, []);
-  return <ScriptOnce>{getThemeScript()}</ScriptOnce>;
+/**
+ * Custom script with duplicated logic, used for SSR
+ */
+const getThemeScript = () => {
+  function themeFn() {
+    const storedTheme = localStorage.getItem("user-theme" satisfies typeof themeStorageKey);
+    const isStoredValid = storedTheme && ["light", "dark", "system"].includes(storedTheme);
+
+    const theme = isStoredValid ? storedTheme : "system";
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const systemTheme = mediaQuery.matches ? "dark" : "light";
+
+    const resolvedTheme = theme === "system" ? systemTheme : theme;
+    document.documentElement.classList[resolvedTheme === "dark" ? "add" : "remove"]("dark");
+  }
+  return `(${themeFn.toString()})();`;
 };
+
+export const ThemeScript = () => {
+  const scriptString = getThemeScript();
+  useEffect(setupPreferredListener, []);
+  return <ScriptOnce>{scriptString}</ScriptOnce>;
+};
+
+// TODO: Probably need to change to use cookie to prevent hydration mismatch, but for now this is good enough
