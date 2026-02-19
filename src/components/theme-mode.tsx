@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { m } from "@/i18n/_generated/messages";
-import { handleThemeChange } from "@/lib/theme";
+import { setTheme } from "@/lib/theme";
 import { Moon, Sun } from "lucide-react";
 
 export function ThemeMode() {
@@ -20,15 +20,9 @@ export function ThemeMode() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleThemeChange("light")}>
-          {m.theme_light()}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleThemeChange("dark")}>
-          {m.theme_dark()}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleThemeChange("system")}>
-          {m.theme_system()}
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("light")}>{m.theme_light()}</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>{m.theme_dark()}</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>{m.theme_system()}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

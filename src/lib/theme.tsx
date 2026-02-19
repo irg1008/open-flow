@@ -1,11 +1,10 @@
 import { ScriptOnce } from "@tanstack/react-router";
-import { createClientOnlyFn, createIsomorphicFn } from "@tanstack/react-start";
+import { createServerFn } from "@tanstack/react-start";
+import { getCookie, setCookie } from "@tanstack/react-start/server";
 import darkThemeUrl from "highlight.js/styles/github-dark.css?url";
 import lightThemeUrl from "highlight.js/styles/github.css?url";
 import { useEffect } from "react";
 import { z } from "zod";
-
-const themeStorageKey = "user-theme" as const;
 
 const UserThemeSchema = z.enum(["light", "dark", "system"]).catch("system");
 const AppThemeSchema = z.enum(["light", "dark"]).catch("light");
@@ -13,87 +12,94 @@ const AppThemeSchema = z.enum(["light", "dark"]).catch("light");
 export type UserTheme = z.infer<typeof UserThemeSchema>;
 export type AppTheme = z.infer<typeof AppThemeSchema>;
 
-const HIGHLIGHT_THEME = {
+export const DEFAULT_SYSTEM_THEME: AppTheme = "dark"; // Most users prefer dark mode, so we guess to prevent hydration mismatch
+
+// Server
+
+const cookieName = "ui-theme";
+
+export const getStoredTheme = createServerFn({ method: "GET" }).handler(async () => {
+  const cookieTheme = getCookie(cookieName);
+  return UserThemeSchema.parse(cookieTheme);
+});
+
+export const setStoredTheme = createServerFn({ method: "POST" })
+  .inputValidator(UserThemeSchema)
+  .handler(async ({ data }) => setCookie(cookieName, data));
+
+// Code highlight css
+
+export const highlightTheme = {
   dark: darkThemeUrl,
-  light: lightThemeUrl
-} as const;
+  light: lightThemeUrl,
+  update(theme: AppTheme) {
+    let linkTag = document.getElementById("highlight-theme") as HTMLLinkElement | null;
 
-const updateHightlightTheme = createClientOnlyFn((theme: AppTheme) => {
-  let linkTag = document.getElementById("highlight-theme") as HTMLLinkElement | null;
+    if (!linkTag) {
+      linkTag = document.createElement("link");
+      linkTag.id = "highlight-theme";
+      linkTag.rel = "stylesheet";
+      document.head.appendChild(linkTag);
+    }
 
-  if (!linkTag) {
-    linkTag = document.createElement("link");
-    linkTag.id = "highlight-theme";
-    linkTag.rel = "stylesheet";
-    document.head.appendChild(linkTag);
+    linkTag.href = highlightTheme[theme];
   }
+};
 
-  linkTag.href = HIGHLIGHT_THEME[theme];
-});
+// Client
 
-const getMediaQuery = createClientOnlyFn(() => {
-  return window.matchMedia("(prefers-color-scheme: dark)");
-});
+const getSystemTheme = () => {
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  return mediaQuery.matches ? "dark" : "light";
+};
 
-export const getUserTheme = createIsomorphicFn()
-  .server((): UserTheme => "system")
-  .client((): UserTheme => {
-    const storedTheme = localStorage.getItem(themeStorageKey);
-    return UserThemeSchema.parse(storedTheme);
-  });
+const setRootTheme = (theme: UserTheme) => {
+  const root = document.documentElement;
+  root.classList.remove("light", "dark");
 
-export const getAppTheme = createClientOnlyFn((theme: UserTheme) => {
-  const systemTheme = getMediaQuery().matches ? "dark" : "light";
-  return theme === "system" ? systemTheme : theme;
-});
+  const newTheme = theme === "system" ? getSystemTheme() : theme;
+  root.classList.add(newTheme);
 
-export const setUserTheme = createClientOnlyFn((theme: UserTheme) => {
-  const validatedTheme = UserThemeSchema.parse(theme);
-  localStorage.setItem(themeStorageKey, validatedTheme);
-});
-
-export const handleThemeChange = createClientOnlyFn((theme: UserTheme) => {
-  const appTheme = getAppTheme(theme);
-
-  setUserTheme(theme);
-  updateHightlightTheme(appTheme);
-
-  document.documentElement.classList[appTheme === "dark" ? "add" : "remove"]("dark");
-});
+  highlightTheme.update(newTheme);
+};
 
 const setupPreferredListener = () => {
-  if (getUserTheme() !== "system") return;
-
-  const mediaQuery = getMediaQuery();
-  const handler = () => handleThemeChange("system");
-
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  const handler = () => setRootTheme("system");
   mediaQuery.addEventListener("change", handler);
   return () => mediaQuery.removeEventListener("change", handler);
 };
 
-/**
- * Custom script with duplicated logic, used for SSR
- */
-const getThemeScript = () => {
-  function themeFn() {
-    const storedTheme = localStorage.getItem("user-theme" satisfies typeof themeStorageKey);
-    const isStoredValid = storedTheme && ["light", "dark", "system"].includes(storedTheme);
+// Needed SSR script and global setter
 
-    const theme = isStoredValid ? storedTheme : "system";
+export const setTheme = async (theme: UserTheme) => {
+  setRootTheme(theme);
+  await setStoredTheme({ data: theme });
+};
+
+export const ThemeScript = ({ initialTheme }: { initialTheme: UserTheme }) => {
+  useEffect(() => {
+    setRootTheme(initialTheme);
+
+    if (initialTheme !== "system") return;
+    return setupPreferredListener();
+  }, [initialTheme]);
+
+  /**
+   * Need to duplciate logic to serialize in server
+   */
+  function themeFn(theme: UserTheme) {
+    const root = document.documentElement;
+
+    if (theme !== "system") {
+      root.className = theme;
+      return;
+    }
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const systemTheme = mediaQuery.matches ? "dark" : "light";
-
-    const resolvedTheme = theme === "system" ? systemTheme : theme;
-    document.documentElement.classList[resolvedTheme === "dark" ? "add" : "remove"]("dark");
+    root.className = systemTheme;
   }
-  return `(${themeFn.toString()})();`;
-};
 
-export const ThemeScript = () => {
-  const scriptString = getThemeScript();
-  useEffect(setupPreferredListener, []);
-  return <ScriptOnce>{scriptString}</ScriptOnce>;
+  return <ScriptOnce>{`(${themeFn.toString()})("${initialTheme}");`}</ScriptOnce>;
 };
-
-// TODO: Probably need to change to use cookie to prevent hydration mismatch, but for now this is good enough

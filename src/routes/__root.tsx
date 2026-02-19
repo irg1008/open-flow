@@ -1,23 +1,18 @@
 /// <reference types="vite/client" />
 import { Navbar } from "@/components/navbar";
 import { getLocale } from "@/i18n/_generated/runtime";
-import { getToken } from "@/lib/auth-server";
+import { getAuth } from "@/lib/auth-server";
 import { ConvexProvider } from "@/lib/convex";
 import { seo } from "@/lib/seo";
-import { ThemeScript } from "@/lib/theme";
+import { DEFAULT_SYSTEM_THEME, getStoredTheme, ThemeScript } from "@/lib/theme";
 import globalCss from "@/styles/global.css?url";
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { createServerFn } from "@tanstack/react-start";
 import * as React from "react";
 import { Toaster } from "sonner";
-
-const getAuth = createServerFn({ method: "GET" }).handler(async () => {
-  return await getToken();
-});
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -37,11 +32,16 @@ export const Route = createRootRouteWithContext<{
       { rel: "icon", href: "/favicon.ico" }
     ]
   }),
+  loader: async () => ({
+    initialTheme: await getStoredTheme()
+  }),
   beforeLoad: async (ctx) => {
     const token = await getAuth();
+
     if (token) {
       ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);
     }
+
     return { isAuthenticated: !!token, token };
   },
   component: RootComponent
@@ -51,8 +51,6 @@ function RootComponent() {
   return (
     <ConvexProvider from={Route.id}>
       <RootDocument>
-        <ThemeScript />
-
         <main className="bg-background relative flex min-h-svh flex-col">
           <Navbar />
           <div className="relative flex flex-1 flex-col p-4 has-[main]:p-0">
@@ -66,15 +64,20 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { initialTheme } = Route.useLoaderData();
+  const htmlClass = initialTheme === "system" ? DEFAULT_SYSTEM_THEME : initialTheme;
+
   return (
-    <html lang={getLocale()}>
+    <html lang={getLocale()} className={htmlClass} suppressHydrationWarning>
       <head>
         <HeadContent />
+        <ThemeScript initialTheme={initialTheme} />
       </head>
       <body className="group/body overscroll-none antialiased [--footer-height:calc(var(--spacing)*14)] [--header-height:calc(var(--spacing)*14)] xl:[--footer-height:calc(var(--spacing)*24)]">
         {children}
+
         <ReactQueryDevtools />
-        <TanStackRouterDevtools position="bottom-right" />
+        <TanStackRouterDevtools />
 
         <Scripts />
       </body>
