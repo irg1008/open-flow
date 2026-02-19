@@ -68,7 +68,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const htmlClass = initialTheme === "system" ? DEFAULT_SYSTEM_THEME : initialTheme;
 
   return (
-    <html lang={getLocale()} className={htmlClass} suppressHydrationWarning>
+    <html lang={getLocale()} className={htmlClass}>
       <head>
         <HeadContent />
         <ThemeScript initialTheme={initialTheme} />

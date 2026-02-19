@@ -9,8 +9,8 @@ import { z } from "zod";
 const UserThemeSchema = z.enum(["light", "dark", "system"]).catch("system");
 const AppThemeSchema = z.enum(["light", "dark"]).catch("light");
 
-export type UserTheme = z.infer<typeof UserThemeSchema>;
-export type AppTheme = z.infer<typeof AppThemeSchema>;
+type UserTheme = z.infer<typeof UserThemeSchema>;
+type AppTheme = z.infer<typeof AppThemeSchema>;
 
 export const DEFAULT_SYSTEM_THEME: AppTheme = "dark"; // Most users prefer dark mode, so we guess to prevent hydration mismatch
 
@@ -23,13 +23,13 @@ export const getStoredTheme = createServerFn({ method: "GET" }).handler(async ()
   return UserThemeSchema.parse(cookieTheme);
 });
 
-export const setStoredTheme = createServerFn({ method: "POST" })
+const setStoredTheme = createServerFn({ method: "POST" })
   .inputValidator(UserThemeSchema)
   .handler(async ({ data }) => setCookie(cookieName, data));
 
 // Code highlight css
 
-export const highlightTheme = {
+const highlightTheme = {
   dark: darkThemeUrl,
   light: lightThemeUrl,
   update(theme: AppTheme) {
