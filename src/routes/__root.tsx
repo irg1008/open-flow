@@ -4,7 +4,7 @@ import { getLocale } from "@/i18n/_generated/runtime";
 import { getAuth } from "@/lib/auth-server";
 import { ConvexProvider } from "@/lib/convex";
 import { seo } from "@/lib/seo";
-import { DEFAULT_SYSTEM_THEME, getStoredTheme, ThemeScript } from "@/lib/theme";
+import { getStoredTheme, ThemeScript } from "@/lib/theme";
 import globalCss from "@/styles/global.css?url";
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { QueryClient } from "@tanstack/react-query";
@@ -56,8 +56,9 @@ function RootComponent() {
           <div className="relative flex flex-1 flex-col p-4 has-[main]:p-0">
             <Outlet />
           </div>
-          <Toaster />
         </main>
+
+        <Toaster />
       </RootDocument>
     </ConvexProvider>
   );
@@ -65,10 +66,10 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const { initialTheme } = Route.useLoaderData();
-  const htmlClass = initialTheme === "system" ? DEFAULT_SYSTEM_THEME : initialTheme;
+  const htmlClass = initialTheme === "system" ? undefined : initialTheme;
 
   return (
-    <html lang={getLocale()} className={htmlClass}>
+    <html lang={getLocale()} className={htmlClass} suppressHydrationWarning>
       <head>
         <HeadContent />
         <ThemeScript initialTheme={initialTheme} />

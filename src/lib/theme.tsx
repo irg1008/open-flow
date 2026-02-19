@@ -1,18 +1,16 @@
-import { ScriptOnce } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
 import darkThemeUrl from "highlight.js/styles/github-dark.css?url";
 import lightThemeUrl from "highlight.js/styles/github.css?url";
 import { useEffect } from "react";
 import { z } from "zod";
+import { FunctionOnce } from "./function-once";
 
 const UserThemeSchema = z.enum(["light", "dark", "system"]).catch("system");
 const AppThemeSchema = z.enum(["light", "dark"]).catch("light");
 
 type UserTheme = z.infer<typeof UserThemeSchema>;
 type AppTheme = z.infer<typeof AppThemeSchema>;
-
-export const DEFAULT_SYSTEM_THEME: AppTheme = "dark"; // Most users prefer dark mode, so we guess to prevent hydration mismatch
 
 // Server
 
@@ -101,5 +99,5 @@ export const ThemeScript = ({ initialTheme }: { initialTheme: UserTheme }) => {
     root.className = systemTheme;
   }
 
-  return <ScriptOnce>{`(${themeFn.toString()})("${initialTheme}");`}</ScriptOnce>;
+  return <FunctionOnce param={initialTheme}>{themeFn}</FunctionOnce>;
 };
