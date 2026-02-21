@@ -30,6 +30,8 @@ const mapGithubInstallation = (installation: EventInstallation): GithubInstallat
   return {
     accountName,
     accountType,
+    suspendedAt: installation.suspended_at,
+    suspendedByName: installation.suspended_by?.login,
     installationId: installation.id,
     installationClientId: installation.client_id,
     repoSelectionAll: installation.repository_selection === "all"
@@ -72,7 +74,20 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
     await ctx.runMutation(internal.github.mutations.unverifyRepos, { installation, repos });
   });
 
-  // 3. TRACK STARS COUNT
+  // 3. TRACK SUSPENSIONS
+  webhooks.on("installation.suspend", async ({ payload }) => {
+    const installation = mapGithubInstallation(payload.installation);
+    installation.suspended = true;
+    await ctx.runMutation(internal.github.mutations.changeSuspensionStatus, installation);
+  });
+
+  webhooks.on("installation.unsuspend", async ({ payload }) => {
+    const installation = mapGithubInstallation(payload.installation);
+    installation.suspended = false;
+    await ctx.runMutation(internal.github.mutations.changeSuspensionStatus, installation);
+  });
+
+  // 4. TRACK STARS COUNT
   webhooks.on("star.created", async ({ payload }) => {
     const externalId = payload.repository.id;
     const starCount = payload.repository.stargazers_count;
@@ -85,7 +100,7 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
     await ctx.runMutation(internal.github.mutations.updateStarCount, { externalId, starCount });
   });
 
-  // 4. TRACK VISIBILITY CHANGES
+  // 5. TRACK VISIBILITY CHANGES
   webhooks.on("repository.privatized", async ({ payload }) => {
     const externalId = payload.repository.id;
     await ctx.runMutation(internal.github.mutations.updateVisibility, {
@@ -102,7 +117,7 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
     });
   });
 
-  // 5. TRACK RENAMES
+  // 6. TRACK RENAMES
   webhooks.on("repository.renamed", async ({ payload }) => {
     const externalId = payload.repository.id;
     const name = payload.repository.name;

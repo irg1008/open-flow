@@ -37,6 +37,9 @@ export const accountTypeValidator = v.union(v.literal("User"), v.literal("Organi
 
 export const githubInstallationValidator = v.object({
   installationId: v.number(),
+  suspended: v.optional(v.boolean()),
+  suspendedAt: v.optional(v.nullable(v.string())),
+  suspendedByName: v.optional(v.string()),
   installationClientId: v.optional(v.string()),
   repoSelectionAll: v.boolean(),
   accountName: v.optional(v.nullable(v.string())),

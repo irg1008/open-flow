@@ -120,6 +120,18 @@ export const deleteIntegration = internalMutation({
   }
 });
 
+export const changeSuspensionStatus = internalMutation({
+  args: githubInstallationValidator,
+  handler: async (ctx, installation) => {
+    const integration = await internal.getIntegrationByInstallationId(
+      ctx,
+      installation.installationId
+    );
+    if (!integration) return null;
+    await ctx.db.patch("githubIntegration", integration._id, installation);
+  }
+});
+
 export const updateStarCount = internalMutation({
   args: {
     externalId: v.number(),
