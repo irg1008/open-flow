@@ -3,6 +3,7 @@
 		"bradlc.vscode-tailwindcss",
 		"fabiospampinato.vscode-terminals",
 		"inlang.vs-code-extension",
-		"oxc.oxc-vscode"
+		"oxc.oxc-vscode",
+		"IvanArjona.cloudflaretunnel"
 	]
 }

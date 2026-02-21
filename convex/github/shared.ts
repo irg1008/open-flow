@@ -2,10 +2,6 @@ import { Doc } from "#/_generated/dataModel";
 import { MutationCtx } from "#/_generated/server";
 import { Repo } from "./validators";
 
-const a = "";
-
-console.log(a);
-
 export const updateRepoDetail = async (
   ctx: MutationCtx,
   externalId: Doc<"repoDetail">["externalId"],
@@ -18,7 +14,8 @@ export const updateRepoDetail = async (
 
   if (!existing) return null;
 
-  return await ctx.db.patch("repoDetail", existing._id, data);
+  await ctx.db.patch("repoDetail", existing._id, data);
+  return existing._id;
 };
 
 export const upsertRepoDetail = async (ctx: MutationCtx, data: Repo) => {

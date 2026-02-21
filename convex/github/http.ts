@@ -3,9 +3,10 @@ import { DataModel } from "#/_generated/dataModel";
 import { httpAction } from "#/_generated/server";
 import { Webhooks } from "@octokit/webhooks";
 import { HandlerFunction } from "@octokit/webhooks/types";
+import { validate } from "convex-helpers/validators";
 import { GenericActionCtx } from "convex/server";
 import { verifyJWT } from "shared/lib/jws";
-import { GithubInstallation, Repo } from "./validators";
+import { accountTypeValidator, GithubInstallation, Repo } from "./validators";
 
 const secret = process.env.GITHUB_WEBHOOK_SECRET;
 
@@ -14,7 +15,21 @@ type EventInstallation = EventParameters["installation"];
 type EventRepository = NonNullable<EventParameters["repositories"]>[number];
 
 const mapGithubInstallation = (installation: EventInstallation): GithubInstallation => {
+  const { account } = installation;
+
+  let accountType;
+  if (account && "type" in account && validate(accountTypeValidator, account.type)) {
+    accountType = account.type;
+  }
+
+  let accountName;
+  if (account && "login" in account) {
+    accountName = account.login;
+  }
+
   return {
+    accountName,
+    accountType,
     installationId: installation.id,
     installationClientId: installation.client_id,
     repoSelectionAll: installation.repository_selection === "all"

@@ -24,9 +24,9 @@ export const RepoDetail = (props: RepoFullName) => {
 
   return (
     <section className="container">
-      {isLoading || (!repo && <Spinner />)}
-
-      {repo && (
+      {isLoading || !repo ? (
+        <Spinner />
+      ) : (
         <>
           <Button asChild>
             <a href={repo.htmlUrl} target="_blank" rel="noopener noreferrer">

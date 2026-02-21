@@ -81,9 +81,11 @@ export const verifyRepos = internalMutation({
     );
 
     let integrationId = integration?._id;
-    if (!integration) {
+    if (!integrationId) {
       integrationId = await ctx.db.insert("githubIntegration", installation);
     }
+
+    await ctx.db.patch("githubIntegration", integrationId, installation);
 
     for (const repo of repos) {
       await internal.upsertRepoDetail(ctx, { ...repo, integrationId });
@@ -101,6 +103,8 @@ export const unverifyRepos = internalMutation({
     const integration = await internal.getIntegrationByInstallationId(ctx, installationId);
     if (!integration) return null;
 
+    await ctx.db.patch("githubIntegration", integration._id, { repoSelectionAll: false });
+
     for (const repo of repos) {
       await internal.updateRepoDetail(ctx, repo.externalId, { integrationId: undefined });
     }
@@ -112,7 +116,7 @@ export const deleteIntegration = internalMutation({
   handler: async (ctx, { installationId }) => {
     const integration = await internal.getIntegrationByInstallationId(ctx, installationId);
     if (!integration) return null;
-    await ctx.db.delete(integration._id);
+    await ctx.db.delete("githubIntegration", integration._id);
   }
 });
 

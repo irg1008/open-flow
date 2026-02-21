@@ -9,8 +9,6 @@
  */
 
 import type * as auth from "../auth.js";
-import type * as comments_mutations from "../comments/mutations.js";
-import type * as comments_queries from "../comments/queries.js";
 import type * as crons from "../crons.js";
 import type * as github_actions from "../github/actions.js";
 import type * as github_http from "../github/http.js";
@@ -29,8 +27,6 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
-  "comments/mutations": typeof comments_mutations;
-  "comments/queries": typeof comments_queries;
   crons: typeof crons;
   "github/actions": typeof github_actions;
   "github/http": typeof github_http;

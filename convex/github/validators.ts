@@ -33,10 +33,14 @@ export const repoFullNameWithEtagValidator = repoFullNameValidator.extend({
   etag: v.optional(v.string())
 });
 
+export const accountTypeValidator = v.union(v.literal("User"), v.literal("Organization"));
+
 export const githubInstallationValidator = v.object({
   installationId: v.number(),
   installationClientId: v.optional(v.string()),
-  repoSelectionAll: v.boolean()
+  repoSelectionAll: v.boolean(),
+  accountName: v.optional(v.nullable(v.string())),
+  accountType: v.optional(accountTypeValidator)
 });
 
 export type GithubInstallation = Infer<typeof githubInstallationValidator>;
