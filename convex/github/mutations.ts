@@ -1,8 +1,9 @@
-import { getAuth } from "#/auth";
 import { authMutation } from "#/lib/functions";
 import { v } from "convex/values";
+import { signJWT } from "shared/lib/jws";
 import { internalMutation } from "../_generated/server";
-import { repoValidator } from "./validators";
+import * as internal from "./shared";
+import { githubInstallationValidator, repoValidator } from "./validators";
 
 export const upsertRepoList = internalMutation({
   args: {
@@ -22,50 +23,126 @@ export const upsertRepoList = internalMutation({
       return await ctx.db.insert("repoList", data);
     }
 
-    return await ctx.db.patch(existingList._id, data);
+    return await ctx.db.replace("repoList", existingList._id, data);
   }
 });
 
 export const upsertRepoDetail = internalMutation({
   args: repoValidator,
-  handler: async (ctx, repo) => {
-    const existing = await ctx.db
-      .query("repoDetail")
-      .withIndex("by_full_name", (q) => q.eq("ownerLogin", repo.ownerLogin).eq("name", repo.name))
-      .unique();
-
-    if (!existing) {
-      return await ctx.db.insert("repoDetail", repo);
-    }
-
-    return await ctx.db.patch(existing._id, repo);
-  }
+  handler: internal.upsertRepoDetail
 });
 
 export const getInstallAppUrl = authMutation({
-  handler: async (ctx, args) => {
-    // Generate a random state token to prevent CSRF attacks
-    const state = crypto.randomUUID();
+  args: {
+    redirectTo: v.string()
+  },
+  handler: async (ctx, { redirectTo }) => {
+    const isRelativeUrl = redirectTo.startsWith("/");
+    if (!isRelativeUrl) {
+      throw new Error("Invalid redirect URL");
+    }
 
-    // Save the state to verify it later when GitHub redirects the user back
-    await ctx.db.insert("githubOAuthStates", {
-      userId: ctx.user.subject,
-      state: state,
-      createdAt: Date.now()
-    });
+    const userId = ctx.user.subject;
+    const state = await signJWT({ userId, redirectTo });
+    return `https://github.com/apps/${process.env.GITHUB_APP_ID}/installations/new?state=${state}`;
+  }
+});
 
-    const { auth } = await getAuth(ctx);
-    auth.api.callbackOAuth({
-      provider: "github",
-      state,
-      callbackURL: window.location.href
-    });
+export const linkUserToIntegration = internalMutation({
+  args: {
+    installationId: v.number(),
+    userId: v.string()
+  },
+  handler: async (ctx, { installationId, userId }) => {
+    const userIntegration = await ctx.db
+      .query("githubUserIntegration")
+      .withIndex("by_installation_user", (q) =>
+        q.eq("installationId", installationId).eq("userId", userId)
+      )
+      .unique();
 
-    // State should be saved or maybe we should hook to auth
+    if (userIntegration) {
+      return null;
+    }
 
-    const appName = "open-source-flow"; // Move to env file or config
+    return await ctx.db.insert("githubUserIntegration", { installationId, userId });
+  }
+});
 
-    // The specific GitHub URL that prompts the user to select repositories
-    return `https://github.com/apps/${appName}/installations/new?state=${state}`;
+export const verifyRepos = internalMutation({
+  args: {
+    installation: githubInstallationValidator,
+    repos: v.array(repoValidator)
+  },
+  handler: async (ctx, { installation, repos }) => {
+    const integration = await internal.getIntegrationByInstallationId(
+      ctx,
+      installation.installationId
+    );
+
+    let integrationId = integration?._id;
+    if (!integration) {
+      integrationId = await ctx.db.insert("githubIntegration", installation);
+    }
+
+    for (const repo of repos) {
+      await internal.upsertRepoDetail(ctx, { ...repo, integrationId });
+    }
+  }
+});
+
+export const unverifyRepos = internalMutation({
+  args: {
+    installation: githubInstallationValidator,
+    repos: v.array(repoValidator)
+  },
+  handler: async (ctx, { installation, repos }) => {
+    const { installationId } = installation;
+    const integration = await internal.getIntegrationByInstallationId(ctx, installationId);
+    if (!integration) return null;
+
+    for (const repo of repos) {
+      await internal.updateRepoDetail(ctx, repo.externalId, { integrationId: undefined });
+    }
+  }
+});
+
+export const deleteIntegration = internalMutation({
+  args: githubInstallationValidator,
+  handler: async (ctx, { installationId }) => {
+    const integration = await internal.getIntegrationByInstallationId(ctx, installationId);
+    if (!integration) return null;
+    await ctx.db.delete(integration._id);
+  }
+});
+
+export const updateStarCount = internalMutation({
+  args: {
+    externalId: v.number(),
+    starCount: v.number()
+  },
+  handler: async (ctx, { externalId, starCount }) => {
+    return await internal.updateRepoDetail(ctx, externalId, { stargazersCount: starCount });
+  }
+});
+
+export const updateVisibility = internalMutation({
+  args: {
+    externalId: v.number(),
+    isPrivate: v.boolean()
+  },
+  handler: async (ctx, { externalId, isPrivate }) => {
+    return await internal.updateRepoDetail(ctx, externalId, { private: isPrivate });
+  }
+});
+
+export const updateRepoName = internalMutation({
+  args: {
+    externalId: v.number(),
+    name: v.string(),
+    ownerLogin: v.string()
+  },
+  handler: async (ctx, { externalId, name, ownerLogin }) => {
+    return await internal.updateRepoDetail(ctx, externalId, { name, ownerLogin });
   }
 });

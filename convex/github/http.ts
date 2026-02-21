@@ -1,27 +1,162 @@
+import { internal } from "#/_generated/api";
+import { DataModel } from "#/_generated/dataModel";
 import { httpAction } from "#/_generated/server";
-import { verify } from "@octokit/webhooks-methods";
+import { Webhooks } from "@octokit/webhooks";
+import { HandlerFunction } from "@octokit/webhooks/types";
+import { GenericActionCtx } from "convex/server";
+import { verifyJWT } from "shared/lib/jws";
+import { GithubInstallation, Repo } from "./validators";
 
 const secret = process.env.GITHUB_WEBHOOK_SECRET;
 
+type EventParameters = Parameters<HandlerFunction<"installation">>[0]["payload"];
+type EventInstallation = EventParameters["installation"];
+type EventRepository = NonNullable<EventParameters["repositories"]>[number];
+
+const mapGithubInstallation = (installation: EventInstallation): GithubInstallation => {
+  return {
+    installationId: installation.id,
+    installationClientId: installation.client_id,
+    repoSelectionAll: installation.repository_selection === "all"
+  };
+};
+
+const mapRepos = (repositories?: EventRepository[]): Repo[] => {
+  if (!repositories) return [];
+  return repositories.map((repo) => ({
+    externalId: repo.id,
+    name: repo.name
+  }));
+};
+
+const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
+  const webhooks = new Webhooks({ secret });
+
+  // 1. VERIFY OWNERSHIP (App Installed / Repos Added)
+  webhooks.on("installation.created", async ({ payload }) => {
+    const installation = mapGithubInstallation(payload.installation);
+    const repos = mapRepos(payload.repositories);
+    await ctx.runMutation(internal.github.mutations.verifyRepos, { installation, repos });
+  });
+
+  webhooks.on("installation_repositories.added", async ({ payload }) => {
+    const installation = mapGithubInstallation(payload.installation);
+    const repos = mapRepos(payload.repositories_added);
+    await ctx.runMutation(internal.github.mutations.verifyRepos, { installation, repos });
+  });
+
+  // 2. UNVERIFY OWNERSHIP (App Deleted / Repos Removed)
+  webhooks.on("installation.deleted", async ({ payload }) => {
+    const installation = mapGithubInstallation(payload.installation);
+    await ctx.runMutation(internal.github.mutations.deleteIntegration, installation);
+  });
+
+  webhooks.on("installation_repositories.removed", async ({ payload }) => {
+    const installation = mapGithubInstallation(payload.installation);
+    const repos = mapRepos(payload.repositories_removed);
+    await ctx.runMutation(internal.github.mutations.unverifyRepos, { installation, repos });
+  });
+
+  // 3. TRACK STARS COUNT
+  webhooks.on("star.created", async ({ payload }) => {
+    const externalId = payload.repository.id;
+    const starCount = payload.repository.stargazers_count;
+    await ctx.runMutation(internal.github.mutations.updateStarCount, { externalId, starCount });
+  });
+
+  webhooks.on("star.deleted", async ({ payload }) => {
+    const externalId = payload.repository.id;
+    const starCount = payload.repository.stargazers_count;
+    await ctx.runMutation(internal.github.mutations.updateStarCount, { externalId, starCount });
+  });
+
+  // 4. TRACK VISIBILITY CHANGES
+  webhooks.on("repository.privatized", async ({ payload }) => {
+    const externalId = payload.repository.id;
+    await ctx.runMutation(internal.github.mutations.updateVisibility, {
+      externalId,
+      isPrivate: true
+    });
+  });
+
+  webhooks.on("repository.publicized", async ({ payload }) => {
+    const externalId = payload.repository.id;
+    await ctx.runMutation(internal.github.mutations.updateVisibility, {
+      externalId,
+      isPrivate: false
+    });
+  });
+
+  // 5. TRACK RENAMES
+  webhooks.on("repository.renamed", async ({ payload }) => {
+    const externalId = payload.repository.id;
+    const name = payload.repository.name;
+    const ownerLogin = payload.repository.owner.login;
+    await ctx.runMutation(internal.github.mutations.updateRepoName, {
+      externalId,
+      name,
+      ownerLogin
+    });
+  });
+
+  return webhooks;
+};
+
 export const githubWebhook = httpAction(async (ctx, request) => {
   const signature = request.headers.get("x-hub-signature-256");
+  const eventName = request.headers.get("x-github-event");
+  const deliveryId = request.headers.get("x-github-delivery");
   const payload = await request.text();
 
-  if (!signature || !secret) {
-    return new Response("Missing signature", { status: 400 });
+  if (!signature || !eventName || !deliveryId) {
+    return new Response("Missing GitHub headers", { status: 400 });
   }
 
-  const isValid = await verify(secret, payload, signature);
-  if (!isValid) {
-    return new Response("Invalid signature", { status: 401 });
+  const webhooks = cerateWebhookHandler(ctx);
+
+  try {
+    await webhooks.verifyAndReceive({ id: deliveryId, name: eventName, payload, signature });
+    return new Response("Webhook processed successfully", { status: 200 });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Webhook verification/routing failed:", error.message);
+      return new Response(`Error: ${error.message}`, { status: 401 });
+    }
+
+    console.error("Unknown error during webhook processing:", error);
+    return new Response("Unknown error", { status: 500 });
+  }
+});
+
+export const githubInstallAppCallback = httpAction(async (ctx, request) => {
+  const url = new URL(request.url);
+  const installationId = url.searchParams.get("installation_id");
+  const state = url.searchParams.get("state");
+
+  if (!installationId || !state) {
+    return new Response("Missing parameters", { status: 400 });
   }
 
-  const event = request.headers.get("x-github-event");
-  const data = JSON.parse(payload);
+  const payload = await verifyJWT<{ userId: string; redirectTo: string }>(state);
+  if (!payload) {
+    return new Response("Invalid or expired state", { status: 401 });
+  }
 
-  console.log({ event, data });
+  const { userId, redirectTo } = payload;
+  if (!userId || !redirectTo) {
+    return new Response("Invalid state payload", { status: 401 });
+  }
 
-  // blablabla
+  // We link the user since installation creation is handled via webhook.
+  // We may need to refactor if somehow calback starts being called before webhook does.
+  await ctx.runMutation(internal.github.mutations.linkUserToIntegration, {
+    userId,
+    installationId: parseInt(installationId, 10)
+  });
 
-  return new Response("Webhook processed successfully", { status: 200 });
+  const redirectURL = new URL(redirectTo, process.env.SITE_URL);
+  return new Response("GitHub App installed successfully. You can close this tab.", {
+    status: 302,
+    headers: { location: redirectURL.toString() }
+  });
 });

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { m } from "@/i18n/_generated/messages";
 import { getLocale, Locale, locales, setLocale } from "@/i18n/_generated/runtime";
+import { getCountryName } from "@/i18n/intl";
 import { authClient } from "@/lib/auth-client";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
@@ -47,11 +48,6 @@ export function AccountSettings() {
 
   const handleSetLocale = async (newLocale: Locale) => {
     await setLocale(newLocale);
-  };
-
-  const getCountryName = (locale: Locale) => {
-    const formatter = new Intl.DisplayNames([locale], { type: "language" });
-    return formatter.of(locale) || locale;
   };
 
   return (
@@ -100,9 +96,9 @@ export function AccountSettings() {
             </AlertDialogTrigger>
             <AlertDialogContent asChild>
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
-                  handleDelete();
+                  await handleDelete();
                 }}
               >
                 <AlertDialogHeader>

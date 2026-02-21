@@ -13,7 +13,6 @@
 		"lib": ["DOM", "DOM.Iterable", "ESNext"],
 		"skipLibCheck": true,
 		"strictNullChecks": true,
-		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"],
 			"shared/*": ["./shared/*"],

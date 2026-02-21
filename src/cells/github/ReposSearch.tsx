@@ -1,5 +1,6 @@
 "use client";
 
+import { Repo } from "#/github/validators";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -19,7 +20,7 @@ import { m } from "@/i18n/_generated/messages";
 import { useNavigate } from "@tanstack/react-router";
 import { AlertCircleIcon, SearchIcon } from "lucide-react";
 import { useCallback, useState } from "react";
-import { github, type Repo } from "shared/lib/github";
+import { github } from "shared/lib/github";
 
 export const ReposSearch = () => {
   const [open, setOpen] = useState(false);
@@ -104,7 +105,7 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
       <CommandGroup>
         {result.data.map((repo) => (
           <CommandItem
-            key={repo.id}
+            key={repo.externalId}
             value={`${repo.ownerLogin ? `${repo.ownerLogin}/` : ""}${repo.name}`}
             onSelect={() => handleSelectRepo(repo)}
           >

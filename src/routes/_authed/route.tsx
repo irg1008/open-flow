@@ -1,12 +1,9 @@
-import { createFileRoute, notFound, Outlet } from "@tanstack/react-router";
+import { NotFound } from "@/components/not-found";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authed")({
-  beforeLoad: ({ context }) => {
-    if (!context.isAuthenticated) {
-      throw notFound();
-    }
-  },
   component: () => {
-    return <Outlet />;
+    const { isAuthenticated } = Route.useRouteContext();
+    return isAuthenticated ? <Outlet /> : <NotFound />;
   }
 });

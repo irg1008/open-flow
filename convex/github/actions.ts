@@ -35,7 +35,6 @@ export const fetchRepoDetail = action({
   args: repoFullNameValidator,
   handler: async (ctx, args): Promise<number | null> => {
     var dbRepo = await ctx.runQuery(api.github.queries.getRepoDetail, args);
-    if (dbRepo?.claimed) return null; // For claimed repos, we update data in real time via webhooks
 
     var { status, repo } = await repoDetailCache.fetch(ctx, { ...args, etag: dbRepo?.etag });
     if (repo && repo.etag !== dbRepo?.etag) {

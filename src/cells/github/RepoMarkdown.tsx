@@ -1,10 +1,10 @@
 import type { Doc } from "#/_generated/dataModel";
+import { Repo } from "#/github/validators";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useReactQuery } from "@/lib/react-query";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import type { Repo } from "shared/lib/github";
 import { parseRemoteGithubMarkdown } from "shared/lib/markdown";
 
 const fetchRepoMarkdown = async (repo: Repo) => {
@@ -34,7 +34,7 @@ export const RepoDetailMarkdown = ({
   ...props
 }: RepoDetailMarkdownProps) => {
   const { data: markdownContent } = useReactQuery({
-    queryKey: ["repoDetailMarkdown", repo.id],
+    queryKey: ["repoDetailMarkdown", repo._id],
     queryFn: () => fetchRepoMarkdown(repo)
   });
 
@@ -52,7 +52,7 @@ export const RepoDetailMarkdown = ({
 
   useEffect(() => {
     setExpanded(initialExpanded ?? false);
-  }, [repo.id, initialExpanded]);
+  }, [repo._id, initialExpanded]);
 
   return (
     markdownContent && (

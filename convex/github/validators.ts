@@ -1,22 +1,26 @@
 import { Infer, v } from "convex/values";
 
 export const repoValidator = v.object({
-  id: v.number(),
+  externalId: v.number(),
   name: v.string(),
-  description: v.nullable(v.string()),
+  description: v.optional(v.nullable(v.string())),
   branch: v.optional(v.string()),
-  stargazersCount: v.number(),
-  htmlUrl: v.string(),
-  createdAt: v.string(),
+  stargazersCount: v.optional(v.number()),
+  htmlUrl: v.optional(v.string()),
+  createdAt: v.optional(v.string()),
+  ownerId: v.optional(v.number()),
   ownerName: v.optional(v.nullable(v.string())),
   ownerLogin: v.optional(v.nullable(v.string())),
   ownerAvatarUrl: v.optional(v.nullable(v.string())),
   ownerHtmlUrl: v.optional(v.nullable(v.string())),
   license: v.optional(v.nullable(v.string())),
   topics: v.optional(v.array(v.string())),
-  etag: v.optional(v.string()), // Etag from GitHub API to manage cache invalidation
-  claimed: v.optional(v.boolean()) // Whether this repo has been claimed by a user in our app
+  private: v.optional(v.boolean()),
+  integrationId: v.optional(v.id("githubIntegration")),
+  etag: v.optional(v.string()) // Etag from GitHub API to manage cache invalidation
 });
+
+export type Repo = Infer<typeof repoValidator>;
 
 export const repoFullNameValidator = v.object({
   owner: v.string(),
@@ -28,3 +32,18 @@ export type RepoFullName = Infer<typeof repoFullNameValidator>;
 export const repoFullNameWithEtagValidator = repoFullNameValidator.extend({
   etag: v.optional(v.string())
 });
+
+export const githubInstallationValidator = v.object({
+  installationId: v.number(),
+  installationClientId: v.optional(v.string()),
+  repoSelectionAll: v.boolean()
+});
+
+export type GithubInstallation = Infer<typeof githubInstallationValidator>;
+
+export const githubUserIntegrationValidator = v.object({
+  userId: v.string(),
+  installationId: v.number()
+});
+
+export type GithubUserIntegration = Infer<typeof githubUserIntegrationValidator>;

@@ -2,6 +2,7 @@
 	"recommendations": [
 		"bradlc.vscode-tailwindcss",
 		"fabiospampinato.vscode-terminals",
-		"inlang.vs-code-extension"
+		"inlang.vs-code-extension",
+		"oxc.oxc-vscode"
 	]
 }

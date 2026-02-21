@@ -1,6 +1,5 @@
-import type { Doc } from "#/_generated/dataModel";
+import { Repo } from "#/github/validators";
 import { Octokit, type RestEndpointMethodTypes } from "@octokit/rest";
-import type { WithoutSystemFields } from "convex/server";
 import { format, subDays } from "date-fns";
 import { z } from "zod";
 
@@ -22,16 +21,16 @@ export type GhRepo = Pick<
   | "license"
   | "topics"
 >;
-export type Repo = WithoutSystemFields<Doc<"repoDetail">>;
 
 export const mapGithubRepo = (ghRepo: GhRepo, etag?: string): Repo => ({
-  id: ghRepo.id,
+  externalId: ghRepo.id,
   name: ghRepo.name,
   description: ghRepo.description,
   branch: ghRepo.default_branch,
   stargazersCount: ghRepo.stargazers_count,
   htmlUrl: ghRepo.html_url,
   createdAt: ghRepo.created_at,
+  ownerId: ghRepo.owner?.id,
   ownerName: ghRepo.owner?.name,
   ownerLogin: ghRepo.owner?.login,
   topics: ghRepo.topics,

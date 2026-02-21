@@ -16,6 +16,7 @@ import type * as github_actions from "../github/actions.js";
 import type * as github_http from "../github/http.js";
 import type * as github_mutations from "../github/mutations.js";
 import type * as github_queries from "../github/queries.js";
+import type * as github_shared from "../github/shared.js";
 import type * as github_validators from "../github/validators.js";
 import type * as http from "../http.js";
 import type * as lib_functions from "../lib/functions.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   "github/http": typeof github_http;
   "github/mutations": typeof github_mutations;
   "github/queries": typeof github_queries;
+  "github/shared": typeof github_shared;
   "github/validators": typeof github_validators;
   http: typeof http;
   "lib/functions": typeof lib_functions;

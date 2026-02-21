@@ -21,6 +21,7 @@
 	"files.watcherExclude": {
 		"**/routeTree.gen.ts": true
 	},
+	"oxc.typeAware": true,
 	"search.exclude": {
 		"**/routeTree.gen.ts": true
 	},
