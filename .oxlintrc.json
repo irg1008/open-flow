@@ -33,6 +33,9 @@
 		"@convex-dev/eslint-plugin/no-old-registered-function-syntax": "error",
 		"@convex-dev/eslint-plugin/require-args-validator": "off",
 		"no-unused-vars": "error",
-		"typescript/no-explicit-any": "error"
+		"typescript/no-explicit-any": "error",
+		"typescript/no-floating-promises": "error",
+		"typescript/await-thenable": "error",
+		"eslint/prefer-const": "error"
 	}
 }

@@ -13,6 +13,7 @@ import type * as comments_mutations from "../comments/mutations.js";
 import type * as comments_queries from "../comments/queries.js";
 import type * as crons from "../crons.js";
 import type * as github_actions from "../github/actions.js";
+import type * as github_http from "../github/http.js";
 import type * as github_mutations from "../github/mutations.js";
 import type * as github_queries from "../github/queries.js";
 import type * as github_validators from "../github/validators.js";
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   "comments/queries": typeof comments_queries;
   crons: typeof crons;
   "github/actions": typeof github_actions;
+  "github/http": typeof github_http;
   "github/mutations": typeof github_mutations;
   "github/queries": typeof github_queries;
   "github/validators": typeof github_validators;

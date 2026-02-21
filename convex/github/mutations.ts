@@ -1,3 +1,5 @@
+import { getAuth } from "#/auth";
+import { authMutation } from "#/lib/functions";
 import { v } from "convex/values";
 import { internalMutation } from "../_generated/server";
 import { repoValidator } from "./validators";
@@ -37,5 +39,33 @@ export const upsertRepoDetail = internalMutation({
     }
 
     return await ctx.db.patch(existing._id, repo);
+  }
+});
+
+export const getInstallAppUrl = authMutation({
+  handler: async (ctx, args) => {
+    // Generate a random state token to prevent CSRF attacks
+    const state = crypto.randomUUID();
+
+    // Save the state to verify it later when GitHub redirects the user back
+    await ctx.db.insert("githubOAuthStates", {
+      userId: ctx.user.subject,
+      state: state,
+      createdAt: Date.now()
+    });
+
+    const { auth } = await getAuth(ctx);
+    auth.api.callbackOAuth({
+      provider: "github",
+      state,
+      callbackURL: window.location.href
+    });
+
+    // State should be saved or maybe we should hook to auth
+
+    const appName = "open-source-flow"; // Move to env file or config
+
+    // The specific GitHub URL that prompts the user to select repositories
+    return `https://github.com/apps/${appName}/installations/new?state=${state}`;
   }
 });

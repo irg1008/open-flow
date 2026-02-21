@@ -26,5 +26,8 @@ export default defineConfig({
   ],
   ssr: {
     noExternal: ["@convex-dev/better-auth"]
+  },
+  server: {
+    allowedHosts: process.env.NODE_ENV === "development" ? [".trycloudflare.com"] : undefined
   }
 });

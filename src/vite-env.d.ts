@@ -15,10 +15,11 @@ declare namespace NodeJS {
     BASE?: string;
 
     // Set inside convex dashboard
+    BETTER_AUTH_SECRET: string;
+    GITHUB_PERSONAL_TOKEN: string;
     GITHUB_CLIENT_ID: string;
     GITHUB_CLIENT_SECRET: string;
-    GITHUB_PERSONAL_TOKEN: string;
-    BETTER_AUTH_SECRET: string;
+    GITHUB_WEBHOOK_SECRET: string;
 
     CONVEX_DEPLOYMENT: string;
     VITE_CONVEX_URL: string;

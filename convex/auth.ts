@@ -44,4 +44,6 @@ export const authCtxOverride = customCtx(async (ctx: GenericCtx<DataModel>) => {
   return { user };
 });
 
+export const getAuth = (ctx: GenericCtx<DataModel>) => authComponent.getAuth(createAuth, ctx);
+
 export type User = Awaited<ReturnType<typeof authComponent.getAuthUser>>;
