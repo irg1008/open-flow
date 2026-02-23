@@ -46,6 +46,7 @@ export const SignInButton = () => {
 };
 
 const AvatarMenu = () => {
+  // const user = useQuery(api.auth.queries.getUser);
   const { data } = authClient.useSession();
   const navigate = useNavigate();
 
