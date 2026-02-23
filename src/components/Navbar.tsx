@@ -1,5 +1,5 @@
-import { SignInButton } from "@/cells/SignInButton";
 import { ThemeMode } from "@/components/theme-mode";
+import { SignInButton } from "@/features/auth/SignInButton";
 import { m } from "@/i18n/_generated/messages";
 import { Link } from "@tanstack/react-router";
 

@@ -1,4 +1,4 @@
-import { ReposSearch } from "@/cells/github/ReposSearch";
+import { ReposSearch } from "@/features/github/ReposSearch";
 import { m } from "@/i18n/_generated/messages";
 import { seo } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";

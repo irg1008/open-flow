@@ -18,6 +18,7 @@ import type * as github_shared from "../github/shared.js";
 import type * as github_validators from "../github/validators.js";
 import type * as http from "../http.js";
 import type * as lib_functions from "../lib/functions.js";
+import type * as triggers from "../triggers.js";
 
 import type {
   ApiFromModules,
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   "github/validators": typeof github_validators;
   http: typeof http;
   "lib/functions": typeof lib_functions;
+  triggers: typeof triggers;
 }>;
 
 /**

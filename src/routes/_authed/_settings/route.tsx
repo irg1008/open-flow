@@ -1,4 +1,4 @@
-import { SettingsSidebar } from "@/components/settings-sidebar";
+import { SettingsSidebar } from "@/features/settings/components/settings-sidebar";
 import { m } from "@/i18n/_generated/messages";
 import { seo } from "@/lib/seo";
 import { createFileRoute, Outlet } from "@tanstack/react-router";

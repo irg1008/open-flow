@@ -3,7 +3,12 @@ import { github } from "shared/lib/github";
 import { api, components, internal } from "../_generated/api";
 import { action, internalAction } from "../_generated/server";
 import { ActionCache } from "./../../node_modules/@convex-dev/action-cache/src/client/index";
-import { repoFullNameValidator, repoFullNameWithEtagValidator } from "./validators";
+import {
+  FetchRepoResponse,
+  fetchRepoResponseValidator,
+  repoFullNameValidator,
+  repoFullNameWithEtagValidator
+} from "./validators";
 
 export const fetchRepos = internalAction({
   args: {
@@ -33,14 +38,20 @@ const repoDetailCache = new ActionCache(components.actionCache, {
 
 export const fetchRepoDetail = action({
   args: repoFullNameValidator,
-  handler: async (ctx, args): Promise<number | null> => {
+  returns: fetchRepoResponseValidator,
+  handler: async (ctx, args): Promise<FetchRepoResponse> => {
     var dbRepo = await ctx.runQuery(api.github.queries.getRepoDetail, args);
 
     var { status, repo } = await repoDetailCache.fetch(ctx, { ...args, etag: dbRepo?.etag });
     if (repo && repo.etag !== dbRepo?.etag) {
+      repo.unaccessible = false;
       await ctx.runMutation(internal.github.mutations.upsertRepoDetail, repo);
     }
 
-    return status;
+    if (status === 404) {
+      await ctx.runMutation(internal.github.mutations.markRepoUnaccessible, args);
+    }
+
+    return { status, repo };
   }
 });

@@ -1,9 +1,8 @@
-import { authMutation } from "#/lib/functions";
+import { authMutation, internalMutation } from "#/lib/functions";
 import { v } from "convex/values";
 import { signJWT } from "shared/lib/jws";
-import { internalMutation } from "../_generated/server";
 import * as internal from "./shared";
-import { githubInstallationValidator, repoValidator } from "./validators";
+import { githubInstallationValidator, repoFullNameValidator, repoValidator } from "./validators";
 
 export const upsertRepoList = internalMutation({
   args: {
@@ -160,5 +159,30 @@ export const updateRepoName = internalMutation({
   },
   handler: async (ctx, { externalId, name, ownerLogin }) => {
     return await internal.updateRepoDetail(ctx, externalId, { name, ownerLogin });
+  }
+});
+
+export const updateIntegrationAccountName = internalMutation({
+  args: {
+    installationId: v.number(),
+    accountName: v.string()
+  },
+  handler: async (ctx, { installationId, accountName }) => {
+    const integration = await internal.getIntegrationByInstallationId(ctx, installationId);
+    if (!integration) return null;
+    return await ctx.db.patch("githubIntegration", integration._id, { accountName });
+  }
+});
+
+export const markRepoUnaccessible = internalMutation({
+  args: repoFullNameValidator,
+  handler: async (ctx, args) => {
+    const { owner, name } = args;
+    const dbRepo = await ctx.db
+      .query("repoDetail")
+      .withIndex("by_full_name", (q) => q.eq("ownerLogin", owner).eq("name", name))
+      .unique();
+    if (!dbRepo) return null;
+    return await internal.updateRepoDetail(ctx, dbRepo.externalId, { unaccessible: true });
   }
 });

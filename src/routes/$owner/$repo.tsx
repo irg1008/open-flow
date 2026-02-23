@@ -1,4 +1,4 @@
-import { RepoDetail } from "@/cells/github/RepoDetail";
+import { RepoDetail } from "@/features/github/RepoDetail";
 import { seo } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 

@@ -16,6 +16,7 @@ export const repoValidator = v.object({
   license: v.optional(v.nullable(v.string())),
   topics: v.optional(v.array(v.string())),
   private: v.optional(v.boolean()),
+  unaccessible: v.optional(v.boolean()), // Flag to indicate if the repo is inaccessible (maybe private or deleted)
   integrationId: v.optional(v.id("githubIntegration")),
   etag: v.optional(v.string()) // Etag from GitHub API to manage cache invalidation
 });
@@ -33,6 +34,13 @@ export const repoFullNameWithEtagValidator = repoFullNameValidator.extend({
   etag: v.optional(v.string())
 });
 
+export const fetchRepoResponseValidator = v.object({
+  status: v.number(),
+  repo: v.optional(v.nullable(repoValidator))
+});
+
+export type FetchRepoResponse = Infer<typeof fetchRepoResponseValidator>;
+
 export const accountTypeValidator = v.union(v.literal("User"), v.literal("Organization"));
 
 export const githubInstallationValidator = v.object({
@@ -42,6 +50,7 @@ export const githubInstallationValidator = v.object({
   suspendedByName: v.optional(v.string()),
   installationClientId: v.optional(v.string()),
   repoSelectionAll: v.boolean(),
+  accountId: v.optional(v.number()),
   accountName: v.optional(v.nullable(v.string())),
   accountType: v.optional(accountTypeValidator)
 });

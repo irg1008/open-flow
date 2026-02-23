@@ -28,6 +28,7 @@ const mapGithubInstallation = (installation: EventInstallation): GithubInstallat
   }
 
   return {
+    accountId: account?.id,
     accountName,
     accountType,
     suspendedAt: installation.suspended_at,
@@ -76,6 +77,8 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
 
   // 3. TRACK SUSPENSIONS
   webhooks.on("installation.suspend", async ({ payload }) => {
+    // On suspension we stop traking renaming, stars and more, so some data can become stale
+    // We may have to tackle this in the future. Right now this is a rare edge case.
     const installation = mapGithubInstallation(payload.installation);
     installation.suspended = true;
     await ctx.runMutation(internal.github.mutations.changeSuspensionStatus, installation);
@@ -126,6 +129,14 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
       externalId,
       name,
       ownerLogin
+    });
+  });
+
+  webhooks.on("installation_target.renamed", async ({ payload }) => {
+    if (!payload.account.login) return;
+    await ctx.runMutation(internal.github.mutations.updateIntegrationAccountName, {
+      installationId: payload.installation.id,
+      accountName: payload.account.login
     });
   });
 

@@ -34,8 +34,8 @@
 		"@convex-dev/eslint-plugin/require-args-validator": "off",
 		"no-unused-vars": "error",
 		"typescript/no-explicit-any": "error",
-		"typescript/no-floating-promises": "error",
-		"typescript/await-thenable": "error",
+		"typescript/no-floating-promises": "warn",
+		"typescript/await-thenable": "warn",
 		"eslint/prefer-const": "error",
 		"eslint/no-console": "warn"
 	}

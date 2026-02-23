@@ -1,25 +1,15 @@
 import type { RepoFullName } from "#/github/validators";
+import { NotFound } from "@/components/not-found";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { api, useAction, useQuery } from "@/lib/convex";
-import { useReactQuery } from "@/lib/react-query";
 import { RepoDetailMarkdown } from "./RepoMarkdown";
+import { useRepoDetail } from "./hooks/use-repo-detail";
 
 export const RepoDetail = (props: RepoFullName) => {
-  const repo = useQuery(api.github.queries.getRepoDetail, props);
-  const revalidateRepo = useAction(api.github.actions.fetchRepoDetail);
+  const { revalidateStatus, repo, isLoading } = useRepoDetail(props);
 
-  const { data: status, isLoading } = useReactQuery({
-    queryKey: ["repoDetail", props.owner, props.name],
-    queryFn: () => revalidateRepo(props)
-  });
-
-  if (status === 404) {
-    return (
-      <section className="container py-8">
-        <p className="text-muted-foreground">Repository not found.</p>
-      </section>
-    );
+  if (revalidateStatus === 404) {
+    return <NotFound />;
   }
 
   return (

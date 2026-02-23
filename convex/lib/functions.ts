@@ -1,19 +1,28 @@
 import { authCtxOverride } from "#/auth";
-import { customAction, customMutation, customQuery } from "convex-helpers/server/customFunctions";
+import { triggers } from "#/triggers";
 import {
-  action,
-  internalAction,
-  internalMutation,
-  internalQuery,
-  mutation,
-  query
+  customAction,
+  customCtx,
+  customMutation,
+  customQuery
+} from "convex-helpers/server/customFunctions";
+import {
+  action as rawAction,
+  internalAction as rawInternalAction,
+  internalMutation as rawInternalMutation,
+  internalQuery as rawInternalQuery,
+  mutation as rawMutation,
+  query as rawQuery
 } from "../_generated/server";
 
-export const authQuery = customQuery(query, authCtxOverride);
-export const internalAuthQuery = customQuery(internalQuery, authCtxOverride);
+export const mutation = customMutation(rawMutation, customCtx(triggers.wrapDB));
+export const internalMutation = customMutation(rawInternalMutation, customCtx(triggers.wrapDB));
+
+export const authQuery = customQuery(rawQuery, authCtxOverride);
+export const internalAuthQuery = customQuery(rawInternalQuery, authCtxOverride);
 
 export const authMutation = customMutation(mutation, authCtxOverride);
 export const internalAuthMutation = customMutation(internalMutation, authCtxOverride);
 
-export const authAction = customAction(action, authCtxOverride);
-export const internalAuthAction = customAction(internalAction, authCtxOverride);
+export const authAction = customAction(rawAction, authCtxOverride);
+export const internalAuthAction = customAction(rawInternalAction, authCtxOverride);

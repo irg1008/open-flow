@@ -1,8 +1,6 @@
-import { Triggers } from "convex-helpers/server/triggers";
 import { typedV } from "convex-helpers/validators";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { DataModel } from "./_generated/dataModel";
 import {
   githubInstallationValidator,
   githubUserIntegrationValidator,
@@ -32,26 +30,3 @@ const schema = defineSchema({
 
 export const vv = typedV(schema);
 export default schema;
-
-const triggers = new Triggers<DataModel>();
-
-// Cascade delete integration references
-triggers.register("githubIntegration", async (ctx, change) => {
-  if (change.operation !== "delete") return;
-
-  const repoDetails = ctx.db
-    .query("repoDetail")
-    .withIndex("by_integration_id", (q) => q.eq("integrationId", change.id));
-
-  for await (const repo of repoDetails) {
-    await ctx.db.patch("repoDetail", repo._id, { integrationId: undefined });
-  }
-
-  const userIntegrations = ctx.db
-    .query("githubUserIntegration")
-    .withIndex("by_installation_user", (q) => q.eq("installationId", change.oldDoc.installationId));
-
-  for await (const userIntegration of userIntegrations) {
-    await ctx.db.delete("githubUserIntegration", userIntegration._id);
-  }
-});
