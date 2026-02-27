@@ -7,6 +7,7 @@ import { markedHighlight } from "marked-highlight";
 
 export const highlightExtension = markedHighlight({
   langPrefix: "block language-",
+  emptyLangClass: "block",
   highlight(code, lang) {
     const language = hljs.getLanguage(lang) ? lang : "plaintext";
     return hljs.highlight(code, { language }).value;
