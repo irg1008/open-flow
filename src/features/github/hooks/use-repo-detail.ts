@@ -1,14 +1,14 @@
 import { api } from "#/_generated/api";
 import { RepoFullName } from "#/github/validators";
+import { useAction, useQuery } from "@/lib/convex";
 import { useReactQuery } from "@/lib/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useAction, useQuery } from "convex/react";
 import { useCallback, useEffect } from "react";
 
 export const useRepoDetail = (args: RepoFullName) => {
   const navigate = useNavigate();
 
-  const repo = useQuery(api.github.queries.getRepoDetail, args);
+  const { data: repo } = useQuery(api.github.queries.getRepoDetail, args);
 
   const revalidateRepo = useAction(api.github.actions.fetchRepoDetail);
   const { data, isLoading } = useReactQuery({

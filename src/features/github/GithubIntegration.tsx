@@ -3,12 +3,19 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Item,
+  ItemActions,
+  ItemDescription,
+  ItemGroup,
+  ItemHeader,
+  ItemTitle
+} from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 import { m } from "@/i18n/_generated/messages";
+import { useMutation, useQuery } from "@/lib/convex";
 import { cn } from "@/lib/utils";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQuery } from "convex/react";
 import { ExternalLinkIcon, StarIcon } from "lucide-react";
 import { constants } from "shared/constants";
 
@@ -22,9 +29,18 @@ export const GithubIntegration = () => {
     await navigate({ href: installUrl });
   };
 
-  const githubIntegrations = useQuery(api.github.queries.getUserIntegrationsRepos);
-  if (!githubIntegrations) {
+  const {
+    data: githubIntegrations,
+    isPending,
+    isError
+  } = useQuery(api.github.queries.getUserIntegrationsRepos);
+
+  if (isPending) {
     return <Spinner />;
+  }
+
+  if (isError) {
+    return null;
   }
 
   return (
@@ -70,66 +86,60 @@ export const GithubIntegration = () => {
           {githubIntegrations.map(
             (integration) =>
               integration && (
-                <div
-                  key={integration.installationId}
-                  className="@container mt-8 flex flex-wrap items-center gap-2"
-                >
-                  {integration.accountAvatarUrl && (
-                    <Avatar>
-                      <AvatarImage
-                        src={integration.accountAvatarUrl}
-                        alt={integration.accountName || undefined}
-                      />
-                    </Avatar>
-                  )}
-                  <p className="text-sm font-medium">{integration.accountName ?? "-"}</p>
+                <div key={integration.installationId} className="@container mt-8">
+                  <header className="mb-4 flex items-center gap-2">
+                    {integration.accountAvatarUrl && (
+                      <Avatar>
+                        <AvatarImage
+                          src={integration.accountAvatarUrl}
+                          alt={integration.accountName || undefined}
+                        />
+                      </Avatar>
+                    )}
+                    <p className="text-sm font-medium">{integration.accountName ?? "-"}</p>
 
-                  {integration.suspended && (
-                    <Badge variant="outline">{m.settings_integrations_suspended()}</Badge>
-                  )}
+                    {integration.suspended && (
+                      <Badge variant="outline">{m.settings_integrations_suspended()}</Badge>
+                    )}
+                  </header>
 
                   {integration.repoSelection.length > 0 && (
-                    <ul
+                    <ItemGroup
                       className={cn(
                         "mt-2 grid basis-full gap-2 @md:grid-cols-2 @lg:grid-cols-3",
                         integration.suspended && "pointer-events-none opacity-50"
                       )}
                     >
                       {integration.repoSelection.map((repo) => (
-                        <li
+                        <Item
                           key={repo._id}
+                          variant="outline"
+                          size="xs"
                           className={cn(!integration.suspended && repo.private && "opacity-50")}
+                          asChild
                         >
-                          <Card className="h-full">
-                            <CardContent className="space-y-2">
-                              <Link
-                                disabled={repo.private}
-                                to="/$owner/$repo"
-                                params={{ owner: integration.accountName!, repo: repo.name }}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <span className="line-clamp-1 text-sm font-medium break-all">
-                                    {repo.name}
-                                  </span>
-                                  {repo.stargazersCount !== undefined && (
-                                    <span className="flex items-center gap-2 text-sm">
-                                      <StarIcon size={14} />
-                                      {repo.stargazersCount}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="text-muted-foreground mt-1 line-clamp-3 text-xs">
-                                  {repo.description ?? m.repos_no_description()}
-                                </div>
-                                {repo.private && (
-                                  <Badge variant="outline">{m.repos_private()}</Badge>
-                                )}
-                              </Link>
-                            </CardContent>
-                          </Card>
-                        </li>
+                          <Link
+                            disabled={repo.private}
+                            to="/$owner/$repo"
+                            params={{ owner: integration.accountName!, repo: repo.name }}
+                          >
+                            <ItemHeader>
+                              <ItemTitle className="line-clamp-1 break-all">{repo.name}</ItemTitle>
+                              {repo.stargazersCount !== undefined && (
+                                <ItemActions className="text-sm">
+                                  <StarIcon size={14} />
+                                  {repo.stargazersCount}
+                                </ItemActions>
+                              )}
+                            </ItemHeader>
+                            <ItemDescription className="line-clamp-3 flex flex-col gap-1">
+                              {repo.description ?? m.repos_no_description()}
+                              {repo.private && <Badge variant="outline">{m.repos_private()}</Badge>}
+                            </ItemDescription>
+                          </Link>
+                        </Item>
                       ))}
-                    </ul>
+                    </ItemGroup>
                   )}
                 </div>
               )

@@ -43,7 +43,7 @@ export const getCurrentUser = authQuery({
   }
 });
 
-export const getAuth = (ctx: MutationCtx | QueryCtx) => {
+export const getAuth = (ctx: QueryCtx) => {
   return authComponent.getAuth(createAuth, ctx);
 };
 

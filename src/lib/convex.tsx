@@ -1,10 +1,11 @@
+import { api } from "#/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { AnyRoute, useRouteContext } from "@tanstack/react-router";
+import { useQuery } from "convex-helpers/react";
 import { ConvexHttpClient } from "convex/browser";
-import { useAction, useMutation, useQuery } from "convex/react";
+import { useAction, useMutation } from "convex/react";
 import { PropsWithChildren } from "react";
-import { api } from "../../convex/_generated/api";
 
 const convexUrl = import.meta.env.VITE_CONVEX_URL;
 const httpClient = new ConvexHttpClient(convexUrl);
