@@ -1,60 +1,29 @@
 import { internal } from "#/_generated/api";
 import { DataModel } from "#/_generated/dataModel";
 import { httpAction } from "#/_generated/server";
-import { Webhooks } from "@octokit/webhooks";
-import { HandlerFunction } from "@octokit/webhooks/types";
-import { validate } from "convex-helpers/validators";
 import { GenericActionCtx } from "convex/server";
+import {
+  getInstallationAdmins,
+  githubApp,
+  mapGithubInstallation,
+  mapRepos
+} from "shared/lib/github-app";
 import { verifyJWT } from "shared/lib/jws";
-import { accountTypeValidator, GithubInstallation, Repo } from "./validators";
-
-const secret = process.env.GITHUB_WEBHOOK_SECRET;
-
-type EventParameters = Parameters<HandlerFunction<"installation">>[0]["payload"];
-type EventInstallation = EventParameters["installation"];
-type EventRepository = NonNullable<EventParameters["repositories"]>[number];
-
-const mapGithubInstallation = (installation: EventInstallation): GithubInstallation => {
-  const { account } = installation;
-
-  let accountType;
-  if (account && "type" in account && validate(accountTypeValidator, account.type)) {
-    accountType = account.type;
-  }
-
-  let accountName;
-  if (account && "login" in account) {
-    accountName = account.login;
-  }
-
-  return {
-    accountId: account?.id,
-    accountName,
-    accountType,
-    suspendedAt: installation.suspended_at,
-    suspendedByName: installation.suspended_by?.login,
-    installationId: installation.id,
-    installationClientId: installation.client_id,
-    repoSelectionAll: installation.repository_selection === "all"
-  };
-};
-
-const mapRepos = (repositories?: EventRepository[]): Repo[] => {
-  if (!repositories) return [];
-  return repositories.map((repo) => ({
-    externalId: repo.id,
-    name: repo.name
-  }));
-};
 
 const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
-  const webhooks = new Webhooks({ secret });
+  const { webhooks } = githubApp();
 
   // 1. VERIFY OWNERSHIP (App Installed / Repos Added)
   webhooks.on("installation.created", async ({ payload }) => {
     const installation = mapGithubInstallation(payload.installation);
+    const admins = await getInstallationAdmins(installation);
+
     const repos = mapRepos(payload.repositories);
-    await ctx.runMutation(internal.github.mutations.verifyRepos, { installation, repos });
+    await ctx.runMutation(internal.github.mutations.verifyRepos, {
+      installation,
+      repos,
+      users: admins
+    });
   });
 
   webhooks.on("installation_repositories.added", async ({ payload }) => {
@@ -77,8 +46,6 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
 
   // 3. TRACK SUSPENSIONS
   webhooks.on("installation.suspend", async ({ payload }) => {
-    // On suspension we stop traking renaming, stars and more, so some data can become stale
-    // We may have to tackle this in the future. Right now this is a rare edge case.
     const installation = mapGithubInstallation(payload.installation);
     installation.suspended = true;
     await ctx.runMutation(internal.github.mutations.changeSuspensionStatus, installation);
@@ -86,6 +53,15 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
 
   webhooks.on("installation.unsuspend", async ({ payload }) => {
     const installation = mapGithubInstallation(payload.installation);
+
+    // Refetch admins and update them, as they may have changed during the suspension.
+    // We may need to refetch more data like stars, repo names. Edge case for now.
+    const admins = await getInstallationAdmins(installation);
+    await ctx.runMutation(internal.github.mutations.replaceIntegrationUsers, {
+      installationId: installation.installationId,
+      externalUserIds: admins.map((admin) => admin.externalUserId)
+    });
+
     installation.suspended = false;
     await ctx.runMutation(internal.github.mutations.changeSuspensionStatus, installation);
   });
@@ -140,6 +116,29 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
     });
   });
 
+  // 7. TRACK ORGANIZATION MEMBERS
+  webhooks.on("organization.member_added", async ({ payload }) => {
+    const externalUserId = payload.membership?.user?.id.toString();
+    const installationId = payload.installation?.id;
+    if (!externalUserId || !installationId) return;
+
+    await ctx.runMutation(internal.github.mutations.addIntegrationUser, {
+      installationId,
+      externalUserId
+    });
+  });
+
+  webhooks.on("organization.member_removed", async ({ payload }) => {
+    const externalUserId = payload.membership?.user?.id.toString();
+    const installationId = payload.installation?.id;
+    if (!externalUserId || !installationId) return;
+
+    await ctx.runMutation(internal.github.mutations.deleteIntegrationUser, {
+      installationId,
+      externalUserId
+    });
+  });
+
   return webhooks;
 };
 
@@ -159,8 +158,8 @@ export const githubWebhook = httpAction(async (ctx, request) => {
     await webhooks.verifyAndReceive({ id: deliveryId, name: eventName, payload, signature });
     return new Response("Webhook processed successfully", { status: 200 });
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Webhook verification/routing failed:", error.message);
+    if (Error.isError(error)) {
+      console.error("Webhook verification/routing failed:", error.message, error.cause);
       return new Response(`Error: ${error.message}`, { status: 401 });
     }
 
@@ -172,7 +171,15 @@ export const githubWebhook = httpAction(async (ctx, request) => {
 export const githubInstallAppCallback = httpAction(async (ctx, request) => {
   const url = new URL(request.url);
   const installationId = url.searchParams.get("installation_id");
+  const action = url.searchParams.get("setup_action");
   const state = url.searchParams.get("state");
+
+  if (action !== "install") {
+    return new Response("Redirect on update", {
+      status: 302,
+      headers: { location: process.env.SITE_URL }
+    });
+  }
 
   if (!installationId || !state) {
     return new Response("Missing parameters", { status: 400 });
@@ -187,13 +194,6 @@ export const githubInstallAppCallback = httpAction(async (ctx, request) => {
   if (!userId || !redirectTo) {
     return new Response("Invalid state payload", { status: 401 });
   }
-
-  // We link the user since installation creation is handled via webhook.
-  // We may need to refactor if somehow calback starts being called before webhook does.
-  await ctx.runMutation(internal.github.mutations.linkUserToIntegration, {
-    userId,
-    installationId: parseInt(installationId, 10)
-  });
 
   const redirectURL = new URL(redirectTo, process.env.SITE_URL);
   return new Response("GitHub App installed successfully. You can close this tab.", {

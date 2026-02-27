@@ -23,8 +23,8 @@ const schema = defineSchema({
   ]),
 
   githubUserIntegration: defineTable(githubUserIntegrationValidator)
-    .index("by_installation_user", ["installationId", "userId"])
-    .index("by_user", ["userId"])
+    .index("by_installation_external_user", ["installationId", "externalUserId"])
+    .index("by_external_user_id", ["externalUserId"])
 });
 
 export const vv = typedV(schema);

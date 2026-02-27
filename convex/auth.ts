@@ -1,10 +1,11 @@
-import { CreateAuth, createClient, type GenericCtx } from "@convex-dev/better-auth";
+import { CreateAuth, createClient } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth/minimal";
-import { customCtx } from "convex-helpers/server/customFunctions";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
+import { MutationCtx, QueryCtx } from "./_generated/server";
 import authConfig from "./auth.config";
+import { authMutation, authQuery } from "./lib/functions";
 
 export const authComponent = createClient<DataModel>(components.betterAuth);
 
@@ -36,14 +37,19 @@ export const createAuth: CreateAuth<DataModel> = (ctx) => {
   });
 };
 
-// See https://labs.convex.dev/better-auth/basic-usage/authorization for more info
-
-export const authCtxOverride = customCtx(async (ctx: GenericCtx<DataModel>) => {
-  const user = await ctx.auth.getUserIdentity();
-  if (!user) throw new Error("Unauthorized");
-  return { user };
+export const getCurrentUser = authQuery({
+  handler: async (ctx) => {
+    return await authComponent.getAuthUser(ctx);
+  }
 });
 
-export const getAuth = (ctx: GenericCtx<DataModel>) => authComponent.getAuth(createAuth, ctx);
+export const getAuth = (ctx: MutationCtx | QueryCtx) => {
+  return authComponent.getAuth(createAuth, ctx);
+};
 
-export type User = Awaited<ReturnType<typeof authComponent.getAuthUser>>;
+export const deleteAccount = authMutation({
+  handler: async (ctx) => {
+    const { auth, headers } = await getAuth(ctx);
+    await auth.api.deleteUser({ headers, body: {} });
+  }
+});

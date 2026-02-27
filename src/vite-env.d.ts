@@ -21,6 +21,7 @@ declare namespace NodeJS {
     GITHUB_CLIENT_SECRET: string;
     GITHUB_WEBHOOK_SECRET: string;
     GITHUB_APP_ID: string;
+    GITHUB_APP_PRIVATE_KEY: string;
     JWT_SECRET: string;
 
     CONVEX_DEPLOYMENT: string;

@@ -1,5 +1,6 @@
-import { authCtxOverride } from "#/auth";
+import { DataModel } from "#/_generated/dataModel";
 import { triggers } from "#/triggers";
+import { GenericCtx } from "@convex-dev/better-auth";
 import {
   customAction,
   customCtx,
@@ -14,6 +15,14 @@ import {
   mutation as rawMutation,
   query as rawQuery
 } from "../_generated/server";
+
+// See https://labs.convex.dev/better-auth/basic-usage/authorization for more info
+
+const authCtxOverride = customCtx(async (ctx: GenericCtx<DataModel>) => {
+  const user = await ctx.auth.getUserIdentity();
+  if (!user) throw new Error("Unauthorized");
+  return { user };
+});
 
 export const mutation = customMutation(rawMutation, customCtx(triggers.wrapDB));
 export const internalMutation = customMutation(rawInternalMutation, customCtx(triggers.wrapDB));

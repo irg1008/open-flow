@@ -1,5 +1,6 @@
 import { Triggers } from "convex-helpers/server/triggers";
 import { DataModel } from "./_generated/dataModel";
+import { deleteIntegrationUsers } from "./github/shared";
 
 export const triggers = new Triggers<DataModel>();
 
@@ -15,11 +16,5 @@ triggers.register("githubIntegration", async (ctx, change) => {
     await ctx.db.patch("repoDetail", repo._id, { integrationId: undefined });
   }
 
-  const userIntegrations = ctx.db
-    .query("githubUserIntegration")
-    .withIndex("by_installation_user", (q) => q.eq("installationId", change.oldDoc.installationId));
-
-  for await (const userIntegration of userIntegrations) {
-    await ctx.db.delete("githubUserIntegration", userIntegration._id);
-  }
+  await deleteIntegrationUsers(ctx, change.oldDoc.installationId);
 });

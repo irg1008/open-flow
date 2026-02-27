@@ -25,7 +25,8 @@ export const useRepoDetail = (args: RepoFullName) => {
 
     await navigate({
       to: "/$owner/$repo",
-      params: { owner: ownerLogin, repo: name }
+      params: { owner: ownerLogin, repo: name },
+      replace: true
     });
   }, [navigate, data]);
 

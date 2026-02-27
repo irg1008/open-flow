@@ -22,7 +22,7 @@ import {
 import { m } from "@/i18n/_generated/messages";
 import { getLocale, Locale, locales, setLocale } from "@/i18n/_generated/runtime";
 import { getCountryName } from "@/i18n/intl";
-import { authClient } from "@/lib/auth-client";
+import { api, useMutation } from "@/lib/convex";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -35,6 +35,8 @@ export function AccountSettings() {
   const requiredText = m.settings_account_delete_action();
   const canDelete = confirmValue.trim() === requiredText;
 
+  const deleteAccount = useMutation(api.auth.deleteAccount);
+
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) setConfirmValue("");
@@ -42,7 +44,7 @@ export function AccountSettings() {
 
   const handleDelete = async () => {
     if (!canDelete) return;
-    await authClient.deleteUser();
+    await deleteAccount();
     await navigate({ to: "/" });
   };
 

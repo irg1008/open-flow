@@ -3,7 +3,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
+  SidebarGroupLabel,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
@@ -13,19 +13,29 @@ import {
 } from "@/components/ui/sidebar";
 import { m } from "@/i18n/_generated/messages";
 import { Link, ToPathOption, useLocation } from "@tanstack/react-router";
+import { ExternalLinkIcon, UserIcon } from "lucide-react";
 import type { PropsWithChildren } from "react";
 
 type SettingsLink = {
   pathname: ToPathOption;
   label: string;
+  icon?: React.ReactNode;
 };
 
 export function SettingsSidebar({ children }: PropsWithChildren) {
   const location = useLocation();
 
   const links: SettingsLink[] = [
-    { pathname: "/settings/account", label: m.settings_account_title() },
-    { pathname: "/settings/integrations", label: m.settings_integrations_title() }
+    {
+      pathname: "/settings/integrations",
+      label: m.settings_integrations_title(),
+      icon: <ExternalLinkIcon size={16} />
+    },
+    {
+      pathname: "/settings/account",
+      label: m.settings_account_title(),
+      icon: <UserIcon size={16} />
+    }
   ];
 
   return (
@@ -36,19 +46,19 @@ export function SettingsSidebar({ children }: PropsWithChildren) {
         } as React.CSSProperties
       }
     >
-      <Sidebar collapsible="offcanvas" className="md:pt-(--header-height)">
-        <SidebarHeader>
-          <h2 className="mt-4 px-2 text-sm font-semibold">{m.settings_title()}</h2>
-        </SidebarHeader>
-
+      <Sidebar collapsible="icon" className="md:pt-(--header-height)">
         <SidebarContent>
           <SidebarGroup>
+            <SidebarGroupLabel>{m.settings_title()}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {links.map((link) => (
                   <SidebarMenuItem key={link.pathname}>
                     <SidebarMenuButton asChild isActive={location.pathname === link.pathname}>
-                      <Link to={link.pathname}>{link.label}</Link>
+                      <Link to={link.pathname} className="flex items-center gap-2">
+                        {link.icon}
+                        {link.label}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -58,16 +68,16 @@ export function SettingsSidebar({ children }: PropsWithChildren) {
         </SidebarContent>
       </Sidebar>
 
-      <SidebarInset className="flex flex-col gap-4 p-4">
-        <div className="flex w-full items-center gap-1 lg:gap-2">
+      <SidebarInset className="overflow-auto pb-4">
+        <header className="flex w-full items-center gap-1 p-4 lg:gap-2">
           <SidebarTrigger className="-ml-1" />
 
           <h1 className="text-base font-medium">
             {links.find((link) => link.pathname === location.pathname)?.label}
           </h1>
-        </div>
+        </header>
 
-        {children}
+        <div className="container">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

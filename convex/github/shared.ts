@@ -1,5 +1,6 @@
 import { Doc, Id } from "#/_generated/dataModel";
 import { MutationCtx, QueryCtx } from "#/_generated/server";
+import { getAuth } from "#/auth";
 import { Repo } from "./validators";
 
 export const updateRepoDetail = async (
@@ -46,4 +47,43 @@ export const getIntegrationRepos = async (
     .query("repoDetail")
     .withIndex("by_integration_id", (q) => q.eq("integrationId", integrationId))
     .collect();
+};
+
+export const getExternalId = async (ctx: QueryCtx) => {
+  const { auth, headers } = await getAuth(ctx);
+
+  const accounts = await auth.api.listUserAccounts({ headers });
+  const githubAccount = accounts.find((account) => account.providerId === "github");
+
+  const externalId = githubAccount?.accountId;
+  if (!externalId) {
+    throw new Error(
+      "No github account connected. Dev note: If logged in with a non-github account, additional log-in step is required to be implemented"
+    );
+  }
+
+  return externalId;
+};
+
+export const getIntegrationUser = async (
+  ctx: QueryCtx,
+  installationId: number,
+  externalUserId: string
+) => {
+  return await ctx.db
+    .query("githubUserIntegration")
+    .withIndex("by_installation_external_user", (q) =>
+      q.eq("installationId", installationId).eq("externalUserId", externalUserId)
+    )
+    .unique();
+};
+
+export const deleteIntegrationUsers = async (ctx: MutationCtx, installationId: number) => {
+  const userIntegrations = ctx.db
+    .query("githubUserIntegration")
+    .withIndex("by_installation_external_user", (q) => q.eq("installationId", installationId));
+
+  for await (const userIntegration of userIntegrations) {
+    await ctx.db.delete("githubUserIntegration", userIntegration._id);
+  }
 };

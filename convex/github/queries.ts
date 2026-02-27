@@ -1,6 +1,6 @@
 import { query } from "#/_generated/server";
 import { authQuery } from "#/lib/functions";
-import { getIntegration, getIntegrationRepos } from "./shared";
+import { getExternalId, getIntegration, getIntegrationRepos } from "./shared";
 import { repoFullNameValidator } from "./validators";
 
 export const getRepoDetail = query({
@@ -17,18 +17,23 @@ export const getRepoDetail = query({
 
 export const getUserIntegrations = authQuery({
   handler: async (ctx) => {
-    const userId = ctx.user.subject;
+    const externalId = await getExternalId(ctx);
 
     const userIntegrations = await ctx.db
       .query("githubUserIntegration")
-      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .withIndex("by_external_user_id", (q) => q.eq("externalUserId", externalId))
       .collect();
 
     return await Promise.all(
       userIntegrations.map(async (userIntegration) => {
         const integration = await getIntegration(ctx, userIntegration);
-        const repos = integration ? await getIntegrationRepos(ctx, integration._id) : [];
-        return { ...integration, repoSelection: repos };
+        if (!integration || integration.suspended) return { ...integration, repoSelection: [] };
+
+        const repos = await getIntegrationRepos(ctx, integration._id);
+        return {
+          ...integration,
+          repoSelection: repos.sort((a, b) => Number(a.private) - Number(b.private))
+        };
       })
     );
   }

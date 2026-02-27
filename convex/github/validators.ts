@@ -43,6 +43,8 @@ export type FetchRepoResponse = Infer<typeof fetchRepoResponseValidator>;
 
 export const accountTypeValidator = v.union(v.literal("User"), v.literal("Organization"));
 
+export type AccountType = Infer<typeof accountTypeValidator>;
+
 export const githubInstallationValidator = v.object({
   installationId: v.number(),
   suspended: v.optional(v.boolean()),
@@ -52,13 +54,14 @@ export const githubInstallationValidator = v.object({
   repoSelectionAll: v.boolean(),
   accountId: v.optional(v.number()),
   accountName: v.optional(v.nullable(v.string())),
+  accountAvatarUrl: v.optional(v.string()),
   accountType: v.optional(accountTypeValidator)
 });
 
 export type GithubInstallation = Infer<typeof githubInstallationValidator>;
 
 export const githubUserIntegrationValidator = v.object({
-  userId: v.string(),
+  externalUserId: v.string(),
   installationId: v.number()
 });
 

@@ -46,7 +46,6 @@ export const SignInButton = () => {
 };
 
 const AvatarMenu = () => {
-  // const user = useQuery(api.auth.queries.getUser);
   const { data } = authClient.useSession();
   const navigate = useNavigate();
 
@@ -70,7 +69,7 @@ const AvatarMenu = () => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link to="/settings/account">
+            <Link to="/settings/integrations">
               <Settings className="size-4" />
               {m.settings_title()}
             </Link>

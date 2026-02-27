@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 import { Navbar } from "@/components/navbar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { getLocale } from "@/i18n/_generated/runtime";
 import { getAuth } from "@/lib/auth-server";
 import { ConvexProvider } from "@/lib/convex";
@@ -50,16 +51,18 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <ConvexProvider from={Route.id}>
-      <RootDocument>
-        <main className="bg-background relative flex min-h-svh flex-col">
-          <Navbar />
-          <div className="relative flex flex-1 flex-col p-4 has-[main]:p-0">
-            <Outlet />
-          </div>
-        </main>
+      <TooltipProvider>
+        <RootDocument>
+          <main className="bg-background relative flex min-h-svh flex-col">
+            <Navbar />
+            <div className="relative flex flex-1 flex-col p-4 has-[main]:p-0">
+              <Outlet />
+            </div>
+          </main>
 
-        <Toaster />
-      </RootDocument>
+          <Toaster />
+        </RootDocument>
+      </TooltipProvider>
     </ConvexProvider>
   );
 }

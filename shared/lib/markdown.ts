@@ -19,14 +19,16 @@ export const baseUrlHtmlExtension = (baseUrl: string): MarkedExtension => ({
   walkTokens(token) {
     if (token.type === "html" && typeof token.text === "string") {
       token.text = token.text.replace(/(src|href|srcset)=["']([^"']+)["']/g, (match, attr, url) => {
+        const srcRaw = attr === "src" ? "?raw=true" : "";
+
         // Ignore absolute URLs and anchors
         if (/^https?:\/\//.test(url) || url.startsWith("#")) {
-          return match;
+          return `${attr}="${url}${srcRaw}"`;
         }
 
         const cleanPath = url.startsWith("/") ? url.slice(1) : url;
         const absolute = new URL(cleanPath, baseUrl).href;
-        return `${attr}="${absolute}"`;
+        return `${attr}="${absolute}${srcRaw}"`;
       });
     }
   }
@@ -71,8 +73,9 @@ export const parseRemoteMarkdown = async (
   const markdown = await response.text();
 
   // Check if the markdown is actually a sub-markdown file (e.g., README.md that points to another markdown file)
+  const isOneLiner = markdown.trim().split("\n").length === 1;
   const isSubMarkdown = markdown.trim().endsWith(".md");
-  if (isSubMarkdown) {
+  if (isOneLiner && isSubMarkdown) {
     const subMarkdownUrl = new URL(markdown.trim(), baseUrl).href;
     return await parseRemoteMarkdown(subMarkdownUrl, baseUrl, options);
   }
