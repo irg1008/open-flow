@@ -1,3 +1,4 @@
+import {} from "convex-helpers/validators";
 import { Infer, v } from "convex/values";
 
 export const repoValidator = v.object({
@@ -60,9 +61,13 @@ export const githubInstallationValidator = v.object({
 
 export type GithubInstallation = Infer<typeof githubInstallationValidator>;
 
-export const githubUserIntegrationValidator = v.object({
+export const githubUserInstallationValidator = v.object({
   externalUserId: v.string(),
   installationId: v.number()
 });
 
-export type GithubUserIntegration = Infer<typeof githubUserIntegrationValidator>;
+export const githubUserIntegrationValidator = githubUserInstallationValidator.extend({
+  integrationId: v.id("githubIntegration")
+});
+
+export type GithubUserInstallation = Infer<typeof githubUserInstallationValidator>;

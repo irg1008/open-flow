@@ -2,7 +2,7 @@ import {
   AccountType,
   accountTypeValidator,
   GithubInstallation,
-  GithubUserIntegration,
+  GithubUserInstallation,
   Repo
 } from "#/github/validators";
 import { HandlerFunction } from "@octokit/webhooks/types";
@@ -63,7 +63,7 @@ export const mapRepos = (repositories?: EventRepository[]): Repo[] => {
 
 export const getInstallationAdmins = async (
   installation: GithubInstallation
-): Promise<GithubUserIntegration[]> => {
+): Promise<GithubUserInstallation[]> => {
   const { installationId, accountId, accountName, accountType } = installation;
 
   if (!accountId || !accountName) {

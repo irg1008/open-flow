@@ -22,7 +22,7 @@ export const GithubIntegration = () => {
     await navigate({ href: installUrl });
   };
 
-  const githubIntegrations = useQuery(api.github.queries.getUserIntegrations);
+  const githubIntegrations = useQuery(api.github.queries.getUserIntegrationsRepos);
   if (!githubIntegrations) {
     return <Spinner />;
   }

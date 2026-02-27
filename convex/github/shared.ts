@@ -1,4 +1,4 @@
-import { Doc, Id } from "#/_generated/dataModel";
+import { Doc } from "#/_generated/dataModel";
 import { MutationCtx, QueryCtx } from "#/_generated/server";
 import { getAuth } from "#/auth";
 import { Repo } from "./validators";
@@ -25,31 +25,14 @@ export const upsertRepoDetail = async (ctx: MutationCtx, data: Repo) => {
   return await ctx.db.insert("repoDetail", data);
 };
 
-export const getIntegrationByInstallationId = async (ctx: QueryCtx, installationId: number) => {
+export const getIntegration = async (ctx: QueryCtx, installationId: number) => {
   return await ctx.db
     .query("githubIntegration")
     .withIndex("by_installation_id", (q) => q.eq("installationId", installationId))
     .unique();
 };
 
-export const getIntegration = (ctx: QueryCtx, userIntegration: Doc<"githubUserIntegration">) => {
-  return ctx.db
-    .query("githubIntegration")
-    .withIndex("by_installation_id", (q) => q.eq("installationId", userIntegration.installationId))
-    .first();
-};
-
-export const getIntegrationRepos = async (
-  ctx: QueryCtx,
-  integrationId: Id<"githubIntegration">
-) => {
-  return await ctx.db
-    .query("repoDetail")
-    .withIndex("by_integration_id", (q) => q.eq("integrationId", integrationId))
-    .collect();
-};
-
-export const getExternalId = async (ctx: QueryCtx) => {
+export const getExternalUserId = async (ctx: QueryCtx) => {
   const { auth, headers } = await getAuth(ctx);
 
   const accounts = await auth.api.listUserAccounts({ headers });
@@ -65,7 +48,7 @@ export const getExternalId = async (ctx: QueryCtx) => {
   return externalId;
 };
 
-export const getIntegrationUser = async (
+export const getUserIntegration = async (
   ctx: QueryCtx,
   installationId: number,
   externalUserId: string

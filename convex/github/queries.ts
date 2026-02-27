@@ -1,6 +1,8 @@
 import { query } from "#/_generated/server";
 import { authQuery } from "#/lib/functions";
-import { getExternalId, getIntegration, getIntegrationRepos } from "./shared";
+import schema from "#/schema";
+import { stream } from "convex-helpers/server/stream";
+import { getExternalUserId } from "./shared";
 import { repoFullNameValidator } from "./validators";
 
 export const getRepoDetail = query({
@@ -15,26 +17,28 @@ export const getRepoDetail = query({
   }
 });
 
-export const getUserIntegrations = authQuery({
+export const getUserIntegrationsRepos = authQuery({
   handler: async (ctx) => {
-    const externalId = await getExternalId(ctx);
+    const externalUserId = await getExternalUserId(ctx);
 
-    const userIntegrations = await ctx.db
+    const userIntegrations = stream(ctx.db, schema)
       .query("githubUserIntegration")
-      .withIndex("by_external_user_id", (q) => q.eq("externalUserId", externalId))
-      .collect();
+      .withIndex("by_external_user_id", (q) => q.eq("externalUserId", externalUserId));
 
-    return await Promise.all(
-      userIntegrations.map(async (userIntegration) => {
-        const integration = await getIntegration(ctx, userIntegration);
-        if (!integration || integration.suspended) return { ...integration, repoSelection: [] };
+    return userIntegrations
+      .map(async (userIntegration) => {
+        const integration = await ctx.db.get("githubIntegration", userIntegration.integrationId);
 
-        const repos = await getIntegrationRepos(ctx, integration._id);
-        return {
-          ...integration,
-          repoSelection: repos.sort((a, b) => Number(a.private) - Number(b.private))
-        };
+        if (!integration) return null;
+        if (integration.suspended) return { ...integration, repoSelection: [] };
+
+        const repoSelection = await ctx.db
+          .query("repoDetail")
+          .withIndex("by_integration_id", (q) => q.eq("integrationId", integration._id))
+          .collect();
+
+        return { ...integration, repoSelection };
       })
-    );
+      .collect();
   }
 });

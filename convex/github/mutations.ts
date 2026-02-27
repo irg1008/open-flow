@@ -3,10 +3,10 @@ import { v } from "convex/values";
 import { constants } from "shared/constants";
 import { signJWT } from "shared/lib/jws";
 import * as internal from "./shared";
-import { deleteIntegrationUsers, getIntegrationUser } from "./shared";
+import { deleteIntegrationUsers, getUserIntegration } from "./shared";
 import {
   githubInstallationValidator,
-  githubUserIntegrationValidator,
+  githubUserInstallationValidator,
   repoFullNameValidator,
   repoValidator
 } from "./validators";
@@ -58,13 +58,10 @@ export const verifyRepos = internalMutation({
   args: {
     installation: githubInstallationValidator,
     repos: v.array(repoValidator),
-    users: v.optional(v.array(githubUserIntegrationValidator))
+    users: v.optional(v.array(githubUserInstallationValidator))
   },
   handler: async (ctx, { installation, repos, users = [] }) => {
-    const integration = await internal.getIntegrationByInstallationId(
-      ctx,
-      installation.installationId
-    );
+    const integration = await internal.getIntegration(ctx, installation.installationId);
 
     let integrationId = integration?._id;
     if (integrationId) {
@@ -78,7 +75,7 @@ export const verifyRepos = internalMutation({
     }
 
     for (const user of users) {
-      await ctx.db.insert("githubUserIntegration", user);
+      await ctx.db.insert("githubUserIntegration", { ...user, integrationId });
     }
   }
 });
@@ -90,7 +87,7 @@ export const unverifyRepos = internalMutation({
   },
   handler: async (ctx, { installation, repos }) => {
     const { installationId } = installation;
-    const integration = await internal.getIntegrationByInstallationId(ctx, installationId);
+    const integration = await internal.getIntegration(ctx, installationId);
     if (!integration) return null;
 
     await ctx.db.patch("githubIntegration", integration._id, { repoSelectionAll: false });
@@ -104,7 +101,7 @@ export const unverifyRepos = internalMutation({
 export const deleteIntegration = internalMutation({
   args: githubInstallationValidator,
   handler: async (ctx, { installationId }) => {
-    const integration = await internal.getIntegrationByInstallationId(ctx, installationId);
+    const integration = await internal.getIntegration(ctx, installationId);
     if (!integration) return null;
     await ctx.db.delete("githubIntegration", integration._id);
   }
@@ -113,10 +110,7 @@ export const deleteIntegration = internalMutation({
 export const changeSuspensionStatus = internalMutation({
   args: githubInstallationValidator,
   handler: async (ctx, installation) => {
-    const integration = await internal.getIntegrationByInstallationId(
-      ctx,
-      installation.installationId
-    );
+    const integration = await internal.getIntegration(ctx, installation.installationId);
     if (!integration) return null;
     await ctx.db.patch("githubIntegration", integration._id, installation);
   }
@@ -159,7 +153,7 @@ export const updateIntegrationAccountName = internalMutation({
     accountName: v.string()
   },
   handler: async (ctx, { installationId, accountName }) => {
-    const integration = await internal.getIntegrationByInstallationId(ctx, installationId);
+    const integration = await internal.getIntegration(ctx, installationId);
     if (!integration) return null;
     return await ctx.db.patch("githubIntegration", integration._id, { accountName });
   }
@@ -179,18 +173,26 @@ export const markRepoUnaccessible = internalMutation({
 });
 
 export const addIntegrationUser = internalMutation({
-  args: githubUserIntegrationValidator,
+  args: githubUserInstallationValidator,
   handler: async (ctx, { installationId, externalUserId }) => {
-    const userIntegration = await getIntegrationUser(ctx, installationId, externalUserId);
+    const userIntegration = await getUserIntegration(ctx, installationId, externalUserId);
     if (userIntegration) return null;
-    return await ctx.db.insert("githubUserIntegration", { installationId, externalUserId });
+
+    const integration = await internal.getIntegration(ctx, installationId);
+    if (!integration) return null;
+
+    return await ctx.db.insert("githubUserIntegration", {
+      integrationId: integration._id,
+      installationId,
+      externalUserId
+    });
   }
 });
 
 export const deleteIntegrationUser = internalMutation({
-  args: githubUserIntegrationValidator,
+  args: githubUserInstallationValidator,
   handler: async (ctx, { installationId, externalUserId }) => {
-    const userIntegration = await getIntegrationUser(ctx, installationId, externalUserId);
+    const userIntegration = await getUserIntegration(ctx, installationId, externalUserId);
     if (!userIntegration) return null;
     return await ctx.db.delete("githubUserIntegration", userIntegration._id);
   }
@@ -204,8 +206,15 @@ export const replaceIntegrationUsers = internalMutation({
   handler: async (ctx, { installationId, externalUserIds }) => {
     await deleteIntegrationUsers(ctx, installationId);
 
+    const integration = await internal.getIntegration(ctx, installationId);
+    if (!integration) return null;
+
     for (const externalUserId of externalUserIds) {
-      await ctx.db.insert("githubUserIntegration", { installationId, externalUserId });
+      await ctx.db.insert("githubUserIntegration", {
+        integrationId: integration._id,
+        installationId,
+        externalUserId
+      });
     }
   }
 });

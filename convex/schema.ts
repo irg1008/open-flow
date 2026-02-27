@@ -15,7 +15,7 @@ const schema = defineSchema({
 
   repoDetail: defineTable(repoValidator)
     .index("by_external_id", ["externalId"])
-    .index("by_integration_id", ["integrationId"])
+    .index("by_integration_id", ["integrationId", "private"])
     .index("by_full_name", ["ownerLogin", "name"]),
 
   githubIntegration: defineTable(githubInstallationValidator).index("by_installation_id", [
