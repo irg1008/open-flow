@@ -1,7 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { BmcIcon } from "@/components/ui/svgs/bmc";
 import { CreemIcon } from "@/components/ui/svgs/creem";
 import { GithubIcon } from "@/components/ui/svgs/github";
 import { GitlabIcon } from "@/components/ui/svgs/gitlab";
+import { OpenCIcon } from "@/components/ui/svgs/openc";
 import { PatreonIcon } from "@/components/ui/svgs/patreon";
 import { PolarShIcon } from "@/components/ui/svgs/polarSh";
 import { StripeIcon } from "@/components/ui/svgs/stripe";
@@ -32,7 +34,9 @@ const integrations: Integration[] = [
   { name: "polar", label: "Polar", icon: <PolarShIcon />, content: ComingSoon },
   { name: "stripe", label: "Stripe", icon: <StripeIcon />, content: ComingSoon },
   { name: "creem", label: "Creem", icon: <CreemIcon />, content: ComingSoon },
-  { name: "patreon", label: "Patreon", icon: <PatreonIcon />, content: ComingSoon }
+  { name: "patreon", label: "Patreon", icon: <PatreonIcon />, content: ComingSoon },
+  { name: "bmc", label: "Buy Me A Coffee", icon: <BmcIcon />, content: ComingSoon },
+  { name: "open-collective", label: "Open Collective", icon: <OpenCIcon />, content: ComingSoon }
 ];
 
 export function IntegrationsSettings() {
