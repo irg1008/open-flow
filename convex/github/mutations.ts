@@ -5,17 +5,21 @@ import { signJWT } from "shared/lib/jws";
 import * as internal from "./shared";
 import { deleteIntegrationUsers, getUserIntegration } from "./shared";
 import {
-  githubInstallationValidator,
-  githubUserInstallationValidator,
-  repoFullNameValidator,
-  repoValidator
+  vGithubIntegration,
+  vGithubUserIntegrationArgs,
+  vRepoDetail,
+  vRepoFullName,
+  vRepoList
 } from "./validators";
 
+const vVerifyReposArgs = v.object({
+  installation: vGithubIntegration,
+  repos: v.array(vRepoDetail),
+  users: v.optional(v.array(vGithubUserIntegrationArgs))
+});
+
 export const upsertRepoList = internalMutation({
-  args: {
-    name: v.string(),
-    repos: v.array(repoValidator)
-  },
+  args: vRepoList,
   handler: async (ctx, { name, repos }) => {
     const normalizedName = name.trim();
     const data = { name: normalizedName, repos };
@@ -34,7 +38,7 @@ export const upsertRepoList = internalMutation({
 });
 
 export const upsertRepoDetail = internalMutation({
-  args: repoValidator,
+  args: vRepoDetail,
   handler: internal.upsertRepoDetail
 });
 
@@ -55,11 +59,7 @@ export const getInstallAppUrl = authMutation({
 });
 
 export const verifyRepos = internalMutation({
-  args: {
-    installation: githubInstallationValidator,
-    repos: v.array(repoValidator),
-    users: v.optional(v.array(githubUserInstallationValidator))
-  },
+  args: vVerifyReposArgs,
   handler: async (ctx, { installation, repos, users = [] }) => {
     const integration = await internal.getIntegration(ctx, installation.installationId);
 
@@ -81,10 +81,7 @@ export const verifyRepos = internalMutation({
 });
 
 export const unverifyRepos = internalMutation({
-  args: {
-    installation: githubInstallationValidator,
-    repos: v.array(repoValidator)
-  },
+  args: vVerifyReposArgs,
   handler: async (ctx, { installation, repos }) => {
     const { installationId } = installation;
     const integration = await internal.getIntegration(ctx, installationId);
@@ -99,7 +96,7 @@ export const unverifyRepos = internalMutation({
 });
 
 export const deleteIntegration = internalMutation({
-  args: githubInstallationValidator,
+  args: vGithubIntegration,
   handler: async (ctx, { installationId }) => {
     const integration = await internal.getIntegration(ctx, installationId);
     if (!integration) return null;
@@ -108,7 +105,7 @@ export const deleteIntegration = internalMutation({
 });
 
 export const changeSuspensionStatus = internalMutation({
-  args: githubInstallationValidator,
+  args: vGithubIntegration,
   handler: async (ctx, installation) => {
     const integration = await internal.getIntegration(ctx, installation.installationId);
     if (!integration) return null;
@@ -117,41 +114,28 @@ export const changeSuspensionStatus = internalMutation({
 });
 
 export const updateStarCount = internalMutation({
-  args: {
-    externalId: v.number(),
-    starCount: v.number()
-  },
-  handler: async (ctx, { externalId, starCount }) => {
-    return await internal.updateRepoDetail(ctx, externalId, { stargazersCount: starCount });
+  args: vRepoDetail.pick("externalId", "stargazersCount"),
+  handler: async (ctx, { externalId, stargazersCount }) => {
+    return await internal.updateRepoDetail(ctx, externalId, { stargazersCount });
   }
 });
 
 export const updateVisibility = internalMutation({
-  args: {
-    externalId: v.number(),
-    isPrivate: v.boolean()
-  },
-  handler: async (ctx, { externalId, isPrivate }) => {
+  args: vRepoDetail.pick("externalId", "private"),
+  handler: async (ctx, { externalId, private: isPrivate }) => {
     return await internal.updateRepoDetail(ctx, externalId, { private: isPrivate });
   }
 });
 
 export const updateRepoName = internalMutation({
-  args: {
-    externalId: v.number(),
-    name: v.string(),
-    ownerLogin: v.string()
-  },
+  args: vRepoDetail.pick("externalId", "name", "ownerLogin"),
   handler: async (ctx, { externalId, name, ownerLogin }) => {
     return await internal.updateRepoDetail(ctx, externalId, { name, ownerLogin });
   }
 });
 
 export const updateIntegrationAccountName = internalMutation({
-  args: {
-    installationId: v.number(),
-    accountName: v.string()
-  },
+  args: vGithubIntegration.pick("installationId", "accountName"),
   handler: async (ctx, { installationId, accountName }) => {
     const integration = await internal.getIntegration(ctx, installationId);
     if (!integration) return null;
@@ -160,7 +144,7 @@ export const updateIntegrationAccountName = internalMutation({
 });
 
 export const markRepoUnaccessible = internalMutation({
-  args: repoFullNameValidator,
+  args: vRepoFullName,
   handler: async (ctx, args) => {
     const { owner, name } = args;
     const dbRepo = await ctx.db
@@ -173,7 +157,7 @@ export const markRepoUnaccessible = internalMutation({
 });
 
 export const addIntegrationUser = internalMutation({
-  args: githubUserInstallationValidator,
+  args: vGithubUserIntegrationArgs,
   handler: async (ctx, { installationId, externalUserId }) => {
     const userIntegration = await getUserIntegration(ctx, installationId, externalUserId);
     if (userIntegration) return null;
@@ -190,7 +174,7 @@ export const addIntegrationUser = internalMutation({
 });
 
 export const deleteIntegrationUser = internalMutation({
-  args: githubUserInstallationValidator,
+  args: vGithubUserIntegrationArgs,
   handler: async (ctx, { installationId, externalUserId }) => {
     const userIntegration = await getUserIntegration(ctx, installationId, externalUserId);
     if (!userIntegration) return null;
@@ -199,15 +183,14 @@ export const deleteIntegrationUser = internalMutation({
 });
 
 export const replaceIntegrationUsers = internalMutation({
-  args: {
-    installationId: v.number(),
+  args: vGithubIntegration.pick("installationId").extend({
     externalUserIds: v.array(v.string())
-  },
+  }),
   handler: async (ctx, { installationId, externalUserIds }) => {
-    await deleteIntegrationUsers(ctx, installationId);
-
     const integration = await internal.getIntegration(ctx, installationId);
     if (!integration) return null;
+
+    await deleteIntegrationUsers(ctx, installationId);
 
     for (const externalUserId of externalUserIds) {
       await ctx.db.insert("githubUserIntegration", {

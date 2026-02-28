@@ -1,12 +1,11 @@
-import { query } from "#/_generated/server";
-import { authQuery } from "#/lib/functions";
+import { authQuery, query } from "#/lib/functions";
 import schema from "#/schema";
 import { stream } from "convex-helpers/server/stream";
 import { getExternalUserId } from "./shared";
-import { repoFullNameValidator } from "./validators";
+import { vRepoFullName } from "./validators";
 
 export const getRepoDetail = query({
-  args: repoFullNameValidator,
+  args: vRepoFullName,
   handler: async (ctx, args) => {
     const repoDetail = await ctx.db
       .query("repoDetail")

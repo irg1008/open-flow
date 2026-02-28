@@ -1,6 +1,6 @@
 "use client";
 
-import { Repo } from "#/github/validators";
+import { RepoDetail } from "#/github/validators";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -78,7 +78,7 @@ export const ReposSearch = () => {
 };
 
 type ReposSearchResultProps = {
-  result: UseSearchResult<Repo>;
+  result: UseSearchResult<RepoDetail>;
 };
 
 const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
@@ -96,7 +96,7 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
     );
   }
 
-  const handleSelectRepo = async (repo: Repo) => {
+  const handleSelectRepo = async (repo: RepoDetail) => {
     await navigate({ to: `/${repo.ownerLogin}/${repo.name}` });
   };
 

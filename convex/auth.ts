@@ -3,7 +3,7 @@ import { convex } from "@convex-dev/better-auth/plugins";
 import { betterAuth } from "better-auth/minimal";
 import { components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
-import { MutationCtx, QueryCtx } from "./_generated/server";
+import { QueryCtx } from "./_generated/server";
 import authConfig from "./auth.config";
 import { authMutation, authQuery } from "./lib/functions";
 

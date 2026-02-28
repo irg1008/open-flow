@@ -37,6 +37,25 @@
 		"typescript/no-floating-promises": "warn",
 		"typescript/await-thenable": "warn",
 		"eslint/prefer-const": "error",
-		"eslint/no-console": "warn"
+		"eslint/no-console": "warn",
+		"no-restricted-imports": [
+			"error",
+			{
+				"patterns": [
+					{
+						"group": ["*/_generated/server"],
+						"importNames": [
+							"query",
+							"mutation",
+							"action",
+							"internalQuery",
+							"internalMutation",
+							"internalAction"
+						],
+						"message": "Use functions.ts for query, mutation, or action"
+					}
+				]
+			}
+		]
 	}
 }

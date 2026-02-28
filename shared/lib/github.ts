@@ -1,4 +1,4 @@
-import { Repo } from "#/github/validators";
+import { RepoDetail } from "#/github/validators";
 import { Octokit, type RestEndpointMethodTypes } from "@octokit/rest";
 import { format, subDays } from "date-fns";
 import { z } from "zod";
@@ -22,7 +22,7 @@ export type GhRepo = Pick<
   | "topics"
 >;
 
-export const mapGithubRepo = (ghRepo: GhRepo, etag?: string): Repo => ({
+export const mapGithubRepo = (ghRepo: GhRepo, etag?: string): RepoDetail => ({
   externalId: ghRepo.id,
   name: ghRepo.name,
   description: ghRepo.description,
@@ -106,7 +106,7 @@ const listRepos = async (options: ListRepoOptions) => {
   const rateLimitReached = rateLimitRemaining === 0;
   const rateLimitMs = rateLimitReset ? rateLimitReset * 1000 - Date.now() : undefined;
 
-  const repos: Repo[] = data.items.map((ghRepo) => mapGithubRepo(ghRepo));
+  const repos = data.items.map((ghRepo) => mapGithubRepo(ghRepo));
   return { repos, count: data.total_count, rateLimitRemaining, rateLimitReached, rateLimitMs };
 };
 

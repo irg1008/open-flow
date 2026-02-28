@@ -1,9 +1,9 @@
 import {
   AccountType,
-  accountTypeValidator,
-  GithubInstallation,
-  GithubUserInstallation,
-  Repo
+  GithubIntegration,
+  GithubUserIntegrationArgs,
+  RepoDetail,
+  vAccountType
 } from "#/github/validators";
 import { HandlerFunction } from "@octokit/webhooks/types";
 import { validate } from "convex-helpers/validators";
@@ -26,11 +26,11 @@ type EventParameters = Parameters<HandlerFunction<"installation">>[0]["payload"]
 type EventInstallation = EventParameters["installation"];
 type EventRepository = NonNullable<EventParameters["repositories"]>[number];
 
-export const mapGithubInstallation = (installation: EventInstallation): GithubInstallation => {
+export const mapGithubInstallation = (installation: EventInstallation): GithubIntegration => {
   const { account } = installation;
 
   let accountType: AccountType | undefined;
-  if (account && "type" in account && validate(accountTypeValidator, account.type)) {
+  if (account && "type" in account && validate(vAccountType, account.type)) {
     accountType = account.type;
   }
 
@@ -52,7 +52,7 @@ export const mapGithubInstallation = (installation: EventInstallation): GithubIn
   };
 };
 
-export const mapRepos = (repositories?: EventRepository[]): Repo[] => {
+export const mapRepos = (repositories?: EventRepository[]): RepoDetail[] => {
   if (!repositories) return [];
   return repositories.map((repo) => ({
     externalId: repo.id,
@@ -62,8 +62,8 @@ export const mapRepos = (repositories?: EventRepository[]): Repo[] => {
 };
 
 export const getInstallationAdmins = async (
-  installation: GithubInstallation
-): Promise<GithubUserInstallation[]> => {
+  installation: GithubIntegration
+): Promise<GithubUserIntegrationArgs[]> => {
   const { installationId, accountId, accountName, accountType } = installation;
 
   if (!accountId || !accountName) {

@@ -69,14 +69,20 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
   // 4. TRACK STARS COUNT
   webhooks.on("star.created", async ({ payload }) => {
     const externalId = payload.repository.id;
-    const starCount = payload.repository.stargazers_count;
-    await ctx.runMutation(internal.github.mutations.updateStarCount, { externalId, starCount });
+    const stargazersCount = payload.repository.stargazers_count;
+    await ctx.runMutation(internal.github.mutations.updateStarCount, {
+      externalId,
+      stargazersCount
+    });
   });
 
   webhooks.on("star.deleted", async ({ payload }) => {
     const externalId = payload.repository.id;
-    const starCount = payload.repository.stargazers_count;
-    await ctx.runMutation(internal.github.mutations.updateStarCount, { externalId, starCount });
+    const stargazersCount = payload.repository.stargazers_count;
+    await ctx.runMutation(internal.github.mutations.updateStarCount, {
+      externalId,
+      stargazersCount
+    });
   });
 
   // 5. TRACK VISIBILITY CHANGES
@@ -84,7 +90,7 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
     const externalId = payload.repository.id;
     await ctx.runMutation(internal.github.mutations.updateVisibility, {
       externalId,
-      isPrivate: true
+      private: true
     });
   });
 
@@ -92,7 +98,7 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
     const externalId = payload.repository.id;
     await ctx.runMutation(internal.github.mutations.updateVisibility, {
       externalId,
-      isPrivate: false
+      private: false
     });
   });
 
