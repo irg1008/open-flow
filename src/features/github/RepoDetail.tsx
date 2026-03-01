@@ -24,7 +24,7 @@ export const RepoDetail = (props: RepoFullName) => {
             </a>
           </Button>
 
-          <RepoDetailMarkdown className="mx-auto max-w-4xl" repo={repo} expandible expanded />
+          <RepoDetailMarkdown className="mx-auto max-w-4xl" repo={repo} expandible />
         </>
       )}
     </section>
