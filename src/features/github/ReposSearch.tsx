@@ -49,7 +49,7 @@ export const ReposSearch = () => {
 
   return (
     <>
-      <InputGroup className="cursor-text" onClick={() => setOpen(true)}>
+      <InputGroup className="bg-card" onClick={() => setOpen(true)}>
         <InputGroupAddon align="inline-start">
           <SearchIcon className="size-4" />
         </InputGroupAddon>

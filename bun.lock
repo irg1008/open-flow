@@ -11,6 +11,7 @@
         "@convex-dev/react-query": "^0.0.0-alpha.8",
         "@fontsource-variable/fira-code": "^5.2.7",
         "@fontsource-variable/inter": "^5.2.8",
+        "@fontsource-variable/space-grotesk": "^5.2.10",
         "@octokit/rest": "^22.0.1",
         "@octokit/webhooks-methods": "^6.0.0",
         "@tanstack/react-query": "^5.90.12",
@@ -247,6 +248,8 @@
     "@fontsource-variable/fira-code": ["@fontsource-variable/fira-code@5.2.7", "", {}, "sha512-J2bxN7fz5rd8WpQYyau4o19WqTzxoTqaNj9jhsv4p21GSu1Rf34tbqsxqjyDCR+wDMHM3SajyFqtq+5uvRUQ7w=="],
 
     "@fontsource-variable/inter": ["@fontsource-variable/inter@5.2.8", "", {}, "sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ=="],
+
+    "@fontsource-variable/space-grotesk": ["@fontsource-variable/space-grotesk@5.2.10", "", {}, "sha512-yJQO/o35/hAP3CFnpdFTwQku2yzJOae2HIpBmqkOVoxhhXJaQP3g+b6Jrz7u+eI7A5ZdCIf88uMWpBJdFiGr5w=="],
 
     "@hexagon/base64": ["@hexagon/base64@1.1.28", "", {}, "sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw=="],
 

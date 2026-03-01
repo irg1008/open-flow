@@ -6,6 +6,7 @@
 
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/fira-code";
+@import "@fontsource-variable/space-grotesk";
 
 @custom-variant dark (&:is(.dark *));
 @custom-variant fixed (&:is(.layout-fixed *));
@@ -67,7 +68,7 @@
 	--spacing: 0.25rem;
 
 	--breakpoint-3xl: 1600px;
-	--font-display: Space Grotesk, serif;
+	--font-display: Space Grotesk Variable, serif;
 	--font-serif: Source Serif 4, serif;
 	--font-sans: Inter Variable, sans-serif;
 	--font-mono: Fira Code Variable, Source Code Pro, monospace;
@@ -128,7 +129,7 @@
 	--shadow-2xl: 0px 6px 15px 0px hsl(0 0% 0% / 0.75);
 
 	--breakpoint-3xl: 1600px;
-	--font-display: Space Grotesk, serif;
+	--font-display: Space Grotesk Variable, serif;
 	--font-serif: Source Serif 4, serif;
 	--font-sans: Inter Variable, sans-serif;
 	--font-mono: Fira Code Variable, Source Code Pro, monospace;
