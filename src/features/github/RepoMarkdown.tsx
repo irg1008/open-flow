@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useReactQuery } from "@/lib/react-query";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { parseRemoteGithubMarkdown } from "shared/lib/markdown";
 
 const fetchRepoMarkdown = async (repo: RepoDetail) => {
@@ -39,16 +39,9 @@ export const RepoDetailMarkdown = ({
   });
 
   const [expanded, setExpanded] = useState(initialExpanded ?? false);
-  const [isOverflowing, setIsOverflowing] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
 
-  const shouldShowReadMore = expandible && !expanded && isOverflowing;
-
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!expandible || !el || !markdownContent) return;
-    setIsOverflowing(el.scrollHeight > 200);
-  }, [markdownContent, expandible]);
+  let shouldShowReadMore = expandible && !expanded;
+  shouldShowReadMore &&= !!markdownContent && markdownContent.length > 2500;
 
   useEffect(() => {
     setExpanded(initialExpanded ?? false);
@@ -58,11 +51,7 @@ export const RepoDetailMarkdown = ({
     markdownContent && (
       <Card {...props}>
         <CardContent className={cn("relative", shouldShowReadMore && "max-h-96 overflow-hidden")}>
-          <section
-            ref={contentRef}
-            className="typography"
-            dangerouslySetInnerHTML={{ __html: markdownContent }}
-          />
+          <section className="typography" dangerouslySetInnerHTML={{ __html: markdownContent }} />
 
           {shouldShowReadMore && (
             <aside className="from-card pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-t to-transparent" />
