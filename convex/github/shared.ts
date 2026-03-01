@@ -1,4 +1,4 @@
-import { Doc } from "#/_generated/dataModel";
+import { Doc, Id } from "#/_generated/dataModel";
 import { MutationCtx, QueryCtx } from "#/_generated/server";
 import { getAuth } from "#/auth";
 import { RepoDetail } from "./validators";
@@ -64,12 +64,28 @@ export const getUserIntegration = async (
     .unique();
 };
 
-export const deleteIntegrationUsers = async (ctx: MutationCtx, installationId: number) => {
+export const deleteIntegrationUsers = async (
+  ctx: MutationCtx,
+  integrationId: Id<"githubIntegration">
+) => {
   const userIntegrations = ctx.db
     .query("githubUserIntegration")
-    .withIndex("by_installation_external_user", (q) => q.eq("installationId", installationId));
+    .withIndex("by_integration_id", (q) => q.eq("integrationId", integrationId));
 
   for await (const userIntegration of userIntegrations) {
     await ctx.db.delete("githubUserIntegration", userIntegration._id);
+  }
+};
+
+export const unlinkIntegrationRepos = async (
+  ctx: MutationCtx,
+  integrationId: Id<"githubIntegration">
+) => {
+  const repoDetails = ctx.db
+    .query("repoDetail")
+    .withIndex("by_integration_id", (q) => q.eq("integrationId", integrationId));
+
+  for await (const repo of repoDetails) {
+    await ctx.db.patch("repoDetail", repo._id, { integrationId: undefined });
   }
 };

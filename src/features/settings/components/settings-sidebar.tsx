@@ -68,7 +68,7 @@ export function SettingsSidebar({ children }: PropsWithChildren) {
         </SidebarContent>
       </Sidebar>
 
-      <SidebarInset className="pb-4">
+      <SidebarInset className="overflow-x-auto pb-4">
         <header className="flex w-full items-center gap-1 p-4 lg:gap-2">
           <SidebarTrigger className="-ml-1" />
 

@@ -3,7 +3,7 @@ import { v } from "convex/values";
 import { constants } from "shared/constants";
 import { signJWT } from "shared/lib/jws";
 import * as internal from "./shared";
-import { deleteIntegrationUsers, getUserIntegration } from "./shared";
+import { deleteIntegrationUsers, getUserIntegration, unlinkIntegrationRepos } from "./shared";
 import {
   vGithubIntegration,
   vGithubUserIntegrationArgs,
@@ -70,6 +70,10 @@ export const verifyRepos = internalMutation({
       integrationId = await ctx.db.insert("githubIntegration", installation);
     }
 
+    // Unlink if change from all to selected, then link selected
+    if (integration?.repoSelectionAll && !installation.repoSelectionAll) {
+      await unlinkIntegrationRepos(ctx, integration._id);
+    }
     for (const repo of repos) {
       await internal.upsertRepoDetail(ctx, { ...repo, integrationId });
     }
@@ -190,7 +194,7 @@ export const replaceIntegrationUsers = internalMutation({
     const integration = await internal.getIntegration(ctx, installationId);
     if (!integration) return null;
 
-    await deleteIntegrationUsers(ctx, installationId);
+    await deleteIntegrationUsers(ctx, integration._id);
 
     for (const externalUserId of externalUserIds) {
       await ctx.db.insert("githubUserIntegration", {

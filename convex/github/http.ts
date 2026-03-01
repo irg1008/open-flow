@@ -29,6 +29,7 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
   webhooks.on("installation_repositories.added", async ({ payload }) => {
     const installation = mapGithubInstallation(payload.installation);
     const repos = mapRepos(payload.repositories_added);
+    console.log("added", payload);
     await ctx.runMutation(internal.github.mutations.verifyRepos, { installation, repos });
   });
 
@@ -41,6 +42,7 @@ const cerateWebhookHandler = (ctx: GenericActionCtx<DataModel>) => {
   webhooks.on("installation_repositories.removed", async ({ payload }) => {
     const installation = mapGithubInstallation(payload.installation);
     const repos = mapRepos(payload.repositories_removed);
+    console.log("removed", payload);
     await ctx.runMutation(internal.github.mutations.unverifyRepos, { installation, repos });
   });
 
