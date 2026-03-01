@@ -288,7 +288,7 @@
 	}
 
 	img {
-		@apply h-[attr(height_px,auto)] w-[attr(width_px,auto)];
+		@apply max-h-[attr(height_px,auto)] max-w-full box-content;
 	}
 
 	div,
