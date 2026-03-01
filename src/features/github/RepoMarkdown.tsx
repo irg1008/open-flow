@@ -2,10 +2,10 @@ import type { Doc } from "#/_generated/dataModel";
 import { RepoDetail } from "#/github/validators";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { parseRemoteGithubMarkdown } from "@/lib/markdown";
 import { useReactQuery } from "@/lib/react-query";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { parseRemoteGithubMarkdown } from "shared/lib/markdown";
 
 const fetchRepoMarkdown = async (repo: RepoDetail) => {
   if (!repo.branch || !repo.ownerLogin) return;
