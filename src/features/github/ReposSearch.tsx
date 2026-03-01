@@ -1,5 +1,3 @@
-"use client";
-
 import { RepoDetail } from "#/github/validators";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -69,7 +67,7 @@ export const ReposSearch = () => {
             placeholder={m.repos_search_placeholder()}
           />
 
-          <CommandList>
+          <CommandList className="min-h-17">
             <ReposSearchResult result={result} />
           </CommandList>
         </Command>
@@ -85,6 +83,10 @@ type ReposSearchResultProps = {
 const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
   const navigate = useNavigate();
 
+  const handleSelectRepo = async (repo: RepoDetail) => {
+    await navigate({ to: `/${repo.ownerLogin}/${repo.name}` });
+  };
+
   if (result.error) {
     return (
       <CommandGroup>
@@ -96,10 +98,6 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
       </CommandGroup>
     );
   }
-
-  const handleSelectRepo = async (repo: RepoDetail) => {
-    await navigate({ to: `/${repo.ownerLogin}/${repo.name}` });
-  };
 
   if (result.data?.length) {
     return (
@@ -143,9 +141,9 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
 
   if (result.isLoading || result.isFetching) {
     return (
-      <div className="flex items-center justify-center p-4">
+      <CommandEmpty>
         <Spinner />
-      </div>
+      </CommandEmpty>
     );
   }
 

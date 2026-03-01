@@ -53,6 +53,11 @@
 							"internalAction"
 						],
 						"message": "Use functions.ts for query, mutation, or action"
+					},
+					{
+						"group": ["convex/react", "convex-helpers/react"],
+						"importNames": ["useQuery", "useMutation", "useAction"],
+						"message": "Use convex.tsx hooks instead of convex/react hooks"
 					}
 				]
 			}

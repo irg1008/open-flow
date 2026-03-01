@@ -34,7 +34,7 @@ export type RepoDetail = Infer<typeof vRepoDetail>;
 
 export const vRepoList = v.object({
   name: v.string(),
-  repos: v.array(vRepoDetail)
+  repoDetailIds: v.array(v.id("repoDetail"))
 });
 export type RepoList = Infer<typeof vRepoList>;
 

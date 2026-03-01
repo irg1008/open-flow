@@ -1,3 +1,4 @@
+// oxlint-disable no-restricted-imports
 import { api } from "#/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";

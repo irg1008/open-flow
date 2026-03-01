@@ -1,15 +1,16 @@
 import { authMutation, internalMutation } from "#/lib/functions";
+import { asyncMap } from "convex-helpers";
 import { v } from "convex/values";
 import { constants } from "shared/constants";
 import { signJWT } from "shared/lib/jws";
 import * as internal from "./shared";
 import { deleteIntegrationUsers, getUserIntegration, unlinkIntegrationRepos } from "./shared";
 import {
+  RepoList,
   vGithubIntegration,
   vGithubUserIntegrationArgs,
   vRepoDetail,
-  vRepoFullName,
-  vRepoList
+  vRepoFullName
 } from "./validators";
 
 const vVerifyReposArgs = v.object({
@@ -19,14 +20,17 @@ const vVerifyReposArgs = v.object({
 });
 
 export const upsertRepoList = internalMutation({
-  args: vRepoList,
+  args: {
+    name: v.string(),
+    repos: v.array(vRepoDetail)
+  },
   handler: async (ctx, { name, repos }) => {
-    const normalizedName = name.trim();
-    const data = { name: normalizedName, repos };
+    const repoDetailIds = await asyncMap(repos, (repo) => internal.upsertRepoDetail(ctx, repo));
 
+    const data: RepoList = { name, repoDetailIds };
     const existingList = await ctx.db
       .query("repoList")
-      .withIndex("by_name", (q) => q.eq("name", normalizedName))
+      .withIndex("by_name", (q) => q.eq("name", name))
       .unique();
 
     if (!existingList) {

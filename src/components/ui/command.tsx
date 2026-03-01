@@ -1,5 +1,3 @@
-"use client";
-
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 import * as React from "react";
@@ -59,7 +57,6 @@ function CommandDialog({
 
 function CommandInput({
   className,
-  children,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
@@ -73,7 +70,6 @@ function CommandInput({
         )}
         {...props}
       />
-      {children}
     </div>
   );
 }

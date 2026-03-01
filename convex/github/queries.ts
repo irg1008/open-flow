@@ -1,6 +1,8 @@
 import { authQuery, query } from "#/lib/functions";
 import schema from "#/schema";
+import { asyncMap } from "convex-helpers";
 import { stream } from "convex-helpers/server/stream";
+import { v } from "convex/values";
 import { getExternalUserId } from "./shared";
 import { vRepoFullName } from "./validators";
 
@@ -40,5 +42,24 @@ export const getUserIntegrationsRepos = authQuery({
         return { ...integration, repoSelection };
       })
       .collect();
+  }
+});
+
+export const getRepoList = query({
+  args: {
+    listName: v.string()
+  },
+  handler: async (ctx, args) => {
+    const repoList = await ctx.db
+      .query("repoList")
+      .withIndex("by_name", (q) => q.eq("name", args.listName))
+      .unique();
+    if (!repoList) return null;
+
+    const repoDetails = await asyncMap(repoList.repoDetailIds, (repoDetailId) =>
+      ctx.db.get("repoDetail", repoDetailId)
+    );
+
+    return { ...repoList, repoDetails };
   }
 });
