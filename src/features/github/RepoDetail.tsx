@@ -13,7 +13,7 @@ export const RepoDetail = (props: RepoFullName) => {
   }
 
   return (
-    <section className="container">
+    <section className="container scheme-only-light">
       {isLoading || !repo ? (
         <Spinner />
       ) : (
@@ -24,7 +24,7 @@ export const RepoDetail = (props: RepoFullName) => {
             </a>
           </Button>
 
-          <RepoDetailMarkdown repo={repo} />
+          <RepoDetailMarkdown repo={repo} expandible />
         </>
       )}
     </section>

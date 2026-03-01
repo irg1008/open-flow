@@ -44,6 +44,25 @@ const highlightTheme = {
   }
 };
 
+// Picture source handling
+
+export const setNeutralPictureSource = (sourceEl: Element) => {
+  const theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+  const sourceTheme =
+    sourceEl.getAttribute("media") === "(prefers-color-scheme: dark)" ? "dark" : "light";
+
+  sourceEl.setAttribute("data-theme", sourceTheme);
+  sourceEl.setAttribute("media", theme === sourceTheme ? "all" : "not all");
+};
+
+const updatePictureSource = (theme: AppTheme) => {
+  const themeMedia = document.querySelectorAll(`source[data-theme="${theme}"]`);
+  const nonThemeMedia = document.querySelectorAll(`source:not([data-theme="${theme}"])`);
+
+  themeMedia.forEach((source) => source.setAttribute("media", "all"));
+  nonThemeMedia.forEach((source) => source.setAttribute("media", "not all"));
+};
+
 // Client
 
 const getSystemTheme = () => {
@@ -59,6 +78,7 @@ const setRootTheme = (theme: UserTheme) => {
   root.classList.add(newTheme);
 
   highlightTheme.update(newTheme);
+  updatePictureSource(newTheme);
 };
 
 const setupPreferredListener = () => {

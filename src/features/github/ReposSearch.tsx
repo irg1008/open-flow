@@ -40,10 +40,11 @@ export const ReposSearch = () => {
     return repos;
   }, []);
 
-  const results = useSearch({
+  const result = useSearch({
     searchKey: "searchRepos",
     searchFn: searchRepos,
-    debounceMs: 700
+    debounceMs: 700,
+    retry: false
   });
 
   return (
@@ -53,7 +54,7 @@ export const ReposSearch = () => {
           <SearchIcon className="size-4" />
         </InputGroupAddon>
         <InputGroupInput
-          value={results.query}
+          value={result.query}
           readOnly
           placeholder={m.repos_search_placeholder()}
           onFocus={() => setOpen(true)}
@@ -63,13 +64,13 @@ export const ReposSearch = () => {
       <CommandDialog open={open} onOpenChange={setOpen} showCloseButton={false}>
         <Command loop shouldFilter={false}>
           <CommandInput
-            value={results.query}
-            onValueChange={results.setQuery}
+            value={result.query}
+            onValueChange={result.setQuery}
             placeholder={m.repos_search_placeholder()}
           />
 
           <CommandList>
-            <ReposSearchResult result={results} />
+            <ReposSearchResult result={result} />
           </CommandList>
         </Command>
       </CommandDialog>

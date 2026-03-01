@@ -1,3 +1,4 @@
+import { setNeutralPictureSource } from "@/lib/theme";
 import DOMPurify from "dompurify";
 import hljs from "highlight.js";
 import { Marked, type MarkedExtension, type MarkedOptions } from "marked"; // Import Class 'Marked'
@@ -16,26 +17,35 @@ export const highlightExtension = markedHighlight({
 
 export const alertsExtension = markedAlert({ className: "alert" });
 
+const shouldAddRawQuery = (attr: string, url: string) => {
+  if (attr !== "src") return false;
+  const excludedDomains = ["img.shields.io", "badgen.net"];
+  return !excludedDomains.some((domain) => url.includes(domain));
+};
+
 export const baseUrlHtmlExtension = (baseUrl: string): MarkedExtension => ({
   walkTokens(token) {
     if (token.type === "html" && typeof token.text === "string") {
-      token.text = token.text.replace(/(src|href|srcset)=["']([^"']+)["']/g, (match, attr, url) => {
-        const srcRaw = attr === "src" ? "?raw=true" : "";
+      token.text = token.text.replace(
+        /(src|href|srcset)=["']([^"']+)["']/g,
+        (_match, attr, url) => {
+          const srcRaw = shouldAddRawQuery(attr, url) ? "?raw=true" : "";
 
-        // Ignore absolute URLs and anchors
-        if (/^https?:\/\//.test(url) || url.startsWith("#")) {
-          return `${attr}="${url}${srcRaw}"`;
+          // Ignore absolute URLs and anchors
+          if (/^https?:\/\//.test(url) || url.startsWith("#")) {
+            return `${attr}="${url}${srcRaw}"`;
+          }
+
+          const cleanPath = url.startsWith("/") ? url.slice(1) : url;
+          const absolute = new URL(cleanPath, baseUrl).href;
+          return `${attr}="${absolute}${srcRaw}"`;
         }
-
-        const cleanPath = url.startsWith("/") ? url.slice(1) : url;
-        const absolute = new URL(cleanPath, baseUrl).href;
-        return `${attr}="${absolute}${srcRaw}"`;
-      });
+      );
     }
   }
 });
 
-export const externalUrlHook = () => {
+export const sanitizeHtml = (html: string) => {
   DOMPurify.addHook("afterSanitizeAttributes", (node) => {
     if (node.tagName === "A") {
       const href = node.getAttribute("href");
@@ -45,7 +55,13 @@ export const externalUrlHook = () => {
         node.setAttribute("rel", "noopener noreferrer");
       }
     }
+
+    if (node.tagName === "SOURCE") {
+      setNeutralPictureSource(node);
+    }
   });
+
+  return DOMPurify.sanitize(html);
 };
 
 export const parseMarkdown = async (markdown: string, baseUrl: string, options?: MarkedOptions) => {
@@ -55,12 +71,9 @@ export const parseMarkdown = async (markdown: string, baseUrl: string, options?:
     alertsExtension,
     highlightExtension
   );
+
   const html = await marked.parse(markdown, options);
-
-  externalUrlHook();
-  const sanitized = DOMPurify.sanitize(html);
-
-  return sanitized;
+  return sanitizeHtml(html);
 };
 
 export const parseRemoteMarkdown = async (

@@ -15,5 +15,11 @@ export const Route = createFileRoute("/")({
 });
 
 function IndexPage() {
-  return <ReposSearch />;
+  return (
+    <>
+      <section className="container">
+        <ReposSearch />
+      </section>
+    </>
+  );
 }

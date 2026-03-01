@@ -1,22 +1,21 @@
 import { useReactQuery } from "@/lib/react-query";
-import { keepPreviousData } from "@tanstack/react-query";
+import { keepPreviousData, UndefinedInitialDataOptions } from "@tanstack/react-query";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 
 type UseAsyncSearchOptions<TData> = {
   debounceMs?: number;
-  retryDelay?: number;
   searchKey: string;
-  staleTime?: number;
   searchFn: (query: string) => Promise<TData[]>;
-};
+} & Omit<UndefinedInitialDataOptions<TData[], unknown, TData[]>, "queryKey" | "queryFn">;
 
 export function useSearch<TData>({
+  searchFn,
+  searchKey,
   debounceMs = 500,
   retryDelay = 20_000,
   staleTime = 2 * 60_000,
-  searchFn,
-  searchKey
+  ...options
 }: UseAsyncSearchOptions<TData>) {
   const [query, setQuery] = useState("");
   const trimmedQuery = query.trim();
@@ -25,6 +24,7 @@ export function useSearch<TData>({
   const isDebouncing = debounceQuery !== trimmedQuery;
 
   const queryResult = useReactQuery({
+    ...options,
     retryDelay,
     staleTime,
     queryKey: [searchKey, debounceQuery],

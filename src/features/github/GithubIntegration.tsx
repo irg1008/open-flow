@@ -101,6 +101,9 @@ export const GithubIntegration = () => {
                     {integration.suspended && (
                       <Badge variant="outline">{m.settings_integrations_suspended()}</Badge>
                     )}
+                    {integration.repoSelectionAll && (
+                      <Badge variant="ghost">{m.settings_integrations_all_repos()}</Badge>
+                    )}
                   </header>
 
                   {integration.repoSelection.length > 0 && (

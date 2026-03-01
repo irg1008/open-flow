@@ -57,7 +57,7 @@ export const RepoDetailMarkdown = ({
   return (
     markdownContent && (
       <Card {...props}>
-        <CardContent className={cn("relative", shouldShowReadMore && "max-h-80 overflow-hidden")}>
+        <CardContent className={cn("relative", shouldShowReadMore && "max-h-96 overflow-hidden")}>
           <section
             ref={contentRef}
             className="typography"

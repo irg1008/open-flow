@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { clearInterval, setInterval } from "worker-timers";
 
 const spinners = {
   dots: {

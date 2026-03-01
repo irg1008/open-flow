@@ -70,15 +70,20 @@ export type ListRepoOptions = {
   minStars?: number;
   pastDays?: number;
   token?: string;
+  publicOnly?: boolean;
 };
 
 const listRepos = async (options: ListRepoOptions) => {
-  const { query, limit = 20, minStars = 500, pastDays, token } = options;
+  const { query, limit = 20, minStars = 500, publicOnly = true, pastDays, token } = options;
 
   const safeLimit = Math.min(100, Math.max(1, limit));
   const headers = createHeaders(token);
 
   const queryParts = [`stars:>=${minStars}`];
+
+  if (publicOnly) {
+    queryParts.push("is:public");
+  }
 
   if (query) {
     queryParts.push(`${query} in:name,description,owner`);
@@ -89,25 +94,45 @@ const listRepos = async (options: ListRepoOptions) => {
     queryParts.push(`created:>=${createdAfterDate}`);
   }
 
-  const { data, headers: responseHeaders } = await octokit.search.repos({
-    q: queryParts.join(" "),
-    sort: "stars",
-    order: "desc",
-    per_page: safeLimit,
-    page: 1,
-    headers
-  });
+  try {
+    const {
+      data,
+      status,
+      headers: responseHeaders
+    } = await octokit.search.repos({
+      q: queryParts.join(" "),
+      sort: "stars",
+      order: "desc",
+      per_page: safeLimit,
+      page: 1,
+      headers
+    });
 
-  const { "x-ratelimit-reset": _xRateLimitReset, "x-ratelimit-remaining": _xRateLimitRemaining } =
-    responseHeaders;
+    const { "x-ratelimit-reset": _xRateLimitReset, "x-ratelimit-remaining": _xRateLimitRemaining } =
+      responseHeaders;
+    const rateLimitReset = _xRateLimitReset ? parseInt(_xRateLimitReset, 10) : undefined;
+    const rateLimitRemaining = _xRateLimitRemaining
+      ? parseInt(_xRateLimitRemaining, 10)
+      : undefined;
+    const rateLimitReached = rateLimitRemaining === 0;
+    const rateLimitMs = rateLimitReset ? rateLimitReset * 1000 - Date.now() : undefined;
 
-  const rateLimitReset = _xRateLimitReset ? parseInt(_xRateLimitReset, 10) : undefined;
-  const rateLimitRemaining = _xRateLimitRemaining ? parseInt(_xRateLimitRemaining, 10) : undefined;
-  const rateLimitReached = rateLimitRemaining === 0;
-  const rateLimitMs = rateLimitReset ? rateLimitReset * 1000 - Date.now() : undefined;
-
-  const repos = data.items.map((ghRepo) => mapGithubRepo(ghRepo));
-  return { repos, count: data.total_count, rateLimitRemaining, rateLimitReached, rateLimitMs };
+    const repos = data.items.map((ghRepo) => mapGithubRepo(ghRepo));
+    return {
+      repos,
+      status,
+      count: data.total_count,
+      rateLimitRemaining,
+      rateLimitReached,
+      rateLimitMs
+    };
+  } catch (error) {
+    const httpError = httpErrorSchema.safeParse(error);
+    if (!httpError.success) throw error;
+    const { status } = httpError.data.response;
+    if (status === 403) throw new Error("GitHub API rate limit exceeded. Please try again later.");
+    return { status, repos: [] };
+  }
 };
 
 export type GetRepoOptions = {

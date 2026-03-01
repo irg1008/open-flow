@@ -29,7 +29,8 @@ export const getUserIntegrationsRepos = authQuery({
         const integration = await ctx.db.get("githubIntegration", userIntegration.integrationId);
 
         if (!integration) return null;
-        if (integration.suspended) return { ...integration, repoSelection: [] };
+        if (integration.suspended || integration.repoSelectionAll)
+          return { ...integration, repoSelection: [] };
 
         const repoSelection = await ctx.db
           .query("repoDetail")

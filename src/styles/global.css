@@ -222,6 +222,10 @@
 		@apply text-sm leading-none font-medium;
 	}
 
+	img {
+		@apply h-[attr(height_px,auto)] w-[attr(width_px,auto)];
+	}
+
 	div,
 	p {
 		img {
@@ -273,8 +277,12 @@
 		}
 	}
 
-	table {
+	table:not([align]) {
 		@apply w-full;
+	}
+
+	table[align="center"] {
+		@apply mx-auto;
 	}
 
 	tr {
