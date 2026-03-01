@@ -47,6 +47,9 @@ const highlightTheme = {
 // Picture source handling
 
 export const setNeutralPictureSource = (sourceEl: Element) => {
+  const alreadySet = sourceEl.getAttribute("data-theme");
+  if (alreadySet) return;
+
   const theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
   const sourceTheme =
     sourceEl.getAttribute("media") === "(prefers-color-scheme: dark)" ? "dark" : "light";
