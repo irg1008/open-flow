@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
 import { m } from "@/i18n/_generated/messages";
-import { api, useQuery } from "@/lib/convex";
+import { api, useStateQuery } from "@/lib/convex";
 import { Link } from "@tanstack/react-router";
 import { LayoutListIcon, StarIcon } from "lucide-react";
 import { RepoListsNames } from "shared/lib/github";
@@ -26,10 +26,11 @@ import { RepoListsNames } from "shared/lib/github";
 type RepoListProps = {
   name: RepoListsNames;
   title: string;
+  placeholderLength?: number;
 };
 
-export const RepoList = (props: RepoListProps) => {
-  const { isPending, data } = useQuery(api.github.queries.getRepoList, { listName: props.name });
+export const RepoList = ({ name, title, placeholderLength = 10 }: RepoListProps) => {
+  const { isPending, data } = useStateQuery(api.github.queries.getRepoList, { listName: name });
 
   if (!isPending && !data) {
     return (
@@ -40,7 +41,7 @@ export const RepoList = (props: RepoListProps) => {
           </EmptyMedia>
           <EmptyTitle>{m.repos_list_not_found_title()}</EmptyTitle>
           <EmptyDescription>
-            {m.repos_list_not_found_description()} ({props.name})
+            {m.repos_list_not_found_description()} ({title})
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
@@ -48,13 +49,13 @@ export const RepoList = (props: RepoListProps) => {
   }
 
   return (
-    <Card className="flex-1">
+    <Card>
       <CardContent className="space-y-4">
-        <h2 className="text-lg font-semibold">{props.title}</h2>
+        <h2 className="text-lg font-semibold">{title}</h2>
         <ItemGroup>
           {isPending && (
             <>
-              {Array.from({ length: 10 }).map((_, i) => (
+              {Array.from({ length: placeholderLength }).map((_, i) => (
                 <Skeleton key={i} className="h-16 w-full" />
               ))}
             </>
@@ -62,7 +63,7 @@ export const RepoList = (props: RepoListProps) => {
           {data?.repoDetails.map(
             (repo) =>
               repo && (
-                <Item key={repo._id} variant="outline" size="sm" className="flex-row" asChild>
+                <Item key={repo._id} asChild variant="outline" size="sm">
                   <Link
                     to="/$owner/$repo"
                     disabled={!repo.ownerLogin}

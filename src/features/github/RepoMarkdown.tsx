@@ -27,7 +27,7 @@ export type RepoDetailMarkdownProps = {
 } & CollapseProps &
   React.ComponentProps<"div">;
 
-export const RepoDetailMarkdown = ({
+export const RepoMarkdown = ({
   repo,
   expandible,
   expanded: initialExpanded,

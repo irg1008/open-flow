@@ -1,9 +1,10 @@
+import { ErrorComponent } from "@/components/error";
+import { NotFound } from "@/components/not-found";
 import { deLocalizeUrl, localizeUrl } from "@/i18n/_generated/runtime";
 import { ConvexQueryClient } from "@convex-dev/react-query";
 import { QueryClient, notifyManager } from "@tanstack/react-query";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
-import { NotFound } from "./components/not-found";
 import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
@@ -36,8 +37,10 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
-    context: { queryClient, convexQueryClient },
     defaultNotFoundComponent: NotFound,
+    defaultErrorComponent: ErrorComponent,
+    defaultViewTransition: false,
+    context: { queryClient, convexQueryClient },
     rewrite: {
       input: ({ url }) => deLocalizeUrl(url),
       output: ({ url }) => localizeUrl(url)

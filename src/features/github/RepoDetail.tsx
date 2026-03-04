@@ -2,7 +2,7 @@ import type { RepoFullName } from "#/github/validators";
 import { NotFound } from "@/components/not-found";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { RepoDetailMarkdown } from "./RepoMarkdown";
+import { RepoMarkdown } from "./RepoMarkdown";
 import { useRepoDetail } from "./hooks/use-repo-detail";
 
 export const RepoDetail = (props: RepoFullName) => {
@@ -24,7 +24,7 @@ export const RepoDetail = (props: RepoFullName) => {
             </a>
           </Button>
 
-          <RepoDetailMarkdown className="mx-auto max-w-4xl" repo={repo} expandible />
+          <RepoMarkdown className="mx-auto max-w-4xl" repo={repo} expandible />
         </>
       )}
     </section>

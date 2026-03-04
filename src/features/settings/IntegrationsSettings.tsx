@@ -50,7 +50,10 @@ export function IntegrationsSettings() {
     setActiveTab(value);
     setVisitedTabs((prev) => new Set(prev).add(value));
 
-    await router.navigate({ to: ".", search: (prev) => ({ ...prev, tab: value }) });
+    await router.navigate({
+      to: "/settings/integrations",
+      search: (prev) => ({ ...prev, tab: value })
+    });
   };
 
   return (

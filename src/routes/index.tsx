@@ -7,14 +7,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { RepoListsNames } from "shared/lib/github";
 
 export const Route = createFileRoute("/")({
-  component: IndexPage,
   head: () => ({
     meta: seo({
       title: m.pages_home_meta_title(),
       description: m.pages_home_meta_description(),
       keywords: m.pages_home_meta_keywords()
     })
-  })
+  }),
+  component: IndexPage
 });
 
 function IndexPage() {
@@ -32,9 +32,16 @@ function IndexPage() {
         </div>
       </section>
 
-      <section className="container mt-20 flex flex-wrap justify-center gap-6">
+      <section className="container mt-20 grid items-start gap-6 md:grid-cols-2">
         <RepoList name={RepoListsNames.AllTime} title={m.repos_list_all_time_title()} />
-        <RepoList name={RepoListsNames.LastMonth} title={m.repos_list_last_month_title()} />
+        <div className="grid gap-6">
+          <RepoList
+            name={RepoListsNames.Today}
+            title={m.repos_list_today_title()}
+            placeholderLength={2}
+          />
+          <RepoList name={RepoListsNames.LastMonth} title={m.repos_list_last_month_title()} />
+        </div>
       </section>
     </>
   );

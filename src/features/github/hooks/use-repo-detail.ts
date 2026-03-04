@@ -8,7 +8,7 @@ import { useCallback, useEffect } from "react";
 export const useRepoDetail = (args: RepoFullName) => {
   const navigate = useNavigate();
 
-  const { data: repo } = useQuery(api.github.queries.getRepoDetail, args);
+  const repo = useQuery(api.github.queries.getRepoDetail, args);
 
   const revalidateRepo = useAction(api.github.actions.fetchRepoDetail);
   const { data, isLoading } = useReactQuery({

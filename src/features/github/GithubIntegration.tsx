@@ -29,18 +29,14 @@ export const GithubIntegration = () => {
     await navigate({ href: installUrl });
   };
 
-  const {
-    data: githubIntegrations,
-    isPending,
-    isError
-  } = useQuery(api.github.queries.getUserIntegrationsRepos);
+  const githubIntegrations = useQuery(api.github.queries.getUserIntegrationsRepos);
 
-  if (isPending) {
-    return <Spinner />;
-  }
-
-  if (isError) {
-    return null;
+  if (!githubIntegrations) {
+    return (
+      <span className="flex justify-center">
+        <Spinner />
+      </span>
+    );
   }
 
   return (
@@ -102,7 +98,7 @@ export const GithubIntegration = () => {
                       <Badge variant="outline">{m.settings_integrations_suspended()}</Badge>
                     )}
                     {integration.repoSelectionAll && (
-                      <Badge variant="ghost">{m.settings_integrations_all_repos()}</Badge>
+                      <Badge variant="secondary">{m.settings_integrations_all_repos()}</Badge>
                     )}
                   </header>
 

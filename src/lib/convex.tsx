@@ -3,9 +3,9 @@ import { api } from "#/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { AnyRoute, useRouteContext } from "@tanstack/react-router";
-import { useQuery } from "convex-helpers/react";
+import { useQuery as useStateQuery } from "convex-helpers/react";
 import { ConvexHttpClient } from "convex/browser";
-import { useAction, useMutation } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { PropsWithChildren } from "react";
 
 const convexUrl = import.meta.env.VITE_CONVEX_URL;
@@ -28,4 +28,4 @@ export const ConvexProvider = ({
   );
 };
 
-export { api, httpClient, useAction, useMutation, useQuery };
+export { api, httpClient, useAction, useMutation, useQuery, useStateQuery };

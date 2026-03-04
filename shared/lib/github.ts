@@ -5,7 +5,8 @@ import { z } from "zod";
 
 export enum RepoListsNames {
   LastMonth = "popular-last-month",
-  AllTime = "popular-all-time"
+  AllTime = "popular-all-time",
+  Today = "popular-today"
 }
 
 export type GhRepo = Pick<

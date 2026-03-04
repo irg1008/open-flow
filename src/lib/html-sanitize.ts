@@ -15,6 +15,10 @@ export const sanitizeHtml = (html: string) => {
     if (node.tagName === "SOURCE") {
       setNeutralPictureSource(node);
     }
+
+    if (node.tagName === "IMG") {
+      node.setAttribute("loading", "lazy");
+    }
   });
 
   return DOMPurify.sanitize(html);
