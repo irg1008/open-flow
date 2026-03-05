@@ -1,7 +1,7 @@
 import { getRootTheme } from "@/lib/theme";
 import parse, { attributesToProps, DOMNode, domToReact } from "html-react-parser";
 
-export const parseHtml = async (markdown: string) => {
+export const parseHtml = (markdown: string) => {
   return parse(markdown, {
     replace: (domNode) => {
       if (domNode.type !== "tag") return;
@@ -29,9 +29,9 @@ export const parseHtml = async (markdown: string) => {
       }
 
       // Set lazy loading for images
-      if (name === "img") {
-        return <img {...props} alt={attribs.alt} loading="lazy" />;
-      }
+      // if (name === "img") {
+      //   return <img {...props} alt={attribs.alt} loading="lazy" />;
+      // }
 
       // Open links in a new tab
       if (name === "a") {

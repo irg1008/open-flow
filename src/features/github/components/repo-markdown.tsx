@@ -26,6 +26,7 @@ export const RepoMarkdown = ({
   expanded: initialExpanded,
   ...props
 }: RepoDetailMarkdownProps) => {
+  const [parsedHtml] = useState(() => parseHtml(markdown));
   const [expanded, setExpanded] = useState(initialExpanded ?? false);
 
   let shouldShowReadMore = expandible && !expanded;
@@ -39,7 +40,7 @@ export const RepoMarkdown = ({
     markdown && (
       <Card {...props}>
         <CardContent className={cn("relative", shouldShowReadMore && "max-h-96 overflow-hidden")}>
-          <section className="typography">{parseHtml(markdown)}</section>
+          <section className="typography">{parsedHtml}</section>
 
           {shouldShowReadMore && (
             <aside className="from-card pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-t to-transparent" />
