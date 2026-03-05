@@ -1,33 +1,18 @@
 import { createIsomorphicFn } from "@tanstack/react-start";
 import type { MarkedOptions } from "marked";
-import { sanitizeHtml } from "../html-sanitize";
 import { createWorkerRequestClient } from "../worker";
-import { parseMarkdown as mainThreadParseMarkdown } from "./markdown-parser";
-import { ParseMarkdownPayload } from "./markdown.worker";
+import { parseMarkdown as mainThreadParseMarkdown, ParseMarkdownOptions } from "./markdown-parser";
 
-const getMarkdownWorkerClient = createIsomorphicFn()
-  .server(() => null)
-  .client(() => {
-    return createWorkerRequestClient<ParseMarkdownPayload, string>(
+const parseMarkdown = createIsomorphicFn()
+  .server(async (options: ParseMarkdownOptions) => {
+    return mainThreadParseMarkdown(options);
+  })
+  .client((options: ParseMarkdownOptions) => {
+    const worker = createWorkerRequestClient<ParseMarkdownOptions, string>(
       () => new Worker(new URL("./markdown.worker.ts", import.meta.url), { type: "module" })
     );
+    return worker.request(options);
   });
-
-const workerClient = getMarkdownWorkerClient();
-
-const parseMarkdownWithWorker = async (
-  markdown: string,
-  baseUrl: string,
-  options?: MarkedOptions
-) => {
-  if (!workerClient) return await mainThreadParseMarkdown(markdown, baseUrl, options);
-  return await workerClient.request({ markdown, baseUrl, options });
-};
-
-export const parseMarkdown = async (markdown: string, baseUrl: string, options?: MarkedOptions) => {
-  const html = await parseMarkdownWithWorker(markdown, baseUrl, options);
-  return sanitizeHtml(html);
-};
 
 export const parseRemoteMarkdown = async (
   markdownUrl: string,
@@ -47,5 +32,5 @@ export const parseRemoteMarkdown = async (
     return await parseRemoteMarkdown(subMarkdownUrl, baseUrl, options);
   }
 
-  return await parseMarkdown(markdown, baseUrl, options);
+  return await parseMarkdown({ markdown, baseUrl, options });
 };

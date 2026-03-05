@@ -1,22 +1,14 @@
-import { MarkedOptions } from "marked";
 import { WorkerRequest, WorkerResponse } from "../worker";
-import { parseMarkdown } from "./markdown-parser";
+import { parseMarkdown, type ParseMarkdownOptions } from "./markdown-parser";
 
-export type ParseMarkdownPayload = {
-  markdown: string;
-  baseUrl: string;
-  options?: MarkedOptions;
-};
-
-type ParseMarkdownWorkerRequest = WorkerRequest<ParseMarkdownPayload>;
+type ParseMarkdownWorkerRequest = WorkerRequest<ParseMarkdownOptions>;
 type ParseMarkdownWorkerResponse = WorkerResponse<string>;
 
 self.onmessage = async (event: MessageEvent<ParseMarkdownWorkerRequest>) => {
   const { id, payload } = event.data;
-  const { markdown, baseUrl, options } = payload;
 
   try {
-    const html = await parseMarkdown(markdown, baseUrl, options);
+    const html = await parseMarkdown(payload);
     const message: ParseMarkdownWorkerResponse = { id, result: html };
     self.postMessage(message);
   } catch (error) {

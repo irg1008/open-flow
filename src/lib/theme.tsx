@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createClientOnlyFn, createServerFn } from "@tanstack/react-start";
 import { getCookie, setCookie } from "@tanstack/react-start/server";
 import darkThemeUrl from "highlight.js/styles/github-dark.css?url";
 import lightThemeUrl from "highlight.js/styles/github.css?url";
@@ -46,19 +46,6 @@ const highlightTheme = {
 
 // Picture source handling
 
-export const setNeutralPictureSource = (sourceEl: Element) => {
-  const alreadySet = sourceEl.getAttribute("data-theme");
-  if (alreadySet) return;
-
-  const theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
-
-  const sourceTheme =
-    sourceEl.getAttribute("media") === "(prefers-color-scheme: dark)" ? "dark" : "light";
-
-  sourceEl.setAttribute("data-theme", sourceTheme);
-  sourceEl.setAttribute("media", theme === sourceTheme ? "all" : "not all");
-};
-
 const updatePictureSource = (theme: AppTheme) => {
   const themeMedia = document.querySelectorAll(`source[data-theme="${theme}"]`);
   const nonThemeMedia = document.querySelectorAll(`source:not([data-theme="${theme}"])`);
@@ -73,6 +60,10 @@ const getSystemTheme = () => {
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
   return mediaQuery.matches ? "dark" : "light";
 };
+
+export const getRootTheme = createClientOnlyFn(() => {
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+});
 
 const setRootTheme = (theme: UserTheme) => {
   const root = document.documentElement;

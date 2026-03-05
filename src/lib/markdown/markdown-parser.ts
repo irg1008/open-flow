@@ -45,7 +45,13 @@ const baseUrlHtmlExtension = (baseUrl: string): MarkedExtension => ({
   }
 });
 
-export const parseMarkdown = async (markdown: string, baseUrl: string, options?: MarkedOptions) => {
+export type ParseMarkdownOptions = {
+  markdown: string;
+  baseUrl: string;
+  options?: MarkedOptions;
+};
+
+export const parseMarkdown = async ({ markdown, baseUrl, options }: ParseMarkdownOptions) => {
   const marked = new Marked(
     baseUrlExtension(baseUrl),
     baseUrlHtmlExtension(baseUrl),

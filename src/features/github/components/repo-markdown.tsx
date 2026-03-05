@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { parseHtml } from "@/lib/html";
 import { cn } from "@/lib/utils";
+
 import { useEffect, useState } from "react";
 
 type CollapseProps =
@@ -37,7 +39,7 @@ export const RepoMarkdown = ({
     markdown && (
       <Card {...props}>
         <CardContent className={cn("relative", shouldShowReadMore && "max-h-96 overflow-hidden")}>
-          <section className="typography" dangerouslySetInnerHTML={{ __html: markdown }} />
+          <section className="typography">{parseHtml(markdown)}</section>
 
           {shouldShowReadMore && (
             <aside className="from-card pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-t to-transparent" />
