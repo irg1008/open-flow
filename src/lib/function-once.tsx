@@ -1,4 +1,5 @@
 import { ScriptOnce } from "@tanstack/react-router";
+
 export function FunctionOnce<T = unknown>({
   children,
   param

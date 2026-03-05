@@ -35,7 +35,7 @@ export const parseRemoteMarkdown = async (
   options?: MarkedOptions
 ): Promise<string | null> => {
   const response = await fetch(markdownUrl);
-  if (response.status !== 200) return null;
+  if (!response.ok) return null;
 
   const markdown = await response.text();
 
@@ -48,18 +48,4 @@ export const parseRemoteMarkdown = async (
   }
 
   return await parseMarkdown(markdown, baseUrl, options);
-};
-
-export const parseRemoteGithubMarkdown = async (user: string, repo: string, branch: string) => {
-  const rawUrl = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/`;
-
-  const markdownNameVariants = ["README.md", "readme.md", "Readme.md"];
-
-  for (const markdownName of markdownNameVariants) {
-    const markdownUrl = `${rawUrl}${markdownName}`;
-    const result = await parseRemoteMarkdown(markdownUrl, rawUrl, { gfm: true });
-    if (result) return result;
-  }
-
-  return null;
 };

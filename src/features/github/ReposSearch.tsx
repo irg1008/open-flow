@@ -15,7 +15,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useKeyDown } from "@/hooks/use-key-down";
 import { useSearch, UseSearchResult } from "@/hooks/use-search";
 import { m } from "@/i18n/_generated/messages";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { AlertCircleIcon, SearchIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { github } from "shared/lib/github";
@@ -107,8 +107,14 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
             key={repo.externalId}
             value={`${repo.ownerLogin ? `${repo.ownerLogin}/` : ""}${repo.name}`}
             onSelect={() => handleSelectRepo(repo)}
+            asChild
           >
-            <div className="flex items-start gap-2">
+            <Link
+              to="/$owner/$repo"
+              disabled={!repo.ownerLogin}
+              params={{ owner: repo.ownerLogin ?? "", repo: repo.name }}
+              className="flex items-start gap-2"
+            >
               <Avatar size="sm">
                 <AvatarImage
                   src={repo.ownerAvatarUrl ?? undefined}
@@ -128,7 +134,7 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
                   {repo.description ?? m.repos_no_description()}
                 </span>
               </div>
-            </div>
+            </Link>
           </CommandItem>
         ))}
       </CommandGroup>

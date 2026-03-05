@@ -157,7 +157,4 @@ const getRepo = async ({ etag, owner, name, token }: GetRepoOptions) => {
   }
 };
 
-export const github = {
-  listRepos,
-  getRepo
-};
+export const github = { listRepos, getRepo };

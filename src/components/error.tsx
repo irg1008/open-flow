@@ -18,6 +18,7 @@ export const ErrorComponent: ErrorRouteComponent = ({ error, reset }) => {
       <AlertCircleIcon />
       <AlertTitle>{m.error_generic()}</AlertTitle>
       <AlertDescription>{error.message}</AlertDescription>
+      {typeof error.cause === "string" && <AlertDescription>{error.cause}</AlertDescription>}
 
       <AlertAction>
         <Button

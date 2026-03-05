@@ -67,7 +67,7 @@ export const RepoList = ({ name, title, placeholderLength = 10 }: RepoListProps)
                   <Link
                     to="/$owner/$repo"
                     disabled={!repo.ownerLogin}
-                    params={{ owner: repo.ownerLogin!, repo: repo.name }}
+                    params={{ owner: repo.ownerLogin ?? "", repo: repo.name }}
                   >
                     {repo.ownerAvatarUrl && (
                       <ItemMedia>

@@ -19,6 +19,18 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   convexQueryClient: ConvexQueryClient;
 }>()({
+  loader: async () => ({
+    initialTheme: await getStoredTheme()
+  }),
+  beforeLoad: async (ctx) => {
+    const token = await getAuth();
+
+    if (token) {
+      ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);
+    }
+
+    return { isAuthenticated: !!token, token };
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -33,26 +45,14 @@ export const Route = createRootRouteWithContext<{
       { rel: "icon", href: "/favicon.ico" }
     ]
   }),
-  loader: async () => ({
-    initialTheme: await getStoredTheme()
-  }),
-  beforeLoad: async (ctx) => {
-    const token = await getAuth();
-
-    if (token) {
-      ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);
-    }
-
-    return { isAuthenticated: !!token, token };
-  },
   component: RootComponent
 });
 
 function RootComponent() {
   return (
-    <ConvexProvider from={Route.id}>
-      <TooltipProvider>
-        <RootDocument>
+    <RootDocument>
+      <ConvexProvider from={Route.id}>
+        <TooltipProvider>
           <main className="bg-background relative flex min-h-svh flex-col">
             <Navbar />
             <div className="relative flex flex-1 flex-col p-4 has-[main]:p-0">
@@ -61,9 +61,9 @@ function RootComponent() {
           </main>
 
           <Toaster />
-        </RootDocument>
-      </TooltipProvider>
-    </ConvexProvider>
+        </TooltipProvider>
+      </ConvexProvider>
+    </RootDocument>
   );
 }
 
