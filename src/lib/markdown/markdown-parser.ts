@@ -2,6 +2,7 @@ import hljs from "highlight.js";
 import { Marked, type MarkedExtension, type MarkedOptions } from "marked";
 import markedAlert from "marked-alert";
 import { baseUrl as baseUrlExtension } from "marked-base-url";
+import { gfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 
 const highlightExtension = markedHighlight({
@@ -14,6 +15,8 @@ const highlightExtension = markedHighlight({
 });
 
 const alertsExtension = markedAlert({ className: "alert" });
+
+const headingExtension = gfmHeadingId();
 
 const shouldAddRawQuery = (attr: string, url: string) => {
   if (attr !== "src") return false;
@@ -46,6 +49,7 @@ export const parseMarkdown = async (markdown: string, baseUrl: string, options?:
   const marked = new Marked(
     baseUrlExtension(baseUrl),
     baseUrlHtmlExtension(baseUrl),
+    headingExtension,
     alertsExtension,
     highlightExtension
   );

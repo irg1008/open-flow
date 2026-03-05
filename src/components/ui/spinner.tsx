@@ -1233,15 +1233,18 @@ export const Spinner = ({ type = "dots13", speed = 1 }: SpinnerProps) => {
 
   const spinner = useMemo(() => {
     let frameIndex = 0;
-
     const { frames, interval } = spinners[type];
 
-    const timer = setInterval(() => {
-      setSpinnerText(frames[frameIndex]);
-      frameIndex = (frameIndex + 1) % frames.length;
-    }, interval / speed);
+    let timer: number;
+    const start = () => {
+      timer = setInterval(() => {
+        setSpinnerText(frames[frameIndex]);
+        frameIndex = (frameIndex + 1) % frames.length;
+      }, interval / speed);
+    };
 
     return {
+      start,
       stop: () => {
         clearInterval(timer);
         setSpinnerText("");
@@ -1250,6 +1253,8 @@ export const Spinner = ({ type = "dots13", speed = 1 }: SpinnerProps) => {
   }, [type, speed]);
 
   useEffect(() => {
+    spinner.start();
+
     return () => {
       spinner.stop();
     };

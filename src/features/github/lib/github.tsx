@@ -7,7 +7,6 @@ import { PatreonIcon } from "@/components/ui/svgs/patreon";
 import { PolarShIcon } from "@/components/ui/svgs/polarSh";
 import { StripeIcon } from "@/components/ui/svgs/stripe";
 import { GithubIntegration } from "@/features/github/GithubIntegration";
-import { m } from "@/i18n/_generated/messages";
 import { ComponentType, ReactNode } from "react";
 import { parse } from "yaml";
 import z from "zod";
@@ -191,7 +190,7 @@ export const platformsInfo: PlatformInfo[] = [
   },
   {
     name: "custom",
-    label: m.sponsor_platform_custom(),
+    label: "Web",
     baseUrl: ""
   }
 ];

@@ -1,8 +1,8 @@
-import DOMPurify from "dompurify";
+import DOMPurify, { Config } from "dompurify";
 import { setNeutralPictureSource } from "./theme";
 
-export const sanitizeHtml = (html: string) => {
-  DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+export const sanitizeHtml = (html: string, options?: Config) => {
+  DOMPurify.addHook("afterSanitizeAttributes", async (node) => {
     if (node.tagName === "A") {
       const href = node.getAttribute("href");
 
@@ -21,5 +21,5 @@ export const sanitizeHtml = (html: string) => {
     }
   });
 
-  return DOMPurify.sanitize(html);
+  return DOMPurify.sanitize(html, options);
 };
