@@ -7,8 +7,6 @@ import { getStoredTheme } from "@/lib/theme";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/$owner/$repo")({
-  // Deload server: change SSR to false to fully fetch and render on the client side
-  // See https://tanstack.com/start/latest/docs/framework/react/guide/selective-ssr#ssr-true
   loader: async ({ params }) => ({
     markdown: await parseRemoteGithubMarkdown(params),
     funding: await parseRemoteGithubFunding(params),
