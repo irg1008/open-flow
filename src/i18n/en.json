@@ -21,6 +21,7 @@
   "repos_list_not_found_description": "No repositories found in this list",
   "repos_list_not_found_title": "Not found",
   "repos_list_today_title": "Popular today",
+  "repos_markdown_read_more": "Read more",
   "repos_no_description": "No description",
   "repos_private": "Private",
   "repos_search_error": "Error searching repositories",

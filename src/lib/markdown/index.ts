@@ -3,7 +3,7 @@ import type { MarkedOptions } from "marked";
 import { createWorkerRequestClient } from "../worker";
 import { parseMarkdown as mainThreadParseMarkdown, ParseMarkdownOptions } from "./markdown-parser";
 
-const parseMarkdown = createIsomorphicFn()
+export const parseMarkdown = createIsomorphicFn()
   .server(async (options: ParseMarkdownOptions) => {
     return mainThreadParseMarkdown(options);
   })
@@ -17,8 +17,14 @@ const parseMarkdown = createIsomorphicFn()
 export const parseRemoteMarkdown = async (
   markdownUrl: string,
   baseUrl: string,
-  options?: MarkedOptions
+  options?: MarkedOptions,
+  fetchAttempt = 0
 ): Promise<string | null> => {
+  if (fetchAttempt > 3) {
+    console.error(`Failed to fetch markdown after ${fetchAttempt} attempts: ${markdownUrl}`);
+    return null;
+  }
+
   const response = await fetch(markdownUrl);
   if (!response.ok) return null;
 
@@ -29,7 +35,7 @@ export const parseRemoteMarkdown = async (
   const isSubMarkdown = markdown.trim().endsWith(".md");
   if (isOneLiner && isSubMarkdown) {
     const subMarkdownUrl = new URL(markdown.trim(), baseUrl).href;
-    return await parseRemoteMarkdown(subMarkdownUrl, baseUrl, options);
+    return await parseRemoteMarkdown(subMarkdownUrl, baseUrl, options, fetchAttempt + 1);
   }
 
   return await parseMarkdown({ markdown, baseUrl, options });

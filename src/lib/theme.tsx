@@ -9,8 +9,8 @@ import { FunctionOnce } from "./function-once";
 const UserThemeSchema = z.enum(["light", "dark", "system"]).catch("system");
 const AppThemeSchema = z.enum(["light", "dark"]).catch("light");
 
-type UserTheme = z.infer<typeof UserThemeSchema>;
-type AppTheme = z.infer<typeof AppThemeSchema>;
+export type UserTheme = z.infer<typeof UserThemeSchema>;
+export type AppTheme = z.infer<typeof AppThemeSchema>;
 
 // Server
 
@@ -46,12 +46,42 @@ const highlightTheme = {
 
 // Picture source handling
 
-const updatePictureSource = (theme: AppTheme) => {
-  const themeMedia = document.querySelectorAll(`source[data-theme="${theme}"]`);
-  const nonThemeMedia = document.querySelectorAll(`source:not([data-theme="${theme}"])`);
+export const getUpdatedSourceAttributtes = (
+  theme: UserTheme,
+  media?: string,
+  dataTheme?: string | null
+) => {
+  if (!media) return; // Only handle source tags with media attribute
 
-  themeMedia.forEach((source) => source.setAttribute("media", "all"));
-  nonThemeMedia.forEach((source) => source.setAttribute("media", "not all"));
+  if (theme === "system" && !dataTheme) return;
+  if (theme === "system") {
+    return { media: `(prefers-color-scheme: ${dataTheme})` };
+  }
+
+  const isDark = media === "(prefers-color-scheme: dark)" || dataTheme === "dark";
+  const sourceTheme = isDark ? "dark" : "light";
+  const mediaValue = theme === sourceTheme ? "all" : "not all";
+  return { media: mediaValue, dataTheme: sourceTheme };
+};
+
+const updatePictureSource = (theme: UserTheme) => {
+  const allSourceWithMedia = document.querySelectorAll("source[media]");
+
+  allSourceWithMedia.forEach((source) => {
+    const media = source.getAttribute("media");
+    const dataTheme = source.getAttribute("data-theme");
+    if (!media) return;
+
+    const newAttribs = getUpdatedSourceAttributtes(theme, media, dataTheme);
+    if (!newAttribs) return;
+
+    source.setAttribute("media", newAttribs.media);
+    if (newAttribs.dataTheme) {
+      source.setAttribute("data-theme", newAttribs.dataTheme);
+    } else {
+      source.removeAttribute("data-theme");
+    }
+  });
 };
 
 // Client
@@ -73,7 +103,6 @@ const setRootTheme = (theme: UserTheme) => {
   root.classList.add(newTheme);
 
   highlightTheme.update(newTheme);
-  updatePictureSource(newTheme);
 };
 
 const setupPreferredListener = () => {
@@ -87,6 +116,7 @@ const setupPreferredListener = () => {
 
 export const setTheme = async (theme: UserTheme) => {
   setRootTheme(theme);
+  updatePictureSource(theme);
   await setStoredTheme({ data: theme });
 };
 

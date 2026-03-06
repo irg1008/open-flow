@@ -130,7 +130,7 @@ const ReposSearchResult = ({ result }: ReposSearchResultProps) => {
                   {repo.ownerLogin ? `${repo.ownerLogin}/` : ""}
                   {repo.name}
                 </span>
-                <span className="text-muted-foreground text-xs">
+                <span className="text-muted-foreground line-clamp-3 text-xs break-all">
                   {repo.description ?? m.repos_no_description()}
                 </span>
               </div>

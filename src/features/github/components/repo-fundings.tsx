@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { getPlatformInfo, GithubFunding, type PlatformInfo } from "@/features/github/lib/github";
+import { cn } from "@/lib/utils";
 import { ExternalLinkIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -11,7 +12,7 @@ type FundingBadgeProps = { info: PlatformInfo; url: string };
 
 const FundingBadge = ({ info, url }: FundingBadgeProps) => {
   const [faviconErrored, setFaviconErrored] = useState(false);
-  const baseUrl = new URL(url);
+  const baseUrl = new URL(url.startsWith("http") ? url : `https://${url}`);
 
   const iconFallback = faviconErrored ? (
     <ExternalLinkIcon />
@@ -19,14 +20,17 @@ const FundingBadge = ({ info, url }: FundingBadgeProps) => {
     <img
       src={`${baseUrl.origin}/favicon.ico`}
       alt={`${info.name} favicon`}
-      className="ml-1 inline-block h-4 w-4"
-      onError={() => setFaviconErrored(true)}
+      className={cn("ml-1 inline-block h-4 w-4", faviconErrored && "hidden")}
+      onError={({ currentTarget }) => {
+        currentTarget.onerror = null;
+        setFaviconErrored(true);
+      }}
     />
   );
 
   return (
     <Badge asChild key={url} variant="outline">
-      <a href={url} target="_blank" rel="noopener noreferrer">
+      <a href={baseUrl.href} target="_blank" rel="noopener noreferrer">
         {info.icon ?? iconFallback}
         <span>{info.name === "custom" ? `${baseUrl.host}${baseUrl.pathname}` : info.label}</span>
       </a>

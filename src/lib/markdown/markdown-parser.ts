@@ -5,25 +5,28 @@ import { baseUrl as baseUrlExtension } from "marked-base-url";
 import { gfmHeadingId } from "marked-gfm-heading-id";
 import { markedHighlight } from "marked-highlight";
 
+const alertsExtension = markedAlert({ className: "alert" });
+const headingExtension = gfmHeadingId();
+
 const highlightExtension = markedHighlight({
-  langPrefix: "block language-",
-  emptyLangClass: "block",
   highlight(code, lang) {
     const language = hljs.getLanguage(lang) ? lang : "plaintext";
     return hljs.highlight(code, { language }).value;
   }
 });
 
-const alertsExtension = markedAlert({ className: "alert" });
-
-const headingExtension = gfmHeadingId();
-
 const shouldAddRawQuery = (attr: string, url: string) => {
-  if (attr !== "src") return false;
-  const excludedDomains = ["img.shields.io", "badgen.net"];
-  return !excludedDomains.some((domain) => url.includes(domain));
+  if (attr === "href") return false;
+  const includedDomains = ["github.com"];
+  return includedDomains.some((domain) => url.includes(domain));
 };
 
+/**
+ * Convert relative urls inside markdown html
+ *
+ * @param {string} baseUrl
+ * @return {*}  {MarkedExtension}
+ */
 const baseUrlHtmlExtension = (baseUrl: string): MarkedExtension => ({
   walkTokens(token) {
     if (token.type === "html" && typeof token.text === "string") {

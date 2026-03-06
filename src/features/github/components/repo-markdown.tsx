@@ -1,6 +1,8 @@
+import { Html } from "@/components/html";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { parseHtml } from "@/lib/html";
+import { m } from "@/i18n/_generated/messages";
+import { UserTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 import { useEffect, useState } from "react";
@@ -16,43 +18,42 @@ type CollapseProps =
     };
 
 export type RepoDetailMarkdownProps = {
-  markdown: string;
+  htmlMarkdown: string;
+  theme?: UserTheme;
 } & CollapseProps &
   React.ComponentProps<"div">;
 
 export const RepoMarkdown = ({
-  markdown,
+  htmlMarkdown,
+  theme,
   expandible,
   expanded: initialExpanded,
   ...props
 }: RepoDetailMarkdownProps) => {
-  const [parsedHtml] = useState(() => parseHtml(markdown));
   const [expanded, setExpanded] = useState(initialExpanded ?? false);
 
-  let shouldShowReadMore = expandible && !expanded;
-  shouldShowReadMore &&= !!markdown && markdown.length > 2500;
+  const markdownTooLong = htmlMarkdown.length > 2500;
+  const shouldShowReadMore = markdownTooLong && expandible && !expanded;
 
   useEffect(() => {
     setExpanded(initialExpanded ?? false);
   }, [initialExpanded]);
 
   return (
-    markdown && (
-      <Card {...props}>
-        <CardContent className={cn("relative", shouldShowReadMore && "max-h-96 overflow-hidden")}>
-          <section className="typography">{parsedHtml}</section>
-
-          {shouldShowReadMore && (
-            <aside className="from-card pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-t to-transparent" />
-          )}
-        </CardContent>
+    <Card {...props}>
+      <CardContent className={cn("relative", shouldShowReadMore && "max-h-96 overflow-hidden")}>
+        <Html as="article" content={htmlMarkdown} theme={theme} />
 
         {shouldShowReadMore && (
-          <CardFooter className="pt-0">
-            <Button onClick={() => setExpanded(true)}>Read more</Button>
-          </CardFooter>
+          <aside className="from-card pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-linear-to-t to-transparent" />
         )}
-      </Card>
-    )
+      </CardContent>
+
+      {shouldShowReadMore && (
+        <CardFooter className="pt-0">
+          <Button onClick={() => setExpanded(true)}>{m.repos_markdown_read_more()}</Button>
+        </CardFooter>
+      )}
+    </Card>
   );
 };

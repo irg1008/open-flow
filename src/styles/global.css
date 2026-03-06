@@ -330,12 +330,12 @@
 		@apply font-medium underline underline-offset-4 inline-block;
 	}
 
+	pre code {
+		@apply p-3 mt-4 block;
+	}
+
 	code {
 		@apply bg-muted relative rounded px-2 py-1 font-mono text-sm font-semibold overflow-x-auto inline-flex;
-
-		&.block {
-			@apply p-3 mt-4 block;
-		}
 
 		&::selection {
 			@apply bg-popover text-popover-foreground;
