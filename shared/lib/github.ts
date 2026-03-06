@@ -6,6 +6,7 @@ import { z } from "zod";
 export enum RepoListsNames {
   LastMonth = "popular-last-month",
   AllTime = "popular-all-time",
+  LastYear = "popular-last-year",
   Today = "popular-today"
 }
 

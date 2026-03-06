@@ -33,12 +33,16 @@ function IndexPage() {
       </section>
 
       <section className="container mt-20 grid items-start gap-6 md:grid-cols-2">
-        <RepoList name={RepoListsNames.AllTime} title={m.repos_list_all_time_title()} />
+        <RepoList
+          name={RepoListsNames.LastYear}
+          placeholderLength={15}
+          title={m.repos_list_last_year_title()}
+        />
         <div className="grid gap-6">
           <RepoList
             name={RepoListsNames.Today}
             title={m.repos_list_today_title()}
-            placeholderLength={2}
+            placeholderLength={5}
           />
           <RepoList name={RepoListsNames.LastMonth} title={m.repos_list_last_month_title()} />
         </div>

@@ -12,10 +12,17 @@ crons.daily(
 );
 
 crons.daily(
+  "popular-github-repos-last-year",
+  { hourUTC: 6, minuteUTC: 0 },
+  internal.github.actions.fetchRepos,
+  { minStars: 20000, pastDays: 365, limit: 15, listName: RepoListsNames.LastYear }
+);
+
+crons.daily(
   "popular-github-repos-all-time",
   { hourUTC: 6, minuteUTC: 0 },
   internal.github.actions.fetchRepos,
-  { minStars: 100_000, limit: 10, listName: RepoListsNames.AllTime }
+  { minStars: 100_000, limit: 20, listName: RepoListsNames.AllTime }
 );
 
 crons.hourly("popular-github-repos-today", { minuteUTC: 0 }, internal.github.actions.fetchRepos, {

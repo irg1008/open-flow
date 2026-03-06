@@ -327,7 +327,7 @@
 	}
 
 	a {
-		@apply font-medium underline underline-offset-4 inline-block;
+		@apply font-medium underline underline-offset-4;
 	}
 
 	pre code {
