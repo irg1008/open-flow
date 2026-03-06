@@ -9,12 +9,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger
+  SidebarTrigger,
+  useSidebar
 } from "@/components/ui/sidebar";
 import { m } from "@/i18n/_generated/messages";
 import { Link, ToPathOption, useLocation } from "@tanstack/react-router";
 import { ExternalLinkIcon, UserIcon } from "lucide-react";
-import type { PropsWithChildren } from "react";
+import { type PropsWithChildren } from "react";
 
 type SettingsLink = {
   pathname: ToPathOption;
@@ -22,21 +23,21 @@ type SettingsLink = {
   icon?: React.ReactNode;
 };
 
+const links: SettingsLink[] = [
+  {
+    pathname: "/settings/integrations",
+    label: m.settings_integrations_title(),
+    icon: <ExternalLinkIcon size={16} />
+  },
+  {
+    pathname: "/settings/account",
+    label: m.settings_account_title(),
+    icon: <UserIcon size={16} />
+  }
+];
+
 export function SettingsSidebar({ children }: PropsWithChildren) {
   const location = useLocation();
-
-  const links: SettingsLink[] = [
-    {
-      pathname: "/settings/integrations",
-      label: m.settings_integrations_title(),
-      icon: <ExternalLinkIcon size={16} />
-    },
-    {
-      pathname: "/settings/account",
-      label: m.settings_account_title(),
-      icon: <UserIcon size={16} />
-    }
-  ];
 
   return (
     <SidebarProvider
@@ -52,16 +53,7 @@ export function SettingsSidebar({ children }: PropsWithChildren) {
             <SidebarGroupLabel>{m.settings_title()}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {links.map((link) => (
-                  <SidebarMenuItem key={link.pathname}>
-                    <SidebarMenuButton asChild isActive={location.pathname === link.pathname}>
-                      <Link to={link.pathname} className="flex items-center gap-2">
-                        {link.icon}
-                        {link.label}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                <Links />
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -82,3 +74,27 @@ export function SettingsSidebar({ children }: PropsWithChildren) {
     </SidebarProvider>
   );
 }
+
+const Links = () => {
+  const { setOpenMobile } = useSidebar();
+
+  return (
+    <>
+      {links.map((link) => (
+        <SidebarMenuItem key={link.pathname}>
+          <SidebarMenuButton
+            asChild
+            isActive={location.pathname === link.pathname}
+            tooltip={link.label}
+            onClick={() => setOpenMobile(false)}
+          >
+            <Link to={link.pathname} className="flex items-center gap-2">
+              {link.icon}
+              {link.label}
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </>
+  );
+};
