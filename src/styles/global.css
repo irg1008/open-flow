@@ -335,7 +335,7 @@
 	}
 
 	code {
-		@apply bg-muted relative rounded px-2 py-1 font-mono text-sm font-semibold overflow-x-auto inline-flex;
+		@apply bg-muted relative rounded p-1 font-mono text-sm overflow-x-auto inline-flex;
 
 		&::selection {
 			@apply bg-popover text-popover-foreground;
