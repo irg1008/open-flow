@@ -6,6 +6,8 @@ import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const i18n = () =>
   paraglideVitePlugin({
     project: "./src/i18n/project.inlang",
@@ -22,7 +24,11 @@ export default defineConfig({
     viteReact(),
     tailwindcss(),
     i18n(),
-    checker({ typescript: true })
+    checker({
+      enableBuild: false,
+      typescript: isDev,
+      overlay: false
+    })
   ],
   ssr: {
     noExternal: ["@convex-dev/better-auth"]

@@ -242,6 +242,10 @@
 @utility typography {
 	@apply space-y-4;
 
+	details {
+		@apply space-y-4;
+	}
+
 	h1 {
 		@apply scroll-m-20 text-3xl border-b pb-4 font-extrabold tracking-tight text-balance mt-6 mb-3;
 	}
