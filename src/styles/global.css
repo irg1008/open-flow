@@ -66,12 +66,6 @@
 	--shadow-2xl: 0px 4px 10px 0px hsl(0 0% 0% / 0.25);
 	--tracking-normal: 0.01em;
 	--spacing: 0.25rem;
-
-	--breakpoint-3xl: 1600px;
-	--font-display: Space Grotesk Variable, serif;
-	--font-serif: Source Serif 4, serif;
-	--font-sans: Inter Variable, sans-serif;
-	--font-mono: Fira Code Variable, Source Code Pro, monospace;
 }
 
 .dark {
@@ -127,12 +121,6 @@
 	--shadow-xl:
 		0px 6px 15px 0px hsl(0 0% 0% / 0.3), 0px 8px 10px -1px hsl(0 0% 0% / 0.3);
 	--shadow-2xl: 0px 6px 15px 0px hsl(0 0% 0% / 0.75);
-
-	--breakpoint-3xl: 1600px;
-	--font-display: Space Grotesk Variable, serif;
-	--font-serif: Source Serif 4, serif;
-	--font-sans: Inter Variable, sans-serif;
-	--font-mono: Fira Code Variable, Source Code Pro, monospace;
 }
 
 @theme inline {
@@ -190,12 +178,11 @@
 	--tracking-wider: calc(var(--tracking-normal) + 0.05em);
 	--tracking-widest: calc(var(--tracking-normal) + 0.1em);
 
-	--font-display: var(--font-display);
-	--font-sans: var(--font-sans);
-	--font-mono: var(--font-mono);
-	--font-serif: var(--font-serif);
-
-	--breakpoint-3xl: var(--breakpoint-3xl);
+	--breakpoint-3xl: 1600px;
+	--font-display: Space Grotesk Variable, serif;
+	--font-serif: Source Serif 4, serif;
+	--font-sans: Inter Variable, sans-serif;
+	--font-mono: Fira Code Variable, Source Code Pro, monospace;
 }
 
 @layer base {
@@ -327,7 +314,11 @@
 	}
 
 	a {
-		@apply font-medium underline underline-offset-4;
+		@apply font-medium underline underline-offset-4 inline-block;
+	}
+
+	table a {
+		@apply inline;
 	}
 
 	pre code {

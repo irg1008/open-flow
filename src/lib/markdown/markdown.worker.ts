@@ -12,7 +12,7 @@ self.onmessage = async (event: MessageEvent<ParseMarkdownWorkerRequest>) => {
     const message: ParseMarkdownWorkerResponse = { id, result: html };
     self.postMessage(message);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Failed to parse markdown";
+    const errorMessage = Error.isError(error) ? error.message : "Failed to parse markdown";
     const message: ParseMarkdownWorkerResponse = { id, error: errorMessage };
     self.postMessage(message);
   }
