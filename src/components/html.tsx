@@ -49,6 +49,9 @@ const getOptions = (theme?: UserTheme): HTMLReactParserOptions => {
 
       // Open links in a new tab
       if (name === "a") {
+        const isAnchorLink = typeof props.href === "string" && props.href.startsWith("#");
+        if (isAnchorLink) return;
+
         return (
           <a {...props} target="_blank" rel="noopener noreferrer">
             {getChildren()}
