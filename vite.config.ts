@@ -17,7 +17,7 @@ const i18n = () =>
 
 export default defineConfig({
   plugins: [
-    tsconfigPaths({ projects: ["./tsconfig.json"] }),
+    tsconfigPaths(),
     tanstackStart(),
     viteReact(),
     tailwindcss(),
